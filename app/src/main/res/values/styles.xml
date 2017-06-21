@@ -1,0 +1,72 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="Custom_Progress" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <!-- 无动画、背景屏幕半透明 -->
+    <style name="customDialogStyle" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <!-- 对话框是否有遮盖 -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="view_line_width_eeeeee">
+        <item name="android:layout_height">0.7dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">#eeeeee</item>
+    </style>
+    <style name="btn_blue_btn">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/text_color_enable_selecor</item>
+        <item name="android:background">@drawable/btn_blue_selector</item>
+    </style>
+    <style name="clearEditText_userName">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:drawableRight">@mipmap/ic_edittext_clear</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:hint">@string/plz_input_phone</item>
+        <item name="android:inputType">number</item>
+        <item name="android:maxLength">11</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/color_999999</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:background">@drawable/bg_bbb_4</item>
+    </style>
+    <style name="Theme.AppStartLoadTranslucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/AnimationActivity</item>
+    </style>
+    <!--Activity的启动动画-->
+    <style name="AnimationActivity">
+        <item name="android:activityOpenEnterAnimation">@anim/zoomin_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/zoomout_left</item>
+
+
+        <item name="android:activityCloseEnterAnimation">@anim/zoomin_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/zoomout_right</item>
+    </style>
+</resources>
