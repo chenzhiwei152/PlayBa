@@ -51,6 +51,10 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.activity.CommitOrderActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.OrderListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.OrderDetailsActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

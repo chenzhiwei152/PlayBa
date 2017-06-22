@@ -1,5 +1,7 @@
 package com.yuanchangyuan.wanbei.api;
 
+import com.yuanchangyuan.wanbei.api.FastJsonConvert.FastJsonConverterFactory;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
@@ -25,10 +26,8 @@ public class RestAdapterManager {
     /**
      * 获取基础地址服务
      */
-    public static String BASEURL ="";  // BASE URL
+    public static String BASEURL ="http://59.110.214.223:8080";  // BASE URL
 
-    //cobub统计地址
-    public static final String COBUB_URL = "https://app.jyall.com/web-data/index.php";
 
     public static Retrofit getRestAdapter() {
 
@@ -36,7 +35,7 @@ public class RestAdapterManager {
             restAdapter = new Retrofit.Builder()
                     .baseUrl(BASEURL).client(genericClient())
                     .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(FastJsonConverterFactory.create())
                     .build();
         }
 

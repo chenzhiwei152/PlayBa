@@ -53,6 +53,7 @@ public class IndexFragment extends BaseFragment {
     private List<SelectedBean> demands = new ArrayList<>();
     private PoPuMenuListAdapter mMenuAdapter2;
     private MainListItemAdapter listAdapter;
+
     @Override
     protected int getContentViewLayoutId() {
         return R.layout.fragment_index_layout;
@@ -89,15 +90,14 @@ public class IndexFragment extends BaseFragment {
         //初始化广告栏
         initAD(list);
         //
-        listAdapter=new MainListItemAdapter(getActivity());
+        listAdapter = new MainListItemAdapter(getActivity());
 
         sf_listview.setAdapter(listAdapter);
 
 
+        List<HomeListBean> list = new ArrayList<>();
 
-        List<HomeListBean> list=new ArrayList<>();
-
-        HomeListBean bean=new HomeListBean();
+        HomeListBean bean = new HomeListBean();
         bean.setImageId("http://www.fondos7.net/recorte/eeb11484f517b67adf866b65c26a27d7/lindos-cachorros_800x600.jpg");
         bean.setTitle("测试");
         list.add(bean);
@@ -136,6 +136,7 @@ public class IndexFragment extends BaseFragment {
     public void onMsgEvent(EventBusCenter eventBusCenter) {
 
     }
+
     //筛选
     private void setFilter() {
         types.clear();
@@ -151,7 +152,7 @@ public class IndexFragment extends BaseFragment {
         demands.add(new SelectedBean("floorSpace_asc", "面积从小到大"));
         demands.add(new SelectedBean("floorSpace_desc", "面积从大到小"));
         mMenuAdapter2 = new PoPuMenuListAdapter(getActivity(), demands);
-        sortView .setAdapter(mMenuAdapter2);
+        sortView.setAdapter(mMenuAdapter2);
         sortView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -175,7 +176,7 @@ public class IndexFragment extends BaseFragment {
         demands.add(new SelectedBean("floorSpace_asc", "面积从小到大"));
         demands.add(new SelectedBean("floorSpace_desc", "面积从大到小"));
         mMenuAdapter2 = new PoPuMenuListAdapter(getActivity(), demands);
-        softView .setAdapter(mMenuAdapter2);
+        softView.setAdapter(mMenuAdapter2);
         softView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -189,6 +190,7 @@ public class IndexFragment extends BaseFragment {
         popupViews.add(softView);
         dropDownMenu.setDropDownMenu(types, popupViews);
     }
+
     /**
      * 初始化标题
      */
@@ -238,7 +240,7 @@ public class IndexFragment extends BaseFragment {
     private void initAD(final List<bannerBean> list) {
         View header = LayoutInflater.from(getActivity()).inflate(R.layout.kanner_index, sf_listview, false);//headview,广告栏
         kanner = (ConvenientBanner) header.findViewById(R.id.convenientBanner);
-        dropDownMenu= (DropDownMenu) header.findViewById(R.id.dropDownMenu);
+        dropDownMenu = (DropDownMenu) header.findViewById(R.id.dropDownMenu);
         setFilter();
 //自定义你的Holder，实现更多复杂的界面，不一定是图片翻页，其他任何控件翻页亦可。
         kanner.setPages(

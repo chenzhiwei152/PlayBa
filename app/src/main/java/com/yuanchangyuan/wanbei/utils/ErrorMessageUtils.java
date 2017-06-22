@@ -4,8 +4,8 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.yuanchangyuan.wanbei.bean.ErrorBean;
-import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -16,7 +16,7 @@ public class ErrorMessageUtils {
     public static void taostErrorMessage(Context context, JSONObject obj) {
         String message = "访问网络失败";
         try {
-            message = obj.getString("message");
+            message = obj.getString("msg");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,11 +32,11 @@ public class ErrorMessageUtils {
 
     public static void taostErrorMessage(Context context, String errorMessage, String deafuleMessage) {
         if (!TextUtils.isEmpty(errorMessage)) {
-            try{
-                ErrorBean res = new Gson().fromJson(errorMessage, ErrorBean.class);
-                Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show();
+            try {
+                ErrorBean res =  JSON.parseObject(errorMessage, ErrorBean.class);
+                Toast.makeText(context, res.msg, Toast.LENGTH_SHORT).show();
                 return;
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
             Toast.makeText(context, deafuleMessage, Toast.LENGTH_SHORT).show();

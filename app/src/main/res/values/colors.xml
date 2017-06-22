@@ -87,6 +87,7 @@
     <color name="color_aaaaaa">#aaaaaa</color>
     <color name="color_f8f8f8">#f8f8f8</color>
     <color name="color_00000000">#00000000</color>
+    <color name="color_ffffffff">#ffffffff</color>
     <color name="color_aa000000">#aa000000</color>
     <color name="color_ffc0c0c0">#ffc0c0c0</color>
     <color name="color_7f000000">#7f000000</color>

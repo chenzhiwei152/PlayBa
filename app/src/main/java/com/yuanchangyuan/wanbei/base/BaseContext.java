@@ -4,16 +4,18 @@ import android.app.Application;
 import android.os.Build;
 import android.os.StrictMode;
 
+import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
+import com.yuanchangyuan.wanbei.utils.SharePreManager;
+
 
 /**
- * Created by sun.luwei on 2016/11/28.
  */
 
 public class BaseContext extends Application {
 
     private static BaseContext instance;
     //用户信息
-//    public static UserInfo userInfo;
+    public static UserInfoBean userInfo;
 //    private ResponseBodyBeanDao userInfoDao;
 //    private DaoMaster.DevOpenHelper mHelper;
 //    private SQLiteDatabase db;
@@ -119,72 +121,24 @@ public class BaseContext extends Application {
         return instance;
     }
 
-    /**
-     * 设置用户
-     *
-     * @param info
-     */
-//    public void setUserInfo(UserInfo info) {
-//        userInfo = info;
-//        if (userInfoDao == null) {
-//
-//            userInfoDao = instance.getDaoSession().getResponseBodyBeanDao();
-//        }
-//        if (info != null && info.getResponseBody() != null) {
-//
-//            if (userInfoDao.loadAll().size() > 0) {
-//                //如果已经存在则清除
-//                userInfoDao.deleteAll();
-//            }
-//            userInfoDao.insert(info.getResponseBody());
-//        }
-//
-//    }
+    public void setUserInfo(UserInfoBean info) {
+        userInfo = info;
+    }
+
+    public UserInfoBean getUserInfo() {
+        if (userInfo == null) {
+            userInfo = SharePreManager.instance(this).getUserInfo();
+        }
+        return userInfo;
+    }
 
     /**
-     * 获取用户信息
-     *
-     * @return
+     * @param info 更新用户信息
      */
-//    public UserInfo getUserInfo() {
-//        if (userInfo != null) {
-//            return userInfo;
-//        } else {
-//            if (null == userInfoDao) {
-//                userInfoDao = instance.getDaoSession().getResponseBodyBeanDao();
-//            }
-//            try {
-//                ResponseBodyBean res = userInfoDao.loadAll().get(0);
-//                if (res != null) {
-//                    userInfo = new UserInfo();
-//                    userInfo.setResponseBody(res);
-//                }
-//            } catch (Exception e) {
-//                LogUtils.e(e.getMessage());
-//            }
-//            return userInfo;
-//        }
-//    }
+    public void updateUserInfo(UserInfoBean info) {
+        SharePreManager.instance(this).setUserInfo(info);
+    }
 
-    /**
-     * 设置用户
-     *
-     * @param
-     */
-//    public void clearUserInfo() {
-//        try {
-//            if (null == userInfoDao) {
-//                userInfoDao = instance.getDaoSession().getResponseBodyBeanDao();
-//            }
-//            if (userInfoDao.loadAll().size() > 0) {
-//                //如果已经存在则清除
-//                userInfoDao.deleteAll();
-//            }
-//        } catch (Exception e) {
-//            LogUtils.e(e.getMessage());
-//        }
-//
-//    }
 
     /**
      * 根据城市名称查询城市id

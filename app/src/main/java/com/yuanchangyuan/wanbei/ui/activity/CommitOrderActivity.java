@@ -141,7 +141,7 @@ public class CommitOrderActivity extends BaseActivity {
         title_view.setTitleColor(Color.WHITE);
         title_view.setLeftImageResource(R.mipmap.ic_title_back);
         title_view.setLeftText("返回");
-        title_view.setLeftTextColor(R.color.color_ffffff);
+        title_view.setLeftTextColor(Color.WHITE);
         title_view.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
         title_view.setImmersive(true);
 

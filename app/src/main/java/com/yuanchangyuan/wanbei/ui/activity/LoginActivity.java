@@ -1,12 +1,9 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -20,20 +17,32 @@ import android.widget.Toast;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
+import com.yuanchangyuan.wanbei.api.JyCallBack;
+import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
 import com.yuanchangyuan.wanbei.ui.index.MainActivity;
+import com.yuanchangyuan.wanbei.utils.DialogUtils;
+import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
 import com.yuanchangyuan.wanbei.utils.NetUtil;
+import com.yuanchangyuan.wanbei.utils.SharePreManager;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.CleanableEditText;
 import com.yuanchangyuan.wanbei.view.CustomProgressDialog;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindString;
 import butterknife.BindView;
-import butterknife.OnTextChanged;
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 /**
@@ -82,6 +91,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @BindString(R.string.login)
     String logins;
 
+    Call<UserInfoBean> loginCall;
+
     @Override
     public int getContentViewLayoutId() {
         return R.layout.login_activity;
@@ -111,11 +122,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     public void loadData() {
-        SharedPreferences share = BaseContext.getInstance().getSharedPreferences("LAST_USERNAME", Activity.MODE_PRIVATE);
-        if (null != share && share.contains("name")) {
-            userName.setText(share.getString("name", ""));
-            userName.setSelection(userName.getText().length());
+        UserInfoBean userInfo = BaseContext.getInstance().getUserInfo();
+        if (null != userInfo) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
+//        if (null != userInfo) {
+//            userName.setText(userInfo.phone);
+//            userName.setSelection(userName.getText().length());
+//        }
 //        setLoginState();
     }
 
@@ -134,8 +149,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     Toast.makeText(LoginActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    startActivity(new Intent(this, MainActivity.class));
-//                    Login();
+//                    startActivity(new Intent(this, MainActivity.class));
+                    Login();
                 }
                 break;
             case R.id.regist:
@@ -160,7 +175,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             String password = data.getStringExtra("password");
             userName.setText(username);
             passWord.setText(password);
-            setLoginState();
+//            setLoginState();
         }
     }
 
@@ -195,6 +210,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             }
         }
 //        LoginUtils.login(this, telNumber.trim(), password.trim(), mDialog, checkCode);
+        commitlogin();
 
     }
 
@@ -245,6 +261,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         titleView.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
         titleView.setImmersive(true);
     }
+
     @TargetApi(19)
     private void setTranslucentStatus(boolean on) {
         Window win = getWindow();
@@ -258,56 +275,95 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         win.setAttributes(winParams);
     }
 
-    /**
-     * @param s 用户名输入
-     */
-    @OnTextChanged(value = R.id.user_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    void afterNameTextChanged(Editable s) {
-        if (s.length() == 0) {
-            login.setEnabled(false);
-        } else {
-            setLoginState();
-
-        }
-    }
-
-    /**
-     * @param s 密码输入
-     */
-    @OnTextChanged(value = R.id.pass_word, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    void afterPassTextChanged(Editable s) {
-        if (s.length() == 0) {
-            login.setEnabled(false);
-        } else {
-            setLoginState();
-
-        }
-    }
-
-    /**
-     * @param s 验证码输入
-     */
-    @OnTextChanged(value = R.id.et_check_code, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    void afterCodeTextChanged(Editable s) {
-        if (isCodeNeeded) {
-            if (s.length() == 0) {
-                login.setEnabled(false);
-            } else {
-                setLoginState();
-            }
-        }
-    }
+//    /**
+//     * @param s 用户名输入
+//     */
+//    @OnTextChanged(value = R.id.user_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+//    void afterNameTextChanged(Editable s) {
+//        if (s.length() == 0) {
+//            login.setEnabled(false);
+//        } else {
+//            setLoginState();
+//
+//        }
+//    }
+//
+//    /**
+//     * @param s 密码输入
+//     */
+//    @OnTextChanged(value = R.id.pass_word, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+//    void afterPassTextChanged(Editable s) {
+//        if (s.length() == 0) {
+//            login.setEnabled(false);
+//        } else {
+//            setLoginState();
+//
+//        }
+//    }
+//
+//    /**
+//     * @param s 验证码输入
+//     */
+//    @OnTextChanged(value = R.id.et_check_code, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+//    void afterCodeTextChanged(Editable s) {
+//        if (isCodeNeeded) {
+//            if (s.length() == 0) {
+//                login.setEnabled(false);
+//            } else {
+//                setLoginState();
+//            }
+//        }
+//    }
 
     /**
      * 设置登陆按钮状态
      */
-    private void setLoginState() {
-        if (passWord.getText().length() > 0 && userName.getText().length() > 0) {
-            login.setEnabled(true);
-        } else {
-            login.setEnabled(false);
-        }
+//    private void setLoginState() {
+//        if (passWord.getText().length() > 0 && userName.getText().length() > 0) {
+//            login.setEnabled(true);
+//        } else {
+//            login.setEnabled(false);
+//        }
+//    }
+    private void commitlogin() {
+        DialogUtils.showDialog(LoginActivity.this, "登陆...", false);
+        Map<String, String> map = new HashMap<>();
+        loginCall = RestAdapterManager.getApi().login(map);
+        loginCall.enqueue(new JyCallBack<UserInfoBean>() {
+            @Override
+            public void onSuccess(Call<UserInfoBean> call, Response<UserInfoBean> response) {
+                DialogUtils.closeDialog();
+                if (response != null && response.body() != null) {
+                    BaseContext.getInstance().setUserInfo(response.body());
+                    Timestamp now = new Timestamp(System.currentTimeMillis());
+                    SharePreManager.instance(LoginActivity.this).setLoginTime(now.getTime());
+                    SharePreManager.instance(LoginActivity.this).setUserInfo(response.body());
+
+                    Intent jmActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(jmActivityIntent);
+                    finish();
+
+
+                } else {
+                    UIUtil.showToast("登陆失败~请稍后重试");
+                }
+            }
+
+            @Override
+            public void onError(Call<UserInfoBean> call, Throwable t) {
+                UIUtil.showToast("登陆失败~请稍后重试");
+                DialogUtils.closeDialog();
+            }
+
+            @Override
+            public void onError(Call<UserInfoBean> call, Response<UserInfoBean> response) {
+                try {
+                    DialogUtils.closeDialog();
+                    ErrorMessageUtils.taostErrorMessage(LoginActivity.this, response.errorBody().string(), "");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
-
-
 }

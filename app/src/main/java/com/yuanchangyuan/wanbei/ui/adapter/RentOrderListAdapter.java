@@ -3,17 +3,16 @@ package com.yuanchangyuan.wanbei.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yuanchangyuan.wanbei.R;
-import com.yuanchangyuan.wanbei.ui.activity.GoodsDetailsActivity;
+import com.yuanchangyuan.wanbei.ui.activity.OrderDetailsActivity;
 import com.yuanchangyuan.wanbei.ui.bean.HomeListBean;
-import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,19 +24,19 @@ import butterknife.ButterKnife;
 /**
  * Created by chenzhiwei 2016/6/14.
  */
-public class MainListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static List<HomeListBean> list;
     private static Context context;
     private boolean isLight;
     private final LayoutInflater mLayoutInflater;
 
-    public MainListItemAdapter(Context context) {
+    public RentOrderListAdapter(Context context) {
         this.context = context;
         this.list = new ArrayList<>();
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public MainListItemAdapter(Context context, List<HomeListBean> items) {
+    public RentOrderListAdapter(Context context, List<HomeListBean> items) {
         this.context = context;
         this.list = new ArrayList<>();
         this.list.addAll(items);
@@ -61,28 +60,24 @@ public class MainListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ImageViewHolder(mLayoutInflater.inflate(R.layout.fragment_item_home_list, parent, false));
+        return new ImageViewHolder(mLayoutInflater.inflate(R.layout.fragment_item_rent_order_list, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (list != null) {
-            try {
-                ImageLoadedrManager.getInstance().display(context, list.get(position).getImageId(), ((ImageViewHolder) viewHolder).iv_image);
-            } catch (Exception e) {
-
-            }
-            if (!TextUtils.isEmpty(list.get(position).getTitle())) {
-
-                ((ImageViewHolder) viewHolder).tv_title.setText(list.get(position).getTitle());
-                ((ImageViewHolder) viewHolder).tv_title.setVisibility(View.VISIBLE);
-            }else {
-                ((ImageViewHolder) viewHolder).tv_title.setVisibility(View.GONE);
-            }
-            ((ImageViewHolder) viewHolder).iv_image.setOnClickListener(new View.OnClickListener() {
+//            ImageLoadedrManager.getInstance().display(context, list.get(position).getImageId(), ((ImageViewHolder) viewHolder).iv_image);
+//            ((ImageViewHolder) viewHolder).tv_title.setText(list.get(position).getTitle());
+//            ((ImageViewHolder) viewHolder).iv_image.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    context.startActivity(new Intent(context, GoodsDetailsActivity.class));
+//                }
+//            });
+            ((ImageViewHolder)viewHolder).ll_content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    context.startActivity(new Intent(context, GoodsDetailsActivity.class));
+                    context.startActivity(new Intent(context, OrderDetailsActivity.class));
                 }
             });
         }
@@ -90,15 +85,23 @@ public class MainListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return list == null ? 0 : list.size();
+        return list == null ? 5 : 5;
     }
 
 
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.iv_image)
-        ImageView iv_image;
-        @BindView(R.id.tv_title)
-        TextView tv_title;
+        @BindView(R.id.iv_goods)
+        ImageView iv_goods;//商品图片
+        @BindView(R.id.tv_store_name)
+        TextView tv_store_name;//店铺名称
+        @BindView(R.id.tv_goods_name)
+        TextView tv_goods_name;//商品名称
+        @BindView(R.id.tv_goods_price)
+        TextView tv_goods_price;//商品价格
+        @BindView(R.id.tv_goods_number)
+        TextView tv_goods_number;//商品数量
+        @BindView(R.id.ll_content)
+        LinearLayout ll_content;
 
         ImageViewHolder(final View view) {
             super(view);

@@ -69,4 +69,9 @@
         <item name="android:activityCloseEnterAnimation">@anim/zoomin_left</item>
         <item name="android:activityCloseExitAnimation">@anim/zoomout_right</item>
     </style>
+    <!--dialog样式-->
+    <style name="dialog_styles" parent="android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/color_00000000</item>
+    </style>
 </resources>

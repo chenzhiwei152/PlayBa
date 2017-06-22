@@ -2,8 +2,10 @@ package com.yuanchangyuan.wanbei.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -45,7 +47,13 @@ public class UIUtil {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dipValue * scale + 0.5f);
     }
-
+    /**
+     * Convert Dp to Pixel
+     */
+    public static int dpToPx(float dp, Resources resources){
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
+        return (int) px;
+    }
     /**
      * 将px值转换为sp值，保证文字大小不变
      *

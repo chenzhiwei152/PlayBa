@@ -1,36 +1,41 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
+import com.yuanchangyuan.wanbei.api.JyCallBack;
+import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
 import com.yuanchangyuan.wanbei.utils.NetUtil;
 import com.yuanchangyuan.wanbei.utils.TelephoneUtils;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.CleanableEditText;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import butterknife.BindString;
 import butterknife.BindView;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
-import butterknife.OnTextChanged;
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 /**
@@ -59,9 +64,14 @@ public class RegisterActivity extends BaseActivity {
     @BindString(R.string.regist)
     String regist;
 
+    @BindView(R.id.user_nick_name)
+    CleanableEditText user_nick_name;
+    @BindView(R.id.user_password)
+    CleanableEditText user_password;
     CountDownTimer timer;
 
     boolean isCodeSended = false;
+    Call<String> call;//注册
 
     @Override
     public int getContentViewLayoutId() {
@@ -201,6 +211,7 @@ public class RegisterActivity extends BaseActivity {
         titleView.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
         titleView.setImmersive(true);
     }
+
     @TargetApi(19)
     private void setTranslucentStatus(boolean on) {
         Window win = getWindow();
@@ -231,42 +242,42 @@ public class RegisterActivity extends BaseActivity {
 
     }
 
-    @OnTextChanged(value = R.id.user_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    public void afterNameTextChanged(Editable s) {
-        if (s.length() == 0) {
-            tvNext.setEnabled(false);
-        } else {
-            if (cbAgree.isChecked() && isCodeSended && !TextUtils.isEmpty(etCode.getText().toString())) {
-                tvNext.setEnabled(true);
-            } else {
-                tvNext.setEnabled(false);
-            }
-
-        }
-    }
-
-    @OnTextChanged(value = R.id.et_check_code, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    public void afterCodeTextChanged(Editable s) {
-        if (s.length() == 0) {
-            tvNext.setEnabled(false);
-        } else {
-            if (cbAgree.isChecked() && isCodeSended && !TextUtils.isEmpty(etPhone.getText().toString())) {
-                tvNext.setEnabled(true);
-            } else {
-                tvNext.setEnabled(false);
-            }
-
-        }
-    }
-
-    @OnCheckedChanged(R.id.checkBox)
-    public void agrreeMentCheck(CompoundButton view, boolean isChecked) {
-        if (isChecked && isCodeSended && !TextUtils.isEmpty(etPhone.getText().toString()) && !TextUtils.isEmpty(etCode.getText().toString())) {
-            tvNext.setEnabled(true);
-        } else {
-            tvNext.setEnabled(false);
-        }
-    }
+//    @OnTextChanged(value = R.id.user_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+//    public void afterNameTextChanged(Editable s) {
+//        if (s.length() == 0) {
+//            tvNext.setEnabled(false);
+//        } else {
+//            if (cbAgree.isChecked() && isCodeSended && !TextUtils.isEmpty(etCode.getText().toString())) {
+//                tvNext.setEnabled(true);
+//            } else {
+//                tvNext.setEnabled(false);
+//            }
+//
+//        }
+//    }
+//
+//    @OnTextChanged(value = R.id.et_check_code, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+//    public void afterCodeTextChanged(Editable s) {
+//        if (s.length() == 0) {
+//            tvNext.setEnabled(false);
+//        } else {
+//            if (cbAgree.isChecked() && isCodeSended && !TextUtils.isEmpty(etPhone.getText().toString())) {
+//                tvNext.setEnabled(true);
+//            } else {
+//                tvNext.setEnabled(false);
+//            }
+//
+//        }
+//    }
+//
+//    @OnCheckedChanged(R.id.checkBox)
+//    public void agrreeMentCheck(CompoundButton view, boolean isChecked) {
+//        if (isChecked && isCodeSended && !TextUtils.isEmpty(etPhone.getText().toString()) && !TextUtils.isEmpty(etCode.getText().toString())) {
+//            tvNext.setEnabled(true);
+//        } else {
+//            tvNext.setEnabled(false);
+//        }
+//    }
 
     @OnClick(R.id.tv_next)
     public void onNextClick(View view) {
@@ -276,44 +287,62 @@ public class RegisterActivity extends BaseActivity {
         }
         final String tel = etPhone.getText().toString();
         final String code = etCode.getText().toString();
+        HashMap<String, String> map = new HashMap<>();
+//        "phone": "13691525924",
+//                "checkCode": "5924",
+//                "nickName": "老李",
+//                "pwd": "123456"
+        map.put("phone", etPhone.getText().toString());
+        map.put("checkCode", etCode.getText().toString());
+        map.put("nickName", user_nick_name.getText().toString());
+        map.put("pwd", user_password.getText().toString());
 
+        call = RestAdapterManager.getApi().reister(map);
 
-//        RestAdapterManager.getApi().CheckMessageCode(RestAdapterManager.getHeaderMap(),tel, code).enqueue(new JyCallBack<ValidCodeBean>() {
-//            @Override
-//            public void onSuccess(Call<ValidCodeBean> call, Response<ValidCodeBean> response) {
-//                try {
-//
-//                    if (response != null && response.body() != null && !TextUtils.isEmpty(response.body().uuid)) {
-//                        LogUtils.e(response.body().uuid);
-//                        Intent findPsIntent = new Intent(RegisterActivity.this, RegistStepTwoActivity.class);
-//                        timer.cancel();
-//                        findPsIntent.putExtra("uuid", response.body().uuid);
-//                        findPsIntent.putExtra("tel", tel);
-//                        startActivity(findPsIntent);
-//                        return;
-//                    }
-//                } catch (Exception e) {
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Call<ValidCodeBean> call, Throwable t) {
-//
-//            }
-//
-//            @Override
-//            public void onError(Call<ValidCodeBean> call, Response<ValidCodeBean> response) {
-//                UIUtil.showToast("验证码不正确");
-//            }
-//        });
+        call.enqueue(new JyCallBack<String>() {
+            @Override
+            public void onSuccess(Call<String> call, Response<String> response) {
+                try {
 
+                    if (response != null && response.body() != null && !TextUtils.isEmpty(response.body())) {
+                        if (response.body().contains("注册成功")) {
+                            Intent findPsIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                            timer.cancel();
+                            findPsIntent.putExtra("phone", etPhone.getText().toString());
+                            findPsIntent.putExtra("pwd", user_password.getText().toString());
+                            startActivity(findPsIntent);
+                        }
+                        ErrorMessageUtils.taostErrorMessage(RegisterActivity.this, response.body(), "");
+                    } else {
+                        UIUtil.showToast("注册失败");
+                    }
+                } catch (Exception e) {
 
+                }
+            }
+
+            @Override
+            public void onError(Call<String> call, Throwable t) {
+                UIUtil.showToast("注册失败");
+            }
+
+            @Override
+            public void onError(Call<String> call, Response<String> response) {
+                try {
+                    ErrorMessageUtils.taostErrorMessage(RegisterActivity.this, response.errorBody().string(), "");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         timer.cancel();
+        if (call != null) {
+            call.cancel();
+        }
         super.onDestroy();
     }
 
