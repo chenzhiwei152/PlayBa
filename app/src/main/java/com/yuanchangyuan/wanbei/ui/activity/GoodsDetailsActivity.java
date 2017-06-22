@@ -123,6 +123,12 @@ public class GoodsDetailsActivity extends BaseActivity {
         title_view.setLeftImageResource(R.mipmap.ic_title_back);
         title_view.setLeftText("返回");
         title_view.setLeftTextColor(Color.WHITE);
+        title_view.setLeftClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         title_view.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
         title_view.setImmersive(true);
 

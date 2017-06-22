@@ -55,6 +55,16 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.activity.OrderDetailsActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.AccountSafetyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.ShoppingAddressActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.PersonInformationActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.CommitRealNameActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.MyMemberRankActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

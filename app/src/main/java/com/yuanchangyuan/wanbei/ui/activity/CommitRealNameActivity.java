@@ -16,16 +16,17 @@ import com.yuanchangyuan.wanbei.view.TitleBar;
 import butterknife.BindView;
 
 /**
+ * 实名制
  * Created by chen.zhiwei on 2017-6-22.
  */
 
-public class OrderDetailsActivity extends BaseActivity {
+public class CommitRealNameActivity extends BaseActivity {
     @BindView(R.id.title_view)
     TitleBar title_view;
 
     @Override
     public int getContentViewLayoutId() {
-        return R.layout.activity_order_detail;
+        return R.layout.activity_real_name;
     }
 
     @Override
@@ -57,7 +58,7 @@ public class OrderDetailsActivity extends BaseActivity {
      * 初始化标题
      */
     private void initTitle() {
-        title_view.setTitle("订单详情");
+        title_view.setTitle("实名认证");
         title_view.setTitleColor(Color.WHITE);
         title_view.setLeftImageResource(R.mipmap.ic_title_back);
         title_view.setLeftText("返回");

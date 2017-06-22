@@ -9,7 +9,12 @@ import android.widget.TextView;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.base.BaseFragment;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.ui.activity.AccountSafetyActivity;
+import com.yuanchangyuan.wanbei.ui.activity.CommitRealNameActivity;
+import com.yuanchangyuan.wanbei.ui.activity.MyMemberRankActivity;
 import com.yuanchangyuan.wanbei.ui.activity.OrderListActivity;
+import com.yuanchangyuan.wanbei.ui.activity.PersonInformationActivity;
+import com.yuanchangyuan.wanbei.ui.activity.ShoppingAddressActivity;
 import com.yuanchangyuan.wanbei.view.CircularImageView;
 
 import butterknife.BindView;
@@ -47,6 +52,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     ImageView ivAbount;
     @BindView(R.id.rl_about)
     RelativeLayout rlAbout;
+    @BindView(R.id.tv_setting)
+    TextView tv_setting;
 
     @Override
     protected int getContentViewLayoutId() {
@@ -61,6 +68,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         rlMember.setOnClickListener(this);
         rlRealName.setOnClickListener(this);
         rlAbout.setOnClickListener(this);
+        tv_setting.setOnClickListener(this);
     }
 
     @Override
@@ -98,18 +106,26 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.rl_safety:
                 //账户安全
+                startActivity(new Intent(getActivity(), AccountSafetyActivity.class));
                 break;
             case R.id.rl_location:
+                startActivity(new Intent(getActivity(), ShoppingAddressActivity.class));
                 //收货地址
                 break;
             case R.id.rl_member:
                 //会员
+                startActivity(new Intent(getActivity(), MyMemberRankActivity.class));
                 break;
             case R.id.rl_real_name:
                 //实名制
+                startActivity(new Intent(getActivity(), CommitRealNameActivity.class));
                 break;
             case R.id.rl_about:
                 //关于
+                break;
+            case R.id.tv_setting:
+                //设置
+                startActivity(new Intent(getActivity(), PersonInformationActivity.class));
                 break;
         }
     }
