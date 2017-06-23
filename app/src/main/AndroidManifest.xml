@@ -65,6 +65,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.activity.MyMemberRankActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.ShoppingAddressEditActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

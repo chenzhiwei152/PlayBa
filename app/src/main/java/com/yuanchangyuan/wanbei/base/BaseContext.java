@@ -193,12 +193,12 @@ public class BaseContext extends Application {
 
 
     /**
-     * 清除用户信息，退出环信
+     * 清除用户信息
      */
     public void Exit() {
-//        JPushInterface.setAliasAndTags(this, "logout", null);//退出 标签为logout
-//        UserService.getInstance(this).logout();
-//        EMChatManager.getInstance().logout();
+        SharePreManager.instance(this).clearUserInfO();
+        userInfo = null;
+        AppManager.getAppManager().finishAllActivity();
 //        exitfromServer();
     }
 
@@ -215,11 +215,10 @@ public class BaseContext extends Application {
 //            return;
 //        }
 //        userInfo = null;
-//        clearUserInfo();
 //        RestAdapterManager.getApi().LoginOut(tokenID).enqueue(new JyCallBack<String>() {
 //            @Override
 //            public void onSuccess(Call<String> call, Response<String> response) {
-//                EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.Tag.User_Logout));
+////                EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.Tag.User_Logout));
 //            }
 //
 //            @Override
@@ -234,7 +233,7 @@ public class BaseContext extends Application {
 //                } catch (IOException e) {
 //                    e.printStackTrace();
 //                }
-//                EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.Tag.User_Logout));
+////                EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.Tag.User_Logout));
 //            }
 //        });
 //    }

@@ -47,6 +47,7 @@ public class GoodsDetailsActivity extends BaseActivity {
     List<bannerBean> list = new ArrayList<>();
     private MainListItemAdapter listAdapter;
     private Button bt_buy;
+    private Button bt_exchange_state;
 
     @Override
     public int getContentViewLayoutId() {
@@ -177,12 +178,29 @@ public class GoodsDetailsActivity extends BaseActivity {
         View header = LayoutInflater.from(this).inflate(R.layout.kanner_goods_detail, sf_listview, false);//headview,广告栏
         kanner = (ConvenientBanner) header.findViewById(R.id.convenientBanner);
         bt_buy = (Button) header.findViewById(R.id.bt_buy);
+        bt_exchange_state = (Button) header.findViewById(R.id.bt_exchange_state);
+
+        bt_exchange_state.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (bt_buy.getText().equals("立即租赁")) {
+                    bt_exchange_state.setText("切换至租赁");
+                    bt_buy.setText("立即购买");
+                } else {
+                    bt_exchange_state.setText("切换至购买");
+                    bt_buy.setText("立即租赁");
+                }
+            }
+        });
+
         bt_buy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(GoodsDetailsActivity.this, CommitOrderActivity.class));
             }
         });
+
+
 //自定义你的Holder，实现更多复杂的界面，不一定是图片翻页，其他任何控件翻页亦可。
         kanner.setPages(
                 new CBViewHolderCreator<LocalImageHolderView>() {

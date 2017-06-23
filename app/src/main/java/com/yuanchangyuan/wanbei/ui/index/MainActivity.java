@@ -24,7 +24,6 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 
-import static com.yuanchangyuan.wanbei.base.Constants.Tag.SHOW_INDEX;
 
 
 public class MainActivity extends BaseActivity {
@@ -108,9 +107,6 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onMsgEvent(EventBusCenter eventBusCenter) {
         if (null != eventBusCenter) {
-            if (SHOW_INDEX == eventBusCenter.getEvenCode()) {
-                mTabLayout.getTabAt(0).select();
-            }
         }
     }
 

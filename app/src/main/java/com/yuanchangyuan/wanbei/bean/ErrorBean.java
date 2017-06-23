@@ -10,5 +10,5 @@ public class ErrorBean implements Serializable {
     private static final long serialVersionUID = -3745028092791488888L;
 
     public String msg;//返回错误信息
-    public String code;//返回错误码
+    public int code;//返回错误码
 }

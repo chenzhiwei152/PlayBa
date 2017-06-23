@@ -1,10 +1,12 @@
 package com.yuanchangyuan.wanbei.ui.bean;
 
+import com.yuanchangyuan.wanbei.bean.ErrorBean;
+
 /**
  * Created by chen.zhiwei on 2017-6-22.
  */
 
-public class UserInfoBean {
+public class UserInfoBean extends ErrorBean{
     //    {
 //        "birthday": null,
 //            "vipgrade": null,
@@ -29,4 +31,5 @@ public class UserInfoBean {
     public String paytime;
     public String ID;
     public String userId;
+    public String token;
 }

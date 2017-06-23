@@ -1,17 +1,23 @@
 package com.yuanchangyuan.wanbei.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.yuanchangyuan.wanbei.R;
-import com.yuanchangyuan.wanbei.ui.bean.HomeListBean;
+import com.yuanchangyuan.wanbei.ui.activity.ShoppingAddressEditActivity;
+import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -19,7 +25,7 @@ import butterknife.ButterKnife;
  * Created by chenzhiwei 2016/6/14.
  */
 public class ShoppingAddressListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static List<HomeListBean> list;
+    private static List<ShoppingAddressListItemBean> list;
     private static Context context;
     private boolean isLight;
     private final LayoutInflater mLayoutInflater;
@@ -30,14 +36,14 @@ public class ShoppingAddressListAdapter extends RecyclerView.Adapter<RecyclerVie
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public ShoppingAddressListAdapter(Context context, List<HomeListBean> items) {
+    public ShoppingAddressListAdapter(Context context, List<ShoppingAddressListItemBean> items) {
         this.context = context;
         this.list = new ArrayList<>();
         this.list.addAll(items);
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public void addList(List<HomeListBean> items) {
+    public void addList(List<ShoppingAddressListItemBean> items) {
         this.list.addAll(items);
         notifyDataSetChanged();
     }
@@ -47,7 +53,7 @@ public class ShoppingAddressListAdapter extends RecyclerView.Adapter<RecyclerVie
         notifyDataSetChanged();
     }
 
-    public static List<HomeListBean> getEntities() {
+    public static List<ShoppingAddressListItemBean> getEntities() {
         return list;
     }
 
@@ -60,24 +66,54 @@ public class ShoppingAddressListAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (list != null) {
-//            ImageLoadedrManager.getInstance().display(context, list.get(position).getImageId(), ((ImageViewHolder) viewHolder).iv_image);
-//            ((ImageViewHolder) viewHolder).tv_title.setText(list.get(position).getTitle());
-//            ((ImageViewHolder) viewHolder).iv_image.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    context.startActivity(new Intent(context, GoodsDetailsActivity.class));
-//                }
-//            });
+
+            ((ImageViewHolder) viewHolder).tv_address_name.setText(list.get(position).getName());
+            ((ImageViewHolder) viewHolder).tv_address_phone.setText(list.get(position).getPhone());
+            ((ImageViewHolder) viewHolder).tv_address_detail.setText(list.get(position).getDetail());
+            ((ImageViewHolder) viewHolder).tv_address_edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //编辑
+                    Intent intent = new Intent(context, ShoppingAddressEditActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("flag", "1");
+                    bundle.putString("phone", list.get(position).getPhone());
+                    bundle.putString("name", list.get(position).getName());
+                    bundle.putString("detail", list.get(position).getDetail());
+                    bundle.putString("id", list.get(position).getId() + "");
+                    intent.putExtras(bundle);
+                    context.startActivity(intent);
+                }
+            });
+            ((ImageViewHolder) viewHolder).tv_address_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //删除
+                }
+            });
         }
     }
 
     @Override
     public int getItemCount() {
-        return list == null ? 5 : 5;
+        return list == null ? 0 : list.size();
     }
 
 
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.tv_address_name)
+        TextView tv_address_name;
+        @BindView(R.id.tv_address_phone)
+        TextView tv_address_phone;
+        @BindView(R.id.tv_address_detail)
+        TextView tv_address_detail;
+        @BindView(R.id.ll_address)
+        LinearLayout ll_address;
+        @BindView(R.id.tv_address_edit)
+        TextView tv_address_edit;
+        @BindView(R.id.tv_address_delete)
+        TextView tv_address_delete;
 
         ImageViewHolder(final View view) {
             super(view);
@@ -85,18 +121,7 @@ public class ShoppingAddressListAdapter extends RecyclerView.Adapter<RecyclerVie
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    int[] startingLocation = new int[2];
-//                    v.getLocationOnScreen(startingLocation);
-//                    startingLocation[0] += v.getWidth() / 2;
-//                    StoriesBean storiesEntity = new StoriesBean();
-//                    storiesEntity.setId(MainNewsItemAdapter.getEntities().get(getPosition()).getId());
-//                    storiesEntity.setTitle(MainNewsItemAdapter.getEntities().get(getPosition()).getTitle());
-//                    Bundle bundle = new Bundle();
-//                    bundle.putIntArray(Constant.START_LOCATION, startingLocation);
-//                    bundle.putSerializable("entity",storiesEntity);
-//                    bundle.putBoolean("isLight", ((MainActivity) context).isLight());
-//                    LogUtils.e("isLight:"+((MainActivity) context).isLight());
-//                    AppContext.getInstance().intentJump((Activity) MainNewsItemAdapter.context,LatestContentActivity.class,bundle);
+
                 }
             });
         }

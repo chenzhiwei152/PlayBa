@@ -1,6 +1,8 @@
 package com.yuanchangyuan.wanbei.api;
 
 import com.yuanchangyuan.wanbei.api.FastJsonConvert.FastJsonConverterFactory;
+import com.yuanchangyuan.wanbei.base.BaseContext;
+import com.yuanchangyuan.wanbei.utils.LogUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,7 +28,8 @@ public class RestAdapterManager {
     /**
      * 获取基础地址服务
      */
-    public static String BASEURL ="http://59.110.214.223:8080";  // BASE URL
+//    public static String BASEURL ="http://59.110.214.223:8080";  // BASE URL
+    public static String BASEURL ="http://192.168.51.85:8080";  // BASE URL
 
 
     public static Retrofit getRestAdapter() {
@@ -51,7 +54,7 @@ public class RestAdapterManager {
                             Request.Builder builder = chain.request().newBuilder();
 
 
-//                            LogUtils.e("url:" + chain.request().method() + ":" + chain.request().url());
+                            LogUtils.e("url:" + chain.request().method() + ":" + chain.request().url());
                             builder = addHeaders(builder);
                             Request request = builder.build();
                             return chain.proceed(request);
@@ -91,9 +94,9 @@ public class RestAdapterManager {
 //        hashMap.put("deviceresolution", SysUtils.getScreenWidth(BaseContext.getInstance().getInstance()) + "x" + SysUtils.getScreenHeight(BaseContext.getInstance()));//分辨率
 //        String sign = Utils.getSign(hashMap);
 //        hashMap.put("sign", sign);//加密串
-//        if (null != BaseContext.getInstance().getUserInfo()) {
-//            hashMap.put("tokenid", BaseContext.getInstance().getUserInfo().getResponseBody().getTokenid());
-//        }
+        if (null != BaseContext.getInstance().getUserInfo()) {
+            hashMap.put("token", BaseContext.getInstance().getUserInfo().token);
+        }
         return hashMap;
     }
 

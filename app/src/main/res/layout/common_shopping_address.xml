@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:id="@+id/ll_address"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
     <!--收货地址-->
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,9 +35,18 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/tv_address_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="测试   199999999999"
+                    android:text="测试"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_address_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="199999999999"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -52,6 +63,7 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/tv_address_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="北京市东城区广渠门外大街"

@@ -275,59 +275,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         win.setAttributes(winParams);
     }
 
-//    /**
-//     * @param s 用户名输入
-//     */
-//    @OnTextChanged(value = R.id.user_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-//    void afterNameTextChanged(Editable s) {
-//        if (s.length() == 0) {
-//            login.setEnabled(false);
-//        } else {
-//            setLoginState();
-//
-//        }
-//    }
-//
-//    /**
-//     * @param s 密码输入
-//     */
-//    @OnTextChanged(value = R.id.pass_word, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-//    void afterPassTextChanged(Editable s) {
-//        if (s.length() == 0) {
-//            login.setEnabled(false);
-//        } else {
-//            setLoginState();
-//
-//        }
-//    }
-//
-//    /**
-//     * @param s 验证码输入
-//     */
-//    @OnTextChanged(value = R.id.et_check_code, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-//    void afterCodeTextChanged(Editable s) {
-//        if (isCodeNeeded) {
-//            if (s.length() == 0) {
-//                login.setEnabled(false);
-//            } else {
-//                setLoginState();
-//            }
-//        }
-//    }
-
-    /**
-     * 设置登陆按钮状态
-     */
-//    private void setLoginState() {
-//        if (passWord.getText().length() > 0 && userName.getText().length() > 0) {
-//            login.setEnabled(true);
-//        } else {
-//            login.setEnabled(false);
-//        }
-//    }
     private void commitlogin() {
         DialogUtils.showDialog(LoginActivity.this, "登陆...", false);
         Map<String, String> map = new HashMap<>();
+        map.put("phone", userName.getText().toString().trim());
+        map.put("pwd", passWord.getText().toString().trim());
         loginCall = RestAdapterManager.getApi().login(map);
         loginCall.enqueue(new JyCallBack<UserInfoBean>() {
             @Override
@@ -342,10 +294,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     Intent jmActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(jmActivityIntent);
                     finish();
-
-
                 } else {
-                    UIUtil.showToast("登陆失败~请稍后重试");
+                    UIUtil.showToast(response.body().msg);
                 }
             }
 

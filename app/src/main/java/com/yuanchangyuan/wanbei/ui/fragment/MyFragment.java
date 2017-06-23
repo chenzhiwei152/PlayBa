@@ -7,14 +7,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yuanchangyuan.wanbei.R;
+import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.BaseFragment;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.activity.AccountSafetyActivity;
 import com.yuanchangyuan.wanbei.ui.activity.CommitRealNameActivity;
+import com.yuanchangyuan.wanbei.ui.activity.LoginActivity;
 import com.yuanchangyuan.wanbei.ui.activity.MyMemberRankActivity;
 import com.yuanchangyuan.wanbei.ui.activity.OrderListActivity;
 import com.yuanchangyuan.wanbei.ui.activity.PersonInformationActivity;
 import com.yuanchangyuan.wanbei.ui.activity.ShoppingAddressActivity;
+import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.view.CircularImageView;
 
 import butterknife.BindView;
@@ -54,6 +57,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     RelativeLayout rlAbout;
     @BindView(R.id.tv_setting)
     TextView tv_setting;
+    @BindView(R.id.rl_quit_login)
+    RelativeLayout rl_quit_login;
 
     @Override
     protected int getContentViewLayoutId() {
@@ -69,6 +74,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         rlRealName.setOnClickListener(this);
         rlAbout.setOnClickListener(this);
         tv_setting.setOnClickListener(this);
+        rl_quit_login.setOnClickListener(this);
     }
 
     @Override
@@ -102,22 +108,43 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.rl_order:
                 //订单
+                if (BaseContext.getInstance().getUserInfo() == null) {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    return;
+                }
                 startActivity(new Intent(getActivity(), OrderListActivity.class));
                 break;
             case R.id.rl_safety:
                 //账户安全
+                if (BaseContext.getInstance().getUserInfo() == null) {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    return;
+                }
                 startActivity(new Intent(getActivity(), AccountSafetyActivity.class));
                 break;
             case R.id.rl_location:
-                startActivity(new Intent(getActivity(), ShoppingAddressActivity.class));
                 //收货地址
+                if (BaseContext.getInstance().getUserInfo() == null) {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    return;
+                }
+                startActivity(new Intent(getActivity(), ShoppingAddressActivity.class));
+
                 break;
             case R.id.rl_member:
                 //会员
+                if (BaseContext.getInstance().getUserInfo() == null) {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    return;
+                }
                 startActivity(new Intent(getActivity(), MyMemberRankActivity.class));
                 break;
             case R.id.rl_real_name:
                 //实名制
+                if (BaseContext.getInstance().getUserInfo() == null) {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    return;
+                }
                 startActivity(new Intent(getActivity(), CommitRealNameActivity.class));
                 break;
             case R.id.rl_about:
@@ -125,8 +152,36 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.tv_setting:
                 //设置
+                if (BaseContext.getInstance().getUserInfo() == null) {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    return;
+                }
                 startActivity(new Intent(getActivity(), PersonInformationActivity.class));
                 break;
+            case R.id.rl_quit_login:
+                //退出登录
+                if (BaseContext.getInstance().getUserInfo() == null) {
+//                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    return;
+                }
+                showExitDialog();
+                break;
         }
+    }
+
+    private void showExitDialog() {
+        DialogUtils.showOrderCancelMsg(getActivity(), "确定要退出登录吗？", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BaseContext.getInstance().Exit();
+                Intent i = new Intent(getActivity(), LoginActivity.class);
+                startActivity(i);
+            }
+
+//            @Override
+//            public void callBack() {//退出登录
+//
+//            }
+        });
     }
 }
