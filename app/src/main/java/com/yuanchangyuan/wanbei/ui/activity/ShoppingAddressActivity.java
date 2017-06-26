@@ -49,7 +49,7 @@ public class ShoppingAddressActivity extends BaseActivity {
 
     @Override
     public int getContentViewLayoutId() {
-        return R.layout.activity_goods_details;
+        return R.layout.activity_shopping_address_list;
     }
 
     @Override

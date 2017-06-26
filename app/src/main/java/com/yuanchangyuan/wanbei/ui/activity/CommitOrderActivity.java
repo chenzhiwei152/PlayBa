@@ -1,6 +1,7 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -25,7 +27,8 @@ import butterknife.BindView;
  * Created by chen.zhiwei on 2017-6-21.
  */
 
-public class CommitOrderActivity extends BaseActivity {
+public class CommitOrderActivity extends BaseActivity implements View.OnClickListener {
+    private int ADD_REQUEST_CODE = 11;
     @BindView(R.id.title_view)
     TitleBar title_view;
     //    private BuyGoodsFragment buyGoodsFragment;
@@ -42,6 +45,8 @@ public class CommitOrderActivity extends BaseActivity {
     TextView tv_title;
     @BindView(R.id.tv_price)
     TextView tv_price;
+    @BindView(R.id.ll_add_addresss)
+    LinearLayout ll_add_addresss;
     private String tag;
     private String id;
     private int price;
@@ -62,7 +67,7 @@ public class CommitOrderActivity extends BaseActivity {
             goodsBean = (GoodsListBean) bundle.getSerializable("detail");
             tag = bundle.getString("type");
         }
-
+        ll_add_addresss.setOnClickListener(this);
 
         tvDes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +148,16 @@ public class CommitOrderActivity extends BaseActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data != null) {
+            if (resultCode == ADD_REQUEST_CODE) {
+
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     protected View isNeedLec() {
         return null;
     }
@@ -185,5 +200,14 @@ public class CommitOrderActivity extends BaseActivity {
             winParams.flags &= ~bits;
         }
         win.setAttributes(winParams);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ll_add_addresss:
+                startActivityForResult(new Intent(this, ShoppingAddressActivity.class), ADD_REQUEST_CODE);
+                break;
+        }
     }
 }
