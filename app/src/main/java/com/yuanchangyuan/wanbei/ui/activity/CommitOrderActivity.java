@@ -3,15 +3,19 @@ package com.yuanchangyuan.wanbei.ui.activity;
 import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
+import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
 import butterknife.BindView;
@@ -32,27 +36,18 @@ public class CommitOrderActivity extends BaseActivity {
     TextView tvDes;
     @BindView(R.id.btn_add_goods_num)
     TextView tvIns;
+    @BindView(R.id.iv_goods)
+    ImageView iv_goods;
+    @BindView(R.id.tv_title)
+    TextView tv_title;
+    @BindView(R.id.tv_price)
+    TextView tv_price;
     private String tag;
+    private String id;
+    private int price;
     final int mxCount = 200;
+    private GoodsListBean goodsBean;
 
-    /**
-     * 单击事件监听器
-     */
-//    private IClickListener mListener = null;
-//
-//    public interface IClickListener {
-//        void onRightViewClick(View v);
-//
-//        void onDesButtonClick(View v);//减
-//
-//        void onInsButtonClick(View v);//加
-//
-//        void onCheckChange(View v, boolean isChecked);
-//    }
-//
-//    public void setmListener(IClickListener mListener) {
-//        this.mListener = mListener;
-//    }
     @Override
     public int getContentViewLayoutId() {
         return R.layout.activity_commit_order;
@@ -61,6 +56,13 @@ public class CommitOrderActivity extends BaseActivity {
     @Override
     public void initViewsAndEvents() {
         initTitle();
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            goodsBean = (GoodsListBean) bundle.getSerializable("detail");
+            tag = bundle.getString("type");
+        }
+
 
         tvDes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +117,18 @@ public class CommitOrderActivity extends BaseActivity {
 
     @Override
     public void loadData() {
+        setValueDefault();
+    }
+
+    private void setValueDefault() {
+        ImageLoadedrManager.getInstance().display(this, goodsBean.getGoodsImg(), iv_goods);
+        tv_title.setText(goodsBean.getName());
+        if (tag.equals("rent")) {
+            tv_price.setText(goodsBean.getVipprice() / 100.00 + "");
+        } else {
+            tv_price.setText(goodsBean.getPrice() / 100.00 + "");
+        }
+
 
     }
 

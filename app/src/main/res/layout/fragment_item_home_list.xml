@@ -7,10 +7,19 @@
     <ImageView
         android:id="@+id/iv_image"
         android:layout_width="fill_parent"
-        android:layout_height="200dp" />
+        android:layout_height="200dp"
+        android:scaleType="fitXY" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/color_eeeeee" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="16sp" />
 </LinearLayout>

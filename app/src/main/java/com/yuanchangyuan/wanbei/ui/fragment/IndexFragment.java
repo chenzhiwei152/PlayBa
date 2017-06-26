@@ -3,9 +3,10 @@ package com.yuanchangyuan.wanbei.ui.fragment;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.LayoutInflater;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,25 +17,32 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
-import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
+import com.yuanchangyuan.wanbei.api.JyCallBack;
+import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseFragment;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.adapter.MainListItemAdapter;
 import com.yuanchangyuan.wanbei.ui.adapter.PoPuMenuListAdapter;
-import com.yuanchangyuan.wanbei.ui.bean.HomeListBean;
-import com.yuanchangyuan.wanbei.ui.bean.SelectedBean;
+import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
+import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.bannerBean;
+import com.yuanchangyuan.wanbei.utils.EndlessRecyclerOnScrollListener;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 import com.yuanchangyuan.wanbei.utils.LogUtils;
+import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.DropDownMenu;
 import com.yuanchangyuan.wanbei.view.MaxHeighListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by chen.zhiwei on 2017-6-19.
@@ -42,45 +50,84 @@ import butterknife.BindView;
 
 public class IndexFragment extends BaseFragment {
     @BindView(R.id.sf_listview)
-    PullToRefreshRecyclerView sf_listview;
-    private ConvenientBanner kanner;
+    RecyclerView sf_listview;
+    @BindView(R.id.convenientBanner)
+    ConvenientBanner kanner;
+    @BindView(R.id.dropDownMenu)
+    DropDownMenu dropDownMenu;
+    @BindView(R.id.swiperefreshlayout)
+    SwipeRefreshLayout swiperefreshlayout;
+    //    private ConvenientBanner kanner;
     List<bannerBean> list = new ArrayList<>();
-    private DropDownMenu dropDownMenu;
+    //    private DropDownMenu dropDownMenu;
     //筛选标题list
     private List<String> types = new ArrayList<>();
     //筛选view的list
     private List<View> popupViews = new ArrayList<>();
-    private List<SelectedBean> demands = new ArrayList<>();
+    //    private List<SelectedBean> demands = new ArrayList<>();
+    private List<GoodsFilterBean> shopsList = new ArrayList<>();
+    private List<GoodsFilterBean> typesList = new ArrayList<>();
     private PoPuMenuListAdapter mMenuAdapter2;
     private MainListItemAdapter listAdapter;
+
+    private Call<List<GoodsFilterBean>> shopsCall;
+    private Call<List<GoodsFilterBean>> typesCall;
+    private Call<List<GoodsListBean>> goodsListCall;
+
+
+    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+
+    //筛选的关键字
+    private String goodstype;
+    private String shop;
 
     @Override
     protected int getContentViewLayoutId() {
         return R.layout.fragment_index_layout;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void initViewsAndEvents() {
         initTitle();
+//        kanner = (ConvenientBanner) findViewById(R.id.convenientBanner);
+//        dropDownMenu = (DropDownMenu) findViewById(R.id.dropDownMenu);
+//        sf_listview.setSwipeEnable(true);//open swipe
 
-        sf_listview.setSwipeEnable(true);//open swipe
-        sf_listview.setLayoutManager(new LinearLayoutManager(getActivity()));
-        sf_listview.setPagingableListener(new PullToRefreshRecyclerView.PagingableListener() {
-            @Override
-            public void onLoadMoreItems() {
-                LogUtils.e("onLoadMoreItems", "加载更多~");
-//                loadMore(Interface.BEFORE + date);
-            }
-        });
-        sf_listview.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        sf_listview.setLayoutManager(linearLayoutManager);
+        sf_listview.setNestedScrollingEnabled(false);
+        //设置刷新时动画的颜色，可以设置4个
+        swiperefreshlayout.setProgressBackgroundColorSchemeResource(android.R.color.white);
+        swiperefreshlayout.setColorSchemeResources(android.R.color.holo_blue_light,
+                android.R.color.holo_red_light, android.R.color.holo_orange_light,
+                android.R.color.holo_green_light);
+        swiperefreshlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                getList();
                 LogUtils.e("onRefresh", "刷新数据~");
-//                loadLatest();
-                sf_listview.setOnRefreshComplete();
+//                UIUtil.showToast("刷新数据");
+//                        adapter.addItem(newDatas);
+
+
             }
         });
-        sf_listview.setLoadMoreCount(5);
+        sf_listview.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+
+            }
+        });
+        //没有效果
+        sf_listview.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int currentPage) {
+                loadData();
+                UIUtil.showToast("加载更多");
+            }
+        });
+
+
         //死数据
         bannerBean bannerBean = new bannerBean();
         bannerBean.setImage("http://www.fondos7.net/recorte/eeb11484f517b67adf866b65c26a27d7/lindos-cachorros_800x600.jpg");
@@ -93,33 +140,11 @@ public class IndexFragment extends BaseFragment {
         listAdapter = new MainListItemAdapter(getActivity());
 
         sf_listview.setAdapter(listAdapter);
-
-
-        List<HomeListBean> list = new ArrayList<>();
-
-        HomeListBean bean = new HomeListBean();
-        bean.setImageId("http://www.fondos7.net/recorte/eeb11484f517b67adf866b65c26a27d7/lindos-cachorros_800x600.jpg");
-        bean.setTitle("测试");
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        listAdapter.addList(list);
-
     }
 
     @Override
     protected void loadData() {
-
+        getList();
     }
 
     @Override
@@ -137,6 +162,43 @@ public class IndexFragment extends BaseFragment {
 
     }
 
+    private void getList() {
+        Map<String, String> map = new HashMap<>();
+        map.put("shop", shop);
+        map.put("goodstype", goodstype);
+        goodsListCall = RestAdapterManager.getApi().getGoodsList(map);
+        goodsListCall.enqueue(new JyCallBack<List<GoodsListBean>>() {
+            @Override
+            public void onSuccess(Call<List<GoodsListBean>> call, Response<List<GoodsListBean>> response) {
+                swiperefreshlayout.setRefreshing(false);
+                if (response != null && response.body() != null) {
+                    if (response.body().size() > 0) {
+                        listAdapter.ClearData();
+                        listAdapter.addList(response.body());
+                    } else {
+                        listAdapter.ClearData();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onError(Call<List<GoodsListBean>> call, Throwable t) {
+                if (swiperefreshlayout != null) {
+                    swiperefreshlayout.setRefreshing(false);
+                }
+
+            }
+
+            @Override
+            public void onError(Call<List<GoodsListBean>> call, Response<List<GoodsListBean>> response) {
+                if (swiperefreshlayout != null) {
+                    swiperefreshlayout.setRefreshing(false);
+                }
+            }
+        });
+    }
+
     //筛选
     private void setFilter() {
         types.clear();
@@ -145,50 +207,88 @@ public class IndexFragment extends BaseFragment {
         final MaxHeighListView sortView = new MaxHeighListView(getActivity());
         sortView.setDividerHeight(0);
         sortView.setMaxHeight(199);
-        demands.clear();
-        demands.add(new SelectedBean("", "默认排序"));
-        demands.add(new SelectedBean("salesPrice_asc", "租金从低到高"));
-        demands.add(new SelectedBean("salesPrice_desc", "租金从高到低"));
-        demands.add(new SelectedBean("floorSpace_asc", "面积从小到大"));
-        demands.add(new SelectedBean("floorSpace_desc", "面积从大到小"));
-        mMenuAdapter2 = new PoPuMenuListAdapter(getActivity(), demands);
+        mMenuAdapter2 = new PoPuMenuListAdapter(getActivity(), typesList);
         sortView.setAdapter(mMenuAdapter2);
         sortView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                dropDownMenu.setTabText(demands.get(position).getName());
+                dropDownMenu.setTabText(typesList.get(position).getTypename());
                 dropDownMenu.closeMenu();
-//                mSortBy = demands.get(position).getKey();
-//                stitch();
+                goodstype = typesList.get(position).getId() + "";
+                getList();
             }
         });
-        types.add("益智类");
+        types.add("全部");
         popupViews.add(sortView);
 
 
         final MaxHeighListView softView = new MaxHeighListView(getActivity());
         softView.setDividerHeight(0);
         softView.setMaxHeight(199);
-        demands.clear();
-        demands.add(new SelectedBean("", "默认排序"));
-        demands.add(new SelectedBean("salesPrice_asc", "租金从低到高"));
-        demands.add(new SelectedBean("salesPrice_desc", "租金从高到低"));
-        demands.add(new SelectedBean("floorSpace_asc", "面积从小到大"));
-        demands.add(new SelectedBean("floorSpace_desc", "面积从大到小"));
-        mMenuAdapter2 = new PoPuMenuListAdapter(getActivity(), demands);
+        mMenuAdapter2 = new PoPuMenuListAdapter(getActivity(), shopsList);
         softView.setAdapter(mMenuAdapter2);
         softView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                dropDownMenu.setTabText(demands.get(position).getName());
+                dropDownMenu.setTabText(shopsList.get(position).getTypename());
                 dropDownMenu.closeMenu();
-//                mSortBy = demands.get(position).getKey();
-//                stitch();
+                shop = shopsList.get(position).getId() + "";
+                getList();
             }
         });
-        types.add("软件园店");
+        types.add("全部");
         popupViews.add(softView);
         dropDownMenu.setDropDownMenu(types, popupViews);
+    }
+
+    private void getFilterList() {
+        shopsCall = RestAdapterManager.getApi().getAllFilterShops();
+        shopsCall.enqueue(new JyCallBack<List<GoodsFilterBean>>() {
+            @Override
+            public void onSuccess(Call<List<GoodsFilterBean>> call, Response<List<GoodsFilterBean>> response) {
+
+                if (response != null && response.body() != null) {
+
+                    shopsList.clear();
+                    shopsList.addAll(response.body());
+                    shopsList.add(0, new GoodsFilterBean(0, "全部"));
+                    typesCall = RestAdapterManager.getApi().getAllFilterType();
+                    typesCall.enqueue(new JyCallBack<List<GoodsFilterBean>>() {
+                        @Override
+                        public void onSuccess(Call<List<GoodsFilterBean>> call, Response<List<GoodsFilterBean>> response) {
+                            if (response != null && response.body() != null) {
+                                typesList.clear();
+                                typesList.addAll(response.body());
+                                typesList.add(0, new GoodsFilterBean(0, "全部"));
+                                setFilter();
+                            }
+                        }
+
+                        @Override
+                        public void onError(Call<List<GoodsFilterBean>> call, Throwable t) {
+
+                        }
+
+                        @Override
+                        public void onError(Call<List<GoodsFilterBean>> call, Response<List<GoodsFilterBean>> response) {
+
+                        }
+                    });
+                }
+
+
+            }
+
+            @Override
+            public void onError(Call<List<GoodsFilterBean>> call, Throwable t) {
+
+            }
+
+            @Override
+            public void onError(Call<List<GoodsFilterBean>> call, Response<List<GoodsFilterBean>> response) {
+
+            }
+        });
     }
 
     /**
@@ -238,10 +338,9 @@ public class IndexFragment extends BaseFragment {
     }
 
     private void initAD(final List<bannerBean> list) {
-        View header = LayoutInflater.from(getActivity()).inflate(R.layout.kanner_index, sf_listview, false);//headview,广告栏
-        kanner = (ConvenientBanner) header.findViewById(R.id.convenientBanner);
-        dropDownMenu = (DropDownMenu) header.findViewById(R.id.dropDownMenu);
-        setFilter();
+//        View header = LayoutInflater.from(getActivity()).inflate(R.layout.kanner_index, sf_listview, false);//headview,广告栏
+
+        getFilterList();
 //自定义你的Holder，实现更多复杂的界面，不一定是图片翻页，其他任何控件翻页亦可。
         kanner.setPages(
                 new CBViewHolderCreator<LocalImageHolderView>() {
@@ -267,6 +366,7 @@ public class IndexFragment extends BaseFragment {
             }
         });
 //增加headview
-        sf_listview.addHeaderView(header);
+//        sf_listview.addHeaderView(header);
+//        sf_listview.add
     }
 }

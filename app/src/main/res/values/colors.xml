@@ -79,6 +79,8 @@
     <color name="color_101010">#101010</color>
     <color name="color_ffa726">#ffa726</color>
     <color name="color_9CCC65">#9CCC65</color>
+    <color name="color_D9C83C">#D9C83C</color>
+    <color name="color_F57072">#F57072</color>
 
     <!--以下为带有透明度的颜色值-->
     <color name="color_6633b5e5">#6633B5E5</color>

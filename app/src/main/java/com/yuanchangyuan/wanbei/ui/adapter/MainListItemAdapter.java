@@ -2,6 +2,7 @@ package com.yuanchangyuan.wanbei.ui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.ui.activity.GoodsDetailsActivity;
-import com.yuanchangyuan.wanbei.ui.bean.HomeListBean;
+import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import butterknife.ButterKnife;
  * Created by chenzhiwei 2016/6/14.
  */
 public class MainListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static List<HomeListBean> list;
+    private static List<GoodsListBean> list;
     private static Context context;
     private boolean isLight;
     private final LayoutInflater mLayoutInflater;
@@ -37,14 +38,14 @@ public class MainListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public MainListItemAdapter(Context context, List<HomeListBean> items) {
+    public MainListItemAdapter(Context context, List<GoodsListBean> items) {
         this.context = context;
         this.list = new ArrayList<>();
         this.list.addAll(items);
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public void addList(List<HomeListBean> items) {
+    public void addList(List<GoodsListBean> items) {
         this.list.addAll(items);
         notifyDataSetChanged();
     }
@@ -54,7 +55,7 @@ public class MainListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
-    public static List<HomeListBean> getEntities() {
+    public static List<GoodsListBean> getEntities() {
         return list;
     }
 
@@ -68,21 +69,25 @@ public class MainListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (list != null) {
             try {
-                ImageLoadedrManager.getInstance().display(context, list.get(position).getImageId(), ((ImageViewHolder) viewHolder).iv_image);
+                ImageLoadedrManager.getInstance().display(context, list.get(position).getGoodsImg(), ((ImageViewHolder) viewHolder).iv_image);
             } catch (Exception e) {
 
             }
-            if (!TextUtils.isEmpty(list.get(position).getTitle())) {
+            if (!TextUtils.isEmpty(list.get(position).getName())) {
 
-                ((ImageViewHolder) viewHolder).tv_title.setText(list.get(position).getTitle());
+                ((ImageViewHolder) viewHolder).tv_title.setText(list.get(position).getName());
                 ((ImageViewHolder) viewHolder).tv_title.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 ((ImageViewHolder) viewHolder).tv_title.setVisibility(View.GONE);
             }
             ((ImageViewHolder) viewHolder).iv_image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    context.startActivity(new Intent(context, GoodsDetailsActivity.class));
+                    Intent intent = new Intent(context, GoodsDetailsActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("detail", list.get(position));
+                    intent.putExtras(bundle);
+                    context.startActivity(intent);
                 }
             });
         }

@@ -2,6 +2,7 @@ package com.yuanchangyuan.wanbei.api;
 
 import com.yuanchangyuan.wanbei.api.FastJsonConvert.FastJsonConverterFactory;
 import com.yuanchangyuan.wanbei.base.BaseContext;
+import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.utils.LogUtils;
 
 import java.io.IOException;
@@ -28,8 +29,8 @@ public class RestAdapterManager {
     /**
      * 获取基础地址服务
      */
-//    public static String BASEURL ="http://59.110.214.223:8080";  // BASE URL
-    public static String BASEURL ="http://192.168.51.85:8080";  // BASE URL
+    public static String BASEURL ="http://59.110.214.223:8080";  // BASE URL
+//    public static String BASEURL ="http://192.168.51.85:8080";  // BASE URL
 
 
     public static Retrofit getRestAdapter() {
@@ -87,7 +88,7 @@ public class RestAdapterManager {
 //        hashMap.put("devicebrand", MyDeviceInfo.getDeviceName());//设备型号
 //        hashMap.put("systembrand", MyDeviceInfo.getOsVersion());//操作系统版本
 //        hashMap.put("version", SysUtils.getVersionName(BaseContext.getInstance()));//应用版本
-//        hashMap.put("APPkey", Constants.APP_KEY);//应用名称
+        hashMap.put("APPkey", Constants.APP_KEY);//应用名称
 //        hashMap.put("lon", BaseContext.getInstance().getLocationInfo().getLongitude() + "");
 //        hashMap.put("lat", BaseContext.getInstance().getLocationInfo().getLatitude() + "");
 //        hashMap.put("cityId", BaseContext.getInstance().getLocationInfo().getCityId() + "");

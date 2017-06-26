@@ -40,11 +40,33 @@
             android:src="@mipmap/ic_clear" />
     </RelativeLayout>
 
-    <com.lhh.ptrrv.library.PullToRefreshRecyclerView
-        android:id="@+id/sf_listview"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefreshlayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbars="vertical"
+        >
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.lhh.ptrrv.library.PullToRefreshRecyclerView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+            <include layout="@layout/kanner_index" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/sf_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

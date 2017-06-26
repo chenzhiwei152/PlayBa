@@ -1,6 +1,8 @@
 package com.yuanchangyuan.wanbei.api;
 
 
+import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
+import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
 
@@ -62,5 +64,31 @@ public interface JyApi {
      */
     @GET("/resource/deliveryAddress/getAllDeliveryAddress")
     Call<List<ShoppingAddressListItemBean>> getAddressList(@Query("userid") String userid);
+
+
+    /**
+     * 获取商品类型筛选条件
+     *
+     * @return
+     */
+    @GET("/resource/goodstype/getAllList")
+    Call<List<GoodsFilterBean>> getAllFilterType();
+
+    /**
+     * 获取商品门店筛选条件
+     *
+     * @return
+     */
+    @POST("/resource/shop/getAllList")
+    Call<List<GoodsFilterBean>> getAllFilterShops();
+
+    /**
+     * 获取首页列表
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/goods/goodsAllList")
+    Call<List<GoodsListBean>> getGoodsList(@Body Map<String, String> map);
 
 }

@@ -72,6 +72,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
@@ -90,14 +91,16 @@
                             android:layout_centerVertical="true"
                             android:text="会员等级"
                             android:textColor="@color/color_ffffff"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                         <RatingBar
+                            android:id="@+id/rb_rank"
                             style="?android:attr/ratingBarStyleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignBaseline="@+id/tv_member"
                             android:layout_centerVertical="true"
+                            android:layout_marginLeft="10dp"
                             android:layout_toRightOf="@+id/tv_member"
                             android:numStars="5"
                             android:rating="2" />
@@ -337,7 +340,9 @@
             android:id="@+id/rl_quit_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/color_ffffff"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/color_ff6900"
             android:padding="10dp">
 
             <ImageView
@@ -345,24 +350,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/ic_my_abount" />
+                android:src="@mipmap/ic_my_abount"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@+id/iv_quit_login"
                 android:text="退出登录"
+                android:textColor="@color/color_ffffff"
                 android:textSize="16sp" />
 
             <ImageView
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/ic_arrow_right" />
+                android:src="@mipmap/ic_arrow_right"
+                android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>
 </ScrollView>

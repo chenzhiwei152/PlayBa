@@ -21,7 +21,7 @@ public class UserInfoBean extends ErrorBean{
 //            "userId": 1
 //    }
     public String birthday;
-    public String vipgrade;
+    public int vipgrade;
     public String headimg;
     public String phone;
     public String sex;

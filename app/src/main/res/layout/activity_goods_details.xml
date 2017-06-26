@@ -9,10 +9,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.lhh.ptrrv.library.PullToRefreshRecyclerView
-        android:id="@+id/sf_listview"
+
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.lhh.ptrrv.library.PullToRefreshRecyclerView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/kanner_goods_detail" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/sf_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
 </LinearLayout>

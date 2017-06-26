@@ -3,6 +3,7 @@ package com.yuanchangyuan.wanbei.ui.fragment;
 import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.yuanchangyuan.wanbei.ui.activity.OrderListActivity;
 import com.yuanchangyuan.wanbei.ui.activity.PersonInformationActivity;
 import com.yuanchangyuan.wanbei.ui.activity.ShoppingAddressActivity;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
+import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 import com.yuanchangyuan.wanbei.view.CircularImageView;
 
 import butterknife.BindView;
@@ -59,6 +61,10 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     TextView tv_setting;
     @BindView(R.id.rl_quit_login)
     RelativeLayout rl_quit_login;
+    @BindView(R.id.tv_user_name)
+    TextView tv_user_name;
+    @BindView(R.id.rb_rank)
+    RatingBar rb_rank;
 
     @Override
     protected int getContentViewLayoutId() {
@@ -79,7 +85,11 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     protected void loadData() {
-
+        if (BaseContext.getInstance().getUserInfo() != null) {
+            tv_user_name.setText(BaseContext.getInstance().getUserInfo().name);
+            rb_rank.setNumStars(BaseContext.getInstance().getUserInfo().vipgrade);
+            ImageLoadedrManager.getInstance().display(getActivity(), BaseContext.getInstance().getUserInfo().headimg, ivHead);
+        }
     }
 
     @Override

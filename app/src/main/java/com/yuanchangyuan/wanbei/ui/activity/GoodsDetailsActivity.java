@@ -5,25 +5,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.LayoutInflater;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
-import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
+import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
-import com.yuanchangyuan.wanbei.ui.adapter.MainListItemAdapter;
-import com.yuanchangyuan.wanbei.ui.bean.HomeListBean;
+import com.yuanchangyuan.wanbei.ui.adapter.GoodsDetailItemAdapter;
+import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.bannerBean;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 import com.yuanchangyuan.wanbei.view.TitleBar;
@@ -40,14 +42,22 @@ import butterknife.BindView;
 public class GoodsDetailsActivity extends BaseActivity {
 
     @BindView(R.id.sf_listview)
-    PullToRefreshRecyclerView sf_listview;
+    RecyclerView sf_listview;
     @BindView(R.id.title_view)
     TitleBar title_view;
+    @BindView(R.id.tv_goods_detail_describe)
+    TextView tv_goods_detail_describe;
     private ConvenientBanner kanner;
     List<bannerBean> list = new ArrayList<>();
-    private MainListItemAdapter listAdapter;
+    private GoodsDetailItemAdapter listAdapter;
     private Button bt_buy;
     private Button bt_exchange_state;
+    private GoodsListBean goodsBean;
+    private TextView tv_goods_name;
+    private TextView tv_price_title;
+    private TextView tv_member_price;
+    private TextView tv_member_price_title;
+    private TextView tv_price;
 
     @Override
     public int getContentViewLayoutId() {
@@ -57,47 +67,33 @@ public class GoodsDetailsActivity extends BaseActivity {
     @Override
     public void initViewsAndEvents() {
         initTitle();
-        sf_listview.setSwipeEnable(true);//open swipe
-        sf_listview.setLayoutManager(new LinearLayoutManager(this));
 
-        //死数据
-        bannerBean bannerBean = new bannerBean();
-        bannerBean.setImage("http://www.fondos7.net/recorte/eeb11484f517b67adf866b65c26a27d7/lindos-cachorros_800x600.jpg");
-        list.add(bannerBean);
-        list.add(bannerBean);
-        list.add(bannerBean);
-        //初始化广告栏
-        initAD(list);
-        //
-        listAdapter = new MainListItemAdapter(this);
+        kanner = (ConvenientBanner) findViewById(R.id.convenientBanner);
+        bt_buy = (Button) findViewById(R.id.bt_buy);
+        bt_exchange_state = (Button) findViewById(R.id.bt_exchange_state);
+        tv_goods_name = (TextView) findViewById(R.id.tv_goods_name);
+        tv_price_title = (TextView) findViewById(R.id.tv_price_title);
+        tv_member_price = (TextView) findViewById(R.id.tv_member_price);
+        tv_member_price_title = (TextView) findViewById(R.id.tv_member_price_title);
+        tv_price = (TextView) findViewById(R.id.tv_price);
+
+
+        goodsBean = (GoodsListBean) getIntent().getExtras().getSerializable("detail");
+
+//        sf_listview.setSwipeEnable(true);//open swipe
+        sf_listview.setLayoutManager(new LinearLayoutManager(this));
+        sf_listview.setNestedScrollingEnabled(false);
+
+        listAdapter = new GoodsDetailItemAdapter(this);
 
         sf_listview.setAdapter(listAdapter);
 
 
-        List<HomeListBean> list = new ArrayList<>();
-
-        HomeListBean bean = new HomeListBean();
-        bean.setImageId("http://www.fondos7.net/recorte/eeb11484f517b67adf866b65c26a27d7/lindos-cachorros_800x600.jpg");
-//        bean.setTitle("测试");
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        list.add(bean);
-        listAdapter.addList(list);
     }
 
     @Override
     public void loadData() {
-
+        setData();
     }
 
     @Override
@@ -113,6 +109,26 @@ public class GoodsDetailsActivity extends BaseActivity {
     @Override
     protected View isNeedLec() {
         return null;
+    }
+
+    private void setData() {
+        if (goodsBean != null) {
+            if (goodsBean.getBinners() != null) {
+                //广告位
+                for (int i = 0; i < goodsBean.getBinners().size(); i++) {
+                    bannerBean bannerBean = new bannerBean();
+                    bannerBean.setImage(goodsBean.getBinners().get(i));
+                    list.add(bannerBean);
+                }
+                //初始化广告栏
+                initAD(list);
+            }
+            //大图
+            if (goodsBean.getDetails() != null) {
+                listAdapter.addList(goodsBean.getDetails());
+            }
+
+        }
     }
 
     /**
@@ -175,20 +191,20 @@ public class GoodsDetailsActivity extends BaseActivity {
     }
 
     private void initAD(final List<bannerBean> list) {
-        View header = LayoutInflater.from(this).inflate(R.layout.kanner_goods_detail, sf_listview, false);//headview,广告栏
-        kanner = (ConvenientBanner) header.findViewById(R.id.convenientBanner);
-        bt_buy = (Button) header.findViewById(R.id.bt_buy);
-        bt_exchange_state = (Button) header.findViewById(R.id.bt_exchange_state);
 
+
+        setPriceValue();
         bt_exchange_state.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (bt_buy.getText().equals("立即租赁")) {
                     bt_exchange_state.setText("切换至租赁");
                     bt_buy.setText("立即购买");
+                    setPriceValue();
                 } else {
                     bt_exchange_state.setText("切换至购买");
                     bt_buy.setText("立即租赁");
+                    setPriceValue();
                 }
             }
         });
@@ -196,7 +212,36 @@ public class GoodsDetailsActivity extends BaseActivity {
         bt_buy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(GoodsDetailsActivity.this, CommitOrderActivity.class));
+                if (BaseContext.getInstance().getUserInfo() == null) {
+                    new Intent(GoodsDetailsActivity.this, LoginActivity.class);
+                } else {
+
+                    Intent intent = new Intent(GoodsDetailsActivity.this, CommitOrderActivity.class);
+                    Bundle bundle = new Bundle();
+
+                    if (bt_buy.getText().equals("立即租赁")) {
+//可以走会员价
+                        if (goodsBean.getVipprice() > 0) {
+                            bundle.putString("type", "rent");
+//                            bundle.putInt("price", goodsBean.getVipprice());
+//                            bundle.putString("id", goodsBean.getId() + "");
+                            bundle.putSerializable("detail",goodsBean);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                        }
+                    } else {
+                        if (goodsBean.getPrice() > 0) {
+                            bundle.putString("type", "sale");
+//                            bundle.putInt("price", goodsBean.getPrice());
+//                            bundle.putString("id", goodsBean.getId() + "");
+                            bundle.putSerializable("detail",goodsBean);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                        }
+
+                    }
+
+                }
             }
         });
 
@@ -226,6 +271,39 @@ public class GoodsDetailsActivity extends BaseActivity {
             }
         });
 //增加headview
-        sf_listview.addHeaderView(header);
+//        sf_listview.addHeaderView(header);
     }
+
+    private void setPriceValue() {
+        tv_goods_name.setText(goodsBean.getName());//标题
+        tv_goods_detail_describe.setText(goodsBean.getGoodsdetail());
+        if (bt_buy.getText().equals("立即租赁")) {
+            if (goodsBean.getPrice() > 0) {
+                tv_price_title.setText("￥" + goodsBean.getPrice() / 100.00);
+                tv_price.setVisibility(View.VISIBLE);
+            } else {
+                tv_price_title.setText("");
+                tv_price.setVisibility(View.GONE);
+            }
+            if (goodsBean.getVipprice() > 0) {
+                tv_member_price.setText("￥" + goodsBean.getVipprice() / 100.00);
+                tv_member_price_title.setVisibility(View.VISIBLE);
+            } else {
+                tv_member_price.setText("");
+                tv_member_price_title.setVisibility(View.GONE);
+            }
+        } else {
+            if (goodsBean.getPrice() > 0) {
+                tv_price_title.setText("￥" + goodsBean.getPrice() / 100.00);
+                tv_price.setVisibility(View.GONE);
+            } else {
+                tv_price_title.setText("");
+                tv_price.setVisibility(View.GONE);
+            }
+            tv_member_price.setText("");
+            tv_member_price_title.setVisibility(View.GONE);
+        }
+    }
+
+
 }

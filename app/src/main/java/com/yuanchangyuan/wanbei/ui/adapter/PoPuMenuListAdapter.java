@@ -6,8 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
 import com.yuanchangyuan.wanbei.R;
-import com.yuanchangyuan.wanbei.ui.bean.SelectedBean;
+import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
+
 import java.util.List;
 
 /**
@@ -19,9 +21,9 @@ public class PoPuMenuListAdapter extends BaseAdapter{
 
     private ViewHolder viewHolder;
 
-    private List<SelectedBean> list;
+    private List<GoodsFilterBean> list;
 
-    public PoPuMenuListAdapter(Context context, List<SelectedBean> list) {
+    public PoPuMenuListAdapter(Context context, List<GoodsFilterBean> list) {
         this.context = context;
         this.list = list;
     }
@@ -50,7 +52,7 @@ public class PoPuMenuListAdapter extends BaseAdapter{
         }
 
         viewHolder.text1 = (TextView) convertView.findViewById(R.id.textname);
-        viewHolder.text1.setText(list.get(position).getName());
+        viewHolder.text1.setText(list.get(position).getTypename());
 
         return convertView;
     }
