@@ -4,8 +4,10 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,11 +22,14 @@ import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.bean.ErrorBean;
 import com.yuanchangyuan.wanbei.ui.adapter.ShoppingAddressListAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
+import com.yuanchangyuan.wanbei.ui.listerner.ShoppingAddressItemOnClickListerner;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
 import com.yuanchangyuan.wanbei.utils.LogUtils;
+import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
 import java.io.IOException;
@@ -47,6 +52,9 @@ public class ShoppingAddressActivity extends BaseActivity {
     private ImageView mCollectView;
     private Call<List<ShoppingAddressListItemBean>> call;
 
+    private Call<ErrorBean> deleteCall;
+    private String type;
+
     @Override
     public int getContentViewLayoutId() {
         return R.layout.activity_shopping_address_list;
@@ -55,17 +63,51 @@ public class ShoppingAddressActivity extends BaseActivity {
     @Override
     public void initViewsAndEvents() {
         initTitle();
+        try {
+            if (getIntent().getExtras() != null) {
+                type = getIntent().getExtras().getString("type", "");
+            }
+        } catch (Exception e) {
+
+        }
+
         sf_listview.setSwipeEnable(true);//open swipe
         sf_listview.setLayoutManager(new LinearLayoutManager(this));
+
+
         shoppingAddressListAdapter = new ShoppingAddressListAdapter(this);
-        sf_listview.setAdapter(shoppingAddressListAdapter);
-//        sf_listview.setPagingableListener(new PullToRefreshRecyclerView.PagingableListener() {
+        shoppingAddressListAdapter.setOnClickListerner(new ShoppingAddressItemOnClickListerner() {
+            @Override
+            public void onClick(ShoppingAddressListItemBean bean) {
+                //编辑
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("addressBean", bean);
+                intent.putExtras(bundle);
+                setResult(Constants.ADD_REQUEST_CODE, intent);
+                finish();
+            }
+
+            @Override
+            public void onDeleteListerner(final ShoppingAddressListItemBean bean) {
+                //删除
+                DialogUtils.showOrderCancelMsg(ShoppingAddressActivity.this, "确定要删除吗？", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (bean != null && !TextUtils.isEmpty(bean.getId() + "")) {
+                            deleteAddress(bean.getId() + "");
+                        }
+                    }
+
 //            @Override
-//            public void onLoadMoreItems() {
-//                LogUtils.e("onLoadMoreItems", "加载更多~");
-////                loadMore(Interface.BEFORE + date);
+//            public void callBack() {//退出登录
+//
 //            }
-//        });
+                });
+            }
+        });
+        sf_listview.setAdapter(shoppingAddressListAdapter);
+        shoppingAddressListAdapter.setType(type);
         sf_listview.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -100,6 +142,7 @@ public class ShoppingAddressActivity extends BaseActivity {
     protected View isNeedLec() {
         return null;
     }
+
 
     /**
      * 获取数据
@@ -141,6 +184,35 @@ public class ShoppingAddressActivity extends BaseActivity {
         });
     }
 
+    private void deleteAddress(String id) {
+        deleteCall = RestAdapterManager.getApi().deleteAddress(id);
+        deleteCall.enqueue(new JyCallBack<ErrorBean>() {
+            @Override
+            public void onSuccess(Call<ErrorBean> call, Response<ErrorBean> response) {
+
+                if (response != null && response.body() != null) {
+                    UIUtil.showToast(response.body().msg);
+                    if (response.body().code == 1000) {
+                        loadAddressData();
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Call<ErrorBean> call, Throwable t) {
+
+            }
+
+            @Override
+            public void onError(Call<ErrorBean> call, Response<ErrorBean> response) {
+                try {
+                    ErrorMessageUtils.taostErrorMessage(ShoppingAddressActivity.this,response.errorBody().string(),"");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
     /**
      * 初始化标题
@@ -196,6 +268,9 @@ public class ShoppingAddressActivity extends BaseActivity {
     protected void onDestroy() {
         if (call != null) {
             call.cancel();
+        }
+        if (deleteCall != null) {
+            deleteCall.cancel();
         }
         super.onDestroy();
     }

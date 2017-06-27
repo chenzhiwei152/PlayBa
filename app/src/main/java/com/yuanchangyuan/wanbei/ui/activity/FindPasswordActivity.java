@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,18 +15,28 @@ import android.widget.TextView;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
+import com.yuanchangyuan.wanbei.api.JyCallBack;
+import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
-import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.bean.ErrorBean;
+import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
 import com.yuanchangyuan.wanbei.utils.NetUtil;
 import com.yuanchangyuan.wanbei.utils.TelephoneUtils;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.CleanableEditText;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.OnTextChanged;
+import retrofit2.Call;
+import retrofit2.Response;
+
+import static com.yuanchangyuan.wanbei.R.id.et_check_code;
 
 /**
  * 找回密码
@@ -39,14 +48,15 @@ public class FindPasswordActivity extends BaseActivity {
     CountDownTimer timer;
     @BindView(R.id.user_name)
     CleanableEditText etPhone;
-    @BindView(R.id.et_check_code)
+    @BindView(et_check_code)
     EditText etCode;
     @BindView(R.id.tv_check_code)
     TextView tvGetCode;
-
+    @BindView(R.id.user_new_pass)
+    CleanableEditText user_new_pass;
     @BindView(R.id.tv_next)
     Button tvNext;
-
+    private Call<ErrorBean> call;
     boolean isCodeSended = false;
 
     @Override
@@ -90,6 +100,7 @@ public class FindPasswordActivity extends BaseActivity {
         titleView.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
         titleView.setImmersive(true);
     }
+
     @TargetApi(19)
     private void setTranslucentStatus(boolean on) {
         Window win = getWindow();
@@ -102,6 +113,7 @@ public class FindPasswordActivity extends BaseActivity {
         }
         win.setAttributes(winParams);
     }
+
     @Override
     public void loadData() {
 
@@ -115,9 +127,7 @@ public class FindPasswordActivity extends BaseActivity {
     @Override
     public void onMsgEvent(EventBusCenter eventBusCenter) {
         if (null != eventBusCenter) {
-            if (Constants.Tag.CHANGE_PASSWORD_SUCCESS == eventBusCenter.getEvenCode()) {
-                finish();
-            }
+
         }
     }
 
@@ -144,43 +154,9 @@ public class FindPasswordActivity extends BaseActivity {
             UIUtil.showToast("网络连接失败，请检查您的网络");
             return;
         }
-        checkRegist(phoneNumber);
-
-
+        getCode(phoneNumber);
     }
 
-    private void checkRegist(final String phoneNumber) {
-
-//        RestAdapterManager.getApi().CheckRegiste(phoneNumber, "1").enqueue(new JyCallBack<String>() {
-//            @Override
-//            public void onSuccess(Call<String> call, Response<String> response) {
-//                if (!TextUtils.isEmpty(response.body())) {
-//                    if ("true".equals(response.body())) {
-//
-//                        getCode(phoneNumber);
-//                    } else {
-//                        UIUtil.showToast("手机号未注册，快去注册吧！");
-//                    }
-//                } else {
-//                    UIUtil.showToast(response.body());
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Call<String> call, Throwable t) {
-//
-//            }
-//
-//            @Override
-//            public void onError(Call<String> call, Response<String> response) {
-//                try {
-//                    ErrorMessageUtils.taostErrorMessage(BaseContext.getInstance(), response.errorBody().string());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-    }
 
     private void getCode(String phone) {
         timer.start();
@@ -217,77 +193,72 @@ public class FindPasswordActivity extends BaseActivity {
             UIUtil.showToast("网络连接失败，请检查您的网络");
             return;
         }
-        final String tel = etPhone.getText().toString();
-        final String code = etCode.getText().toString();
 
+        String phoneNumber = etPhone.getText().toString();
+        if (TextUtils.isEmpty(phoneNumber)) {
+            UIUtil.showToast("请输入手机号");
+            return;
+        }
+        if (!TelephoneUtils.isMobile(phoneNumber)) {
+            UIUtil.showToast("手机号格式错误");
+            return;
+        }
 
-//        RestAdapterManager.getApi().CheckMessageCode(RestAdapterManager.getHeaderMap(),tel, code).enqueue(new JyCallBack<ValidCodeBean>() {
-//            @Override
-//            public void onSuccess(Call<ValidCodeBean> call, Response<ValidCodeBean> response) {
-//                try {
-//                    if (response != null && response.body() != null && !TextUtils.isEmpty(response.body().uuid)) {
-//
-//                        LogUtils.e(response.body().uuid);
-//                        Intent findPsIntent = new Intent(FindPasswordStepOneActivity.this, FindPasswordStepTwoActivity.class);
-//                        timer.cancel();
-//                        findPsIntent.putExtra("code", code);
-//                        findPsIntent.putExtra("uuid", response.body().uuid);
-//                        findPsIntent.putExtra("tel", tel);
-//                        startActivity(findPsIntent);
-//                    } else {
-//                        UIUtil.showToast("验证验证码错误~");
-//                    }
-//
-//                } catch (Exception e) {
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Call<ValidCodeBean> call, Throwable t) {
-//
-//            }
-//
-//            @Override
-//            public void onError(Call<ValidCodeBean> call, Response<ValidCodeBean> response) {
-//                UIUtil.showToast("验证码不正确");
-//            }
-//        });
-
+        if (TextUtils.isEmpty(etCode.getText())) {
+            UIUtil.showToast("验证码不能为空");
+            return;
+        }
+        if (TextUtils.isEmpty(user_new_pass.getText())) {
+            UIUtil.showToast("密码不能为空");
+            return;
+        }
+        commitData();
     }
 
-
-    @OnTextChanged(value = R.id.user_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    public void afterNameTextChanged(Editable s) {
-        if (s.length() == 0) {
-            tvNext.setEnabled(false);
-        } else {
-            if (isCodeSended && !TextUtils.isEmpty(etCode.getText().toString())) {
-                tvNext.setEnabled(true);
-            } else {
-                tvNext.setEnabled(false);
+    private void commitData() {
+        Map<String, String> map = new HashMap<>();
+        map.put("checkCode", etCode.getText().toString());
+        map.put("newPwd", user_new_pass.getText().toString());
+        map.put("phone", etPhone.getText().toString());
+        call = RestAdapterManager.getApi().commitNewPassword(map);
+        call.enqueue(new JyCallBack<ErrorBean>() {
+            @Override
+            public void onSuccess(Call<ErrorBean> call, Response<ErrorBean> response) {
+                if (response != null && response.body() != null) {
+                    if (response.body().code == 1000) {
+                        UIUtil.showToast(response.body().msg);
+                        finish();
+                    } else {
+                        UIUtil.showToast("修改密码失败~请稍后重试");
+                    }
+                } else {
+                    UIUtil.showToast("修改密码失败~请稍后重试");
+                }
             }
 
-        }
-    }
-
-    @OnTextChanged(value = R.id.et_check_code, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    public void afterCodeTextChanged(Editable s) {
-        if (s.length() == 0) {
-            tvNext.setEnabled(false);
-        } else {
-            if (isCodeSended && !TextUtils.isEmpty(etPhone.getText().toString())) {
-                tvNext.setEnabled(true);
-            } else {
-                tvNext.setEnabled(false);
+            @Override
+            public void onError(Call<ErrorBean> call, Throwable t) {
+                UIUtil.showToast("修改密码失败~请稍后重试");
             }
 
-        }
+            @Override
+            public void onError(Call<ErrorBean> call, Response<ErrorBean> response) {
+                try {
+                    ErrorMessageUtils.taostErrorMessage(FindPasswordActivity.this, response.errorBody().string(), "");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     @Override
     protected void onDestroy() {
         timer.cancel();
+        if (call != null) {
+            call.cancel();
+        }
         super.onDestroy();
     }
 

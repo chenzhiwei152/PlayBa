@@ -198,7 +198,7 @@ public class BaseContext extends Application {
     public void Exit() {
         SharePreManager.instance(this).clearUserInfO();
         userInfo = null;
-        AppManager.getAppManager().finishAllActivity();
+//        AppManager.getAppManager().finishAllActivity();
 //        exitfromServer();
     }
 

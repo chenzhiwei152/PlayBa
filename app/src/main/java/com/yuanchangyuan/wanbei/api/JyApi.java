@@ -1,8 +1,10 @@
 package com.yuanchangyuan.wanbei.api;
 
 
+import com.yuanchangyuan.wanbei.bean.ErrorBean;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
+import com.yuanchangyuan.wanbei.ui.bean.MemberRankBean;
 import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
 
@@ -39,6 +41,16 @@ public interface JyApi {
     Call<String> reister(@Body Map<String, String> map);
 
     /**
+     * 修改密码，忘记密码
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/user/forgetPwd")
+    Call<ErrorBean> commitNewPassword(@Body Map<String, String> map);
+
+
+    /**
      * 增加收货地址
      *
      * @param map
@@ -55,6 +67,15 @@ public interface JyApi {
      */
     @POST("/resource/deliveryAddress/updateDeliveryAddress")
     Call<String> editAddress(@Body Map<String, String> map);
+
+    /**
+     * 删除收货地址
+     *
+     * @param id
+     * @return
+     */
+    @GET("/resource/deliveryAddress/deleteById")
+    Call<ErrorBean> deleteAddress(@Query("id") String id);
 
     /**
      * 获取地址列表
@@ -90,5 +111,18 @@ public interface JyApi {
      */
     @POST("/resource/goods/goodsAllList")
     Call<List<GoodsListBean>> getGoodsList(@Body Map<String, String> map);
+
+    /**
+     * 实名认证
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/user/userAuth")
+    Call<String> commitRealName(@Body Map<String, String> map);
+
+
+    @GET("/resource/viptype/getAllList")
+    Call<List<MemberRankBean>> getMemberRank();
 
 }

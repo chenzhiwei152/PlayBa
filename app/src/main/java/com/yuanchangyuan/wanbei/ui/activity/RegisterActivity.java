@@ -355,7 +355,7 @@ public class RegisterActivity extends BaseActivity {
     @Override
     public void onMsgEvent(EventBusCenter eventBusCenter) {
         if (null != eventBusCenter) {
-            if (eventBusCenter.getEvenCode() == Constants.Tag.REGIST_SUCCESS) {
+            if (eventBusCenter.getEvenCode() == Constants.REGIST_SUCCESS) {
                 finish();
             }
         }

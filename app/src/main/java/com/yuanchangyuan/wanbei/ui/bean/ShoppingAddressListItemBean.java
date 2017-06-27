@@ -1,10 +1,12 @@
 package com.yuanchangyuan.wanbei.ui.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by chen.zhiwei on 2017-6-23.
  */
 
-public class ShoppingAddressListItemBean {
+public class ShoppingAddressListItemBean implements Serializable {
 
     /**
      * id : 1

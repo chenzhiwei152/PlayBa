@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.ui.activity.ShoppingAddressEditActivity;
 import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
+import com.yuanchangyuan.wanbei.ui.listerner.ShoppingAddressItemOnClickListerner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,38 @@ import butterknife.ButterKnife;
 public class ShoppingAddressListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static List<ShoppingAddressListItemBean> list;
     private static Context context;
-    private boolean isLight;
+    private String type;
+    private ShoppingAddressItemOnClickListerner onClickListerner;
+
+//    public ShoppingAddressItemDeleteListerner getOnDeleteListerner() {
+//        return onDeleteListerner;
+//    }
+//
+//    public void setOnDeleteListerner(ShoppingAddressItemDeleteListerner onDeleteListerner) {
+//        this.onDeleteListerner = onDeleteListerner;
+//    }
+//
+//    private ShoppingAddressItemDeleteListerner onDeleteListerner;
+
+    public ShoppingAddressItemOnClickListerner getOnClickListerner() {
+        return onClickListerner;
+    }
+
+    public void setOnClickListerner(ShoppingAddressItemOnClickListerner onClickListerner) {
+        this.onClickListerner = onClickListerner;
+    }
+
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     private final LayoutInflater mLayoutInflater;
+
 
     public ShoppingAddressListAdapter(Context context) {
         this.context = context;
@@ -89,8 +121,22 @@ public class ShoppingAddressListAdapter extends RecyclerView.Adapter<RecyclerVie
                 @Override
                 public void onClick(View view) {
                     //删除
+//                    if (onDeleteListerner != null) {
+//                        onDeleteListerner.onDeleteListerner();
+//                    }
+                    if (onClickListerner != null)
+                        onClickListerner.onDeleteListerner(list.get(position));
                 }
             });
+            if (!TextUtils.isEmpty(type) && type.equals("getAddress")) {
+                ((ImageViewHolder) viewHolder).ll_address.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (onClickListerner != null)
+                            onClickListerner.onClick(list.get(position));
+                    }
+                });
+            }
         }
     }
 

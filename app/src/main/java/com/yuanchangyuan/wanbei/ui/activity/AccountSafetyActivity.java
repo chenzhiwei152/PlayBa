@@ -3,17 +3,33 @@ package com.yuanchangyuan.wanbei.ui.activity;
 import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
+import com.yuanchangyuan.wanbei.api.JyCallBack;
+import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
+import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.bean.ErrorBean;
+import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
+import com.yuanchangyuan.wanbei.utils.UIUtil;
+import com.yuanchangyuan.wanbei.view.CleanableEditText;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindView;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * 账号安全
@@ -23,6 +39,15 @@ import butterknife.BindView;
 public class AccountSafetyActivity extends BaseActivity {
     @BindView(R.id.title_view)
     TitleBar title_view;
+    @BindView(R.id.et_check_code)
+    EditText et_check_code;
+    @BindView(R.id.user_password)
+    CleanableEditText user_password;
+    @BindView(R.id.user_new_password)
+    EditText user_new_password;
+    @BindView(R.id.bt_commit)
+    Button bt_commit;
+    private Call<ErrorBean> call;
 
     @Override
     public int getContentViewLayoutId() {
@@ -37,6 +62,14 @@ public class AccountSafetyActivity extends BaseActivity {
     @Override
     public void loadData() {
 
+        bt_commit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkData()) {
+                    commitData();
+                }
+            }
+        });
     }
 
     @Override
@@ -53,6 +86,63 @@ public class AccountSafetyActivity extends BaseActivity {
     protected View isNeedLec() {
         return null;
     }
+
+    private void commitData() {
+        Map<String, String> map = new HashMap<>();
+        map.put("checkCode", et_check_code.getText().toString());
+        map.put("newPwd", user_password.getText().toString());
+        map.put("phone", BaseContext.getInstance().getUserInfo().phone);
+        call = RestAdapterManager.getApi().commitNewPassword(map);
+        call.enqueue(new JyCallBack<ErrorBean>() {
+            @Override
+            public void onSuccess(Call<ErrorBean> call, Response<ErrorBean> response) {
+                if (response != null && response.body() != null) {
+                    if (response.body().code == 1000) {
+                        UIUtil.showToast(response.body().msg);
+                        finish();
+                    } else {
+                        UIUtil.showToast("修改密码失败~请稍后重试");
+                    }
+                } else {
+                    UIUtil.showToast("修改密码失败~请稍后重试");
+                }
+            }
+
+            @Override
+            public void onError(Call<ErrorBean> call, Throwable t) {
+                UIUtil.showToast("修改密码失败~请稍后重试");
+            }
+
+            @Override
+            public void onError(Call<ErrorBean> call, Response<ErrorBean> response) {
+                try {
+                    ErrorMessageUtils.taostErrorMessage(AccountSafetyActivity.this, response.errorBody().string(), "");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private boolean checkData() {
+        if (TextUtils.isEmpty(et_check_code.getText())) {
+            UIUtil.showToast("验证码不能为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(user_password.getText())) {
+            UIUtil.showToast("新密码不能为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(user_new_password.getText())) {
+            UIUtil.showToast("新密码不能为空");
+            return false;
+        }
+        if (!user_new_password.getText().equals(user_password.getText())) {
+            UIUtil.showToast("密码不一致");
+        }
+        return true;
+    }
+
 
     /**
      * 初始化标题
@@ -92,5 +182,13 @@ public class AccountSafetyActivity extends BaseActivity {
             winParams.flags &= ~bits;
         }
         win.setAttributes(winParams);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (call != null) {
+            call.cancel();
+        }
+        super.onDestroy();
     }
 }

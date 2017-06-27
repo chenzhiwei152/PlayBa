@@ -32,4 +32,5 @@ public class UserInfoBean extends ErrorBean{
     public String ID;
     public String userId;
     public String token;
+    public int deposit;
 }

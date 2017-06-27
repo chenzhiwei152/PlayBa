@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,12 +16,17 @@ import android.widget.TextView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
+import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
+import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
+import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
 import butterknife.BindView;
+
+import static com.yuanchangyuan.wanbei.base.Constants.ADD_REQUEST_CODE;
 
 /**
  * 提交订单
@@ -28,7 +34,7 @@ import butterknife.BindView;
  */
 
 public class CommitOrderActivity extends BaseActivity implements View.OnClickListener {
-    private int ADD_REQUEST_CODE = 11;
+
     @BindView(R.id.title_view)
     TitleBar title_view;
     //    private BuyGoodsFragment buyGoodsFragment;
@@ -47,6 +53,14 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     TextView tv_price;
     @BindView(R.id.ll_add_addresss)
     LinearLayout ll_add_addresss;
+    @BindView(R.id.ll_address)
+    LinearLayout ll_address;
+    @BindView(R.id.tv_address_name)
+    TextView tv_address_name;
+    @BindView(R.id.tv_address_phone)
+    TextView tv_address_phone;
+    @BindView(R.id.tv_address_detail)
+    TextView tv_address_detail;
     private String tag;
     private String id;
     private int price;
@@ -68,6 +82,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             tag = bundle.getString("type");
         }
         ll_add_addresss.setOnClickListener(this);
+        ll_address.setOnClickListener(this);
 
         tvDes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,8 +165,9 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data != null) {
-            if (resultCode == ADD_REQUEST_CODE) {
-
+            if (resultCode == Constants.ADD_REQUEST_CODE) {
+//获取收货地址
+                setAddress((ShoppingAddressListItemBean) data.getExtras().getSerializable("addressBean"));
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -160,6 +176,22 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected View isNeedLec() {
         return null;
+    }
+
+
+    private void setAddress(ShoppingAddressListItemBean bean) {
+        if (bean != null && !TextUtils.isEmpty(bean.getName()) && !TextUtils.isEmpty(bean.getPhone()) && !TextUtils.isEmpty(bean.getDetail())) {
+            tv_address_name.setText(bean.getName());
+            tv_address_phone.setText(bean.getPhone());
+            tv_address_detail.setText(bean.getDetail());
+            ll_address.setVisibility(View.VISIBLE);
+            ll_add_addresss.setVisibility(View.GONE);
+        } else {
+            //
+            ll_address.setVisibility(View.GONE);
+            ll_add_addresss.setVisibility(View.VISIBLE);
+            UIUtil.showToast("地址获取失败");
+        }
     }
 
     /**
@@ -206,7 +238,10 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_add_addresss:
-                startActivityForResult(new Intent(this, ShoppingAddressActivity.class), ADD_REQUEST_CODE);
+            case R.id.ll_address:
+                Intent intent = new Intent(this, ShoppingAddressActivity.class);
+                intent.putExtra("type", "getAddress");
+                startActivityForResult(intent, ADD_REQUEST_CODE);
                 break;
         }
     }

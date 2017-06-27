@@ -16,7 +16,7 @@
         android:layout_marginTop="20dp"
         android:padding="10dp">
 
-        <com.yuanchangyuan.wanbei.view.CleanableEditText
+        <EditText
             android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
             android:textColor="@color/color_101010" />
 
         <EditText
-            android:id="@+id/pass_word"
+            android:id="@+id/et_id_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -73,11 +73,13 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_commit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp">
 
         <Button
+            android:id="@+id/bt_commit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"

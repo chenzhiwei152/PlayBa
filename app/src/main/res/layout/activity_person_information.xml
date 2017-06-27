@@ -49,10 +49,11 @@
             android:text="昵称" />
 
         <TextView
+            android:id="@+id/tv_sick_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="托马斯" />
+            android:text="" />
     </RelativeLayout>
 
     <View
@@ -75,10 +76,11 @@
             android:text="性别" />
 
         <TextView
+            android:id="@+id/tv_sex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="男" />
+            android:text="" />
     </RelativeLayout>
 
     <View
@@ -101,10 +103,11 @@
             android:text="出生年月" />
 
         <TextView
+            android:id="@+id/tv_birthday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="1994年5月13日" />
+            android:text="" />
     </RelativeLayout>
 
 </LinearLayout>

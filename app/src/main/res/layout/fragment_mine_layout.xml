@@ -76,7 +76,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
-                        android:text="托马斯的小车"
+                        android:text=""
                         android:textColor="@color/color_ffffff"
                         android:textSize="18sp" />
 
@@ -103,7 +103,7 @@
                             android:layout_marginLeft="10dp"
                             android:layout_toRightOf="@+id/tv_member"
                             android:numStars="5"
-                            android:rating="2" />
+                            android:rating="0" />
                     </RelativeLayout>
 
                 </LinearLayout>

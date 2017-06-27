@@ -40,7 +40,7 @@
                 android:layout_toRightOf="@+id/check_code_icon"
                 android:background="@drawable/bg_bbb_4"
                 android:hint="@string/plz_input_check_code"
-                android:inputType="text"
+                android:inputType="number"
                 android:paddingLeft="10dp"
                 android:singleLine="true"
                 android:textColor="@color/color_999999"
@@ -138,6 +138,7 @@
         android:layout_marginTop="40dp">
 
         <Button
+            android:id="@+id/bt_commit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"

@@ -25,6 +25,7 @@ import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
 import com.yuanchangyuan.wanbei.ui.index.MainActivity;
+import com.yuanchangyuan.wanbei.ui.utils.LoginUtils;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
 import com.yuanchangyuan.wanbei.utils.NetUtil;
@@ -68,7 +69,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     EditText et_check_code;
     @BindView(R.id.ll_check_code)
     LinearLayout llCheckCode;
-    boolean isCodeNeeded = false;//验证码是否必须
     //登陆
     @BindView(R.id.login)
     Button login;
@@ -82,8 +82,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * 是否清除密码
      */
     private boolean isClearPwd;
-    //是否显示密码
-    private boolean showStatus;
     //进度窗
     private CustomProgressDialog mDialog;
     //注册成功标识
@@ -194,23 +192,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Toast.makeText(this, "请输入11位账号", Toast.LENGTH_SHORT).show();
             return;
         }
-       /* if (!TelephoneUtils.isMobile(telNumber)) {
-            Toast.makeText(this, "手机号格式错误", Toast.LENGTH_SHORT).show();
-            return;
-        }*/ //不校验手机号格式（医生账号 不是手机号）
         if (password.length() < 6) {
             Toast.makeText(this, "密码至少为6位", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (isCodeNeeded) {
-            checkCode = et_check_code.getText().toString();
-            if (TextUtils.isEmpty(checkCode)) {
-                Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-//        LoginUtils.login(this, telNumber.trim(), password.trim(), mDialog, checkCode);
-        commitlogin();
+        LoginUtils.commitlogin(this, userName.getText().toString().trim(), passWord.getText().toString().trim());
+//        commitlogin();
 
     }
 
@@ -222,22 +209,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onMsgEvent(EventBusCenter eventCenter) {
         if (null != eventCenter) {
-            if (Constants.Tag.SHOW_CHECK_CODE == eventCenter.getEvenCode()) {
-                isCodeNeeded = true;
-                login.setEnabled(false);
-                llCheckCode.setVisibility(View.VISIBLE);
-
-
-            } else if (Constants.Tag.HIDE_CHECK_CODE == eventCenter.getEvenCode()) {
-                llCheckCode.setVisibility(View.GONE);
-                isCodeNeeded = false;
-            } else if (eventCenter.getEvenCode() == Constants.Tag.REGIST_SUCCESS) {
-//                resgisBean = (RegisteBean) eventCenter.getData();
-//                if (null != resgisBean) {
-//                    LoginUtils.login(this, resgisBean.getLoginName(), resgisBean.getPassword(), mDialog, "");
-//                }
-            } else if (eventCenter.getEvenCode() == Constants.Tag.LOGIN_FAILURE) {
-                isClearPwd = true;
+            if (Constants.SHOW_CHECK_CODE == eventCenter.getEvenCode()) {
             }
 
         }

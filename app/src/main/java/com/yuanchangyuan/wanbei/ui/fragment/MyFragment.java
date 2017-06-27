@@ -10,7 +10,9 @@ import android.widget.TextView;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.BaseFragment;
+import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.ui.activity.AboutActivity;
 import com.yuanchangyuan.wanbei.ui.activity.AccountSafetyActivity;
 import com.yuanchangyuan.wanbei.ui.activity.CommitRealNameActivity;
 import com.yuanchangyuan.wanbei.ui.activity.LoginActivity;
@@ -21,6 +23,8 @@ import com.yuanchangyuan.wanbei.ui.activity.ShoppingAddressActivity;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 import com.yuanchangyuan.wanbei.view.CircularImageView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
@@ -85,10 +89,21 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     protected void loadData() {
+        setUserInfo();
+    }
+
+    private void setUserInfo() {
         if (BaseContext.getInstance().getUserInfo() != null) {
+            rl_quit_login.setVisibility(View.VISIBLE);
             tv_user_name.setText(BaseContext.getInstance().getUserInfo().name);
             rb_rank.setNumStars(BaseContext.getInstance().getUserInfo().vipgrade);
-            ImageLoadedrManager.getInstance().display(getActivity(), BaseContext.getInstance().getUserInfo().headimg, ivHead);
+            ImageLoadedrManager.getInstance().display(getActivity(), BaseContext.getInstance().getUserInfo().headimg, ivHead, R.mipmap.ic_head_default, R.mipmap.ic_head_default);
+        } else {
+            rl_quit_login.setVisibility(View.GONE);
+            tv_user_name.setText("");
+            rb_rank.setNumStars(0);
+//            ImageLoadedrManager.getInstance().display(getActivity(), "", ivHead, R.mipmap.ic_head_default, R.mipmap.ic_head_default);
+            ivHead.setImageResource(R.mipmap.ic_head_default);
         }
     }
 
@@ -99,12 +114,17 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public boolean isRegistEventBus() {
-        return false;
+        return true;
     }
 
     @Override
     public void onMsgEvent(EventBusCenter eventBusCenter) {
-
+        if (eventBusCenter != null) {
+            if (eventBusCenter.getEvenCode() == Constants.LOGIN_SUCCESS || eventBusCenter.getEvenCode() == Constants.LOGIN_FAILURE) {
+                //登陆成功,或者退出
+                setUserInfo();
+            }
+        }
     }
 
 
@@ -159,6 +179,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.rl_about:
                 //关于
+                startActivity(new Intent(getActivity(), AboutActivity.class));
                 break;
             case R.id.tv_setting:
                 //设置
@@ -186,6 +207,7 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
                 BaseContext.getInstance().Exit();
                 Intent i = new Intent(getActivity(), LoginActivity.class);
                 startActivity(i);
+                EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.LOGIN_FAILURE));
             }
 
 //            @Override
