@@ -2,15 +2,21 @@ package com.yuanchangyuan.wanbei.ui.fragment;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bigkoo.convenientbanner.ConvenientBanner;
@@ -21,8 +27,10 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
+import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.BaseFragment;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.ui.activity.GoodsDetailsActivity;
 import com.yuanchangyuan.wanbei.ui.adapter.MainListItemAdapter;
 import com.yuanchangyuan.wanbei.ui.adapter.PoPuMenuListAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
@@ -31,7 +39,6 @@ import com.yuanchangyuan.wanbei.ui.bean.bannerBean;
 import com.yuanchangyuan.wanbei.utils.EndlessRecyclerOnScrollListener;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 import com.yuanchangyuan.wanbei.utils.LogUtils;
-import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.DropDownMenu;
 import com.yuanchangyuan.wanbei.view.MaxHeighListView;
 
@@ -57,8 +64,12 @@ public class IndexFragment extends BaseFragment {
     DropDownMenu dropDownMenu;
     @BindView(R.id.swiperefreshlayout)
     SwipeRefreshLayout swiperefreshlayout;
-    //    private ConvenientBanner kanner;
+    @BindView(R.id.edit_search)
+    EditText edit_search;
+    @BindView(R.id.iv_clear)
+    ImageView iv_clear;
     List<bannerBean> list = new ArrayList<>();
+    List<GoodsListBean> adList = new ArrayList<>();
     //    private DropDownMenu dropDownMenu;
     //筛选标题list
     private List<String> types = new ArrayList<>();
@@ -73,6 +84,7 @@ public class IndexFragment extends BaseFragment {
     private Call<List<GoodsFilterBean>> shopsCall;
     private Call<List<GoodsFilterBean>> typesCall;
     private Call<List<GoodsListBean>> goodsListCall;
+    private Call<List<GoodsListBean>> adListCall;
 
 
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -80,6 +92,7 @@ public class IndexFragment extends BaseFragment {
     //筛选的关键字
     private String goodstype;
     private String shop;
+    private String keyWord;
 
     @Override
     protected int getContentViewLayoutId() {
@@ -105,9 +118,8 @@ public class IndexFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 getList();
+                getAdList();
                 LogUtils.e("onRefresh", "刷新数据~");
-//                UIUtil.showToast("刷新数据");
-//                        adapter.addItem(newDatas);
 
 
             }
@@ -122,28 +134,43 @@ public class IndexFragment extends BaseFragment {
         sf_listview.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int currentPage) {
-                loadData();
-                UIUtil.showToast("加载更多");
+//                getList();
+//                UIUtil.showToast("加载更多");
+            }
+        });
+        listAdapter = new MainListItemAdapter(getActivity());
+        sf_listview.setAdapter(listAdapter);
+        edit_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                keyWord = edit_search.getText().toString();
+                getList();
             }
         });
 
-
-        //死数据
-        bannerBean bannerBean = new bannerBean();
-        bannerBean.setImage("http://www.fondos7.net/recorte/eeb11484f517b67adf866b65c26a27d7/lindos-cachorros_800x600.jpg");
-        list.add(bannerBean);
-        list.add(bannerBean);
-        list.add(bannerBean);
-        //初始化广告栏
-        initAD(list);
-        //
-        listAdapter = new MainListItemAdapter(getActivity());
-
-        sf_listview.setAdapter(listAdapter);
+        iv_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                edit_search.setText("");
+//                keyWord = "";
+//                getList();
+            }
+        });
     }
 
     @Override
     protected void loadData() {
+        getAdList();
         getList();
     }
 
@@ -162,10 +189,57 @@ public class IndexFragment extends BaseFragment {
 
     }
 
+    private void getAdList() {
+        String userId = "";
+        list.clear();
+        adList.clear();
+        if (BaseContext.getInstance().getUserInfo() != null) {
+            userId = BaseContext.getInstance().getUserInfo().userId;
+        }
+        adListCall = RestAdapterManager.getApi().getAdList(userId);
+        adListCall.enqueue(new JyCallBack<List<GoodsListBean>>() {
+            @Override
+            public void onSuccess(Call<List<GoodsListBean>> call, Response<List<GoodsListBean>> response) {
+                //初始化广告栏
+                if (response != null && response.body() != null) {
+                    adList.addAll(response.body());
+                    for (int i = 0; i < adList.size(); i++) {
+                        bannerBean bannerBean = new bannerBean();
+                        bannerBean.setImage(adList.get(i).getGoodsImg());
+                        list.add(bannerBean);
+                    }
+                }
+                if (list.size() > 0) {
+                    kanner.setVisibility(View.VISIBLE);
+                    initAD(list);
+                } else {
+                    kanner.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onError(Call<List<GoodsListBean>> call, Throwable t) {
+                kanner.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(Call<List<GoodsListBean>> call, Response<List<GoodsListBean>> response) {
+                kanner.setVisibility(View.GONE);
+            }
+        });
+    }
+
     private void getList() {
         Map<String, String> map = new HashMap<>();
         map.put("shop", shop);
         map.put("goodstype", goodstype);
+        if (!TextUtils.isEmpty(keyWord)) {
+
+            map.put("name", keyWord);
+        }
+        if (BaseContext.getInstance().getUserInfo() != null) {
+            map.put("userId", BaseContext.getInstance().getUserInfo().userId);
+        }
         goodsListCall = RestAdapterManager.getApi().getGoodsList(map);
         goodsListCall.enqueue(new JyCallBack<List<GoodsListBean>>() {
             @Override
@@ -360,13 +434,32 @@ public class IndexFragment extends BaseFragment {
         kanner.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-//                int[] startingLocation = new int[2];
-//                v.getLocationOnScreen(startingLocation);
-//                startingLocation[0] += v.getWidth() / 2;
+                Intent intent = new Intent(getActivity(), GoodsDetailsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("detail", adList.get(position));
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 //增加headview
 //        sf_listview.addHeaderView(header);
 //        sf_listview.add
+    }
+
+    @Override
+    public void onDestroy() {
+        if (adListCall != null) {
+            adListCall.cancel();
+        }
+        if (shopsCall != null) {
+            shopsCall.cancel();
+        }
+        if (typesCall != null) {
+            typesCall.cancel();
+        }
+        if (goodsListCall != null) {
+            goodsListCall.cancel();
+        }
+        super.onDestroy();
     }
 }

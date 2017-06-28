@@ -121,8 +121,18 @@ public interface JyApi {
     @POST("/resource/user/userAuth")
     Call<String> commitRealName(@Body Map<String, String> map);
 
-
+    /**
+     * 获取会员登记信息
+     *
+     * @return
+     */
     @GET("/resource/viptype/getAllList")
     Call<List<MemberRankBean>> getMemberRank();
 
+    /**
+     * 广告位数据
+     *
+     */
+    @GET("/resource/goods/adList")
+    Call<List<GoodsListBean>> getAdList(@Query("userId") String userId);
 }
