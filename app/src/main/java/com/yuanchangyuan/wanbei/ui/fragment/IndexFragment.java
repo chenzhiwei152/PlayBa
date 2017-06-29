@@ -18,6 +18,8 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -68,6 +70,12 @@ public class IndexFragment extends BaseFragment {
     EditText edit_search;
     @BindView(R.id.iv_clear)
     ImageView iv_clear;
+    @BindView(R.id.ll_empty)
+    LinearLayout ll_empty;
+    @BindView(R.id.tv_no_data)
+    TextView tv_no_data;
+
+
     List<bannerBean> list = new ArrayList<>();
     List<GoodsListBean> adList = new ArrayList<>();
     //    private DropDownMenu dropDownMenu;
@@ -120,8 +128,6 @@ public class IndexFragment extends BaseFragment {
                 getList();
                 getAdList();
                 LogUtils.e("onRefresh", "刷新数据~");
-
-
             }
         });
         sf_listview.setOnScrollChangeListener(new View.OnScrollChangeListener() {
@@ -247,9 +253,20 @@ public class IndexFragment extends BaseFragment {
                 swiperefreshlayout.setRefreshing(false);
                 if (response != null && response.body() != null) {
                     if (response.body().size() > 0) {
+                        ll_empty.setVisibility(View.GONE);
+                        sf_listview.setVisibility(View.VISIBLE);
                         listAdapter.ClearData();
                         listAdapter.addList(response.body());
                     } else {
+                        if (!TextUtils.isEmpty(keyWord)) {
+                            //搜索数据为空
+                            tv_no_data.setText("没有“" + keyWord + "”的搜索结果");
+                            ll_empty.setVisibility(View.VISIBLE);
+                            sf_listview.setVisibility(View.GONE);
+                        } else {
+                            ll_empty.setVisibility(View.GONE);
+                            sf_listview.setVisibility(View.VISIBLE);
+                        }
                         listAdapter.ClearData();
                     }
 

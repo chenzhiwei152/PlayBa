@@ -95,7 +95,6 @@
 
                         <RatingBar
                             android:id="@+id/rb_rank"
-                            style="?android:attr/ratingBarStyleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignBaseline="@+id/tv_member"
@@ -103,7 +102,8 @@
                             android:layout_marginLeft="10dp"
                             android:layout_toRightOf="@+id/tv_member"
                             android:numStars="5"
-                            android:rating="0" />
+                            style="@style/roomRatingBar"
+                            android:rating="5" />
                     </RelativeLayout>
 
                 </LinearLayout>

@@ -19,9 +19,8 @@
             android:id="@+id/edit_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
-            android:textColor="@color/color_eeeeee"
-            android:background="@drawable/bg_bbb_ffd2b2" />
+            android:background="@drawable/bg_bbb_ffd2b2"
+            android:paddingLeft="25dp" />
 
         <ImageView
             android:id="@+id/iv_search"
@@ -66,6 +65,30 @@
 
                 </android.support.v7.widget.RecyclerView>
 
+                <LinearLayout
+                    android:id="@+id/ll_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:src="@mipmap/ic_empty" />
+
+                    <TextView
+                        android:id="@+id/tv_no_data"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:gravity="center" />
+
+                </LinearLayout>
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>

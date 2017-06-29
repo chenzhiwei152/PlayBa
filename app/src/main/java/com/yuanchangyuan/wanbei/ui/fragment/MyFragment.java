@@ -97,11 +97,12 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
             rl_quit_login.setVisibility(View.VISIBLE);
             tv_user_name.setText(BaseContext.getInstance().getUserInfo().name);
             rb_rank.setNumStars(BaseContext.getInstance().getUserInfo().vipgrade);
+            rb_rank.setVisibility(View.VISIBLE);
             ImageLoadedrManager.getInstance().display(getActivity(), BaseContext.getInstance().getUserInfo().headimg, ivHead, R.mipmap.ic_head_default, R.mipmap.ic_head_default);
         } else {
             rl_quit_login.setVisibility(View.GONE);
             tv_user_name.setText("");
-            rb_rank.setNumStars(0);
+            rb_rank.setVisibility(View.GONE);
 //            ImageLoadedrManager.getInstance().display(getActivity(), "", ivHead, R.mipmap.ic_head_default, R.mipmap.ic_head_default);
             ivHead.setImageResource(R.mipmap.ic_head_default);
         }
@@ -204,10 +205,13 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         DialogUtils.showOrderCancelMsg(getActivity(), "确定要退出登录吗？", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BaseContext.getInstance().Exit();
-                Intent i = new Intent(getActivity(), LoginActivity.class);
-                startActivity(i);
-                EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.LOGIN_FAILURE));
+                if (view.getTag().equals("确定")) {
+                    BaseContext.getInstance().Exit();
+                    Intent i = new Intent(getActivity(), LoginActivity.class);
+                    startActivity(i);
+                    EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.LOGIN_FAILURE));
+                }
+
             }
 
 //            @Override

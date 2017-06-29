@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -21,6 +22,9 @@ import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.ui.utils.login.LoginApi;
+import com.yuanchangyuan.wanbei.ui.utils.login.OnLoginListener;
+import com.yuanchangyuan.wanbei.ui.utils.login.UserInfo;
 import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
 import com.yuanchangyuan.wanbei.utils.NetUtil;
 import com.yuanchangyuan.wanbei.utils.TelephoneUtils;
@@ -34,16 +38,21 @@ import java.util.HashMap;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.wechat.friends.Wechat;
 import retrofit2.Call;
 import retrofit2.Response;
 
 
 /**
  * Created by chen.zhiwei on 2016/7/14.
- * 注册第一步
+ * 注册
  */
-public class RegisterActivity extends BaseActivity {
-
+public class RegisterActivity extends BaseActivity implements
+        View.OnClickListener {
     @BindView(R.id.user_name)
     CleanableEditText etPhone;
     @BindView(R.id.et_check_code)
@@ -68,6 +77,14 @@ public class RegisterActivity extends BaseActivity {
     CleanableEditText user_nick_name;
     @BindView(R.id.user_password)
     CleanableEditText user_password;
+    @BindView(R.id.iv_weixin)
+    ImageView iv_weixin;
+    @BindView(R.id.iv_qq)
+    ImageView iv_qq;
+    @BindView(R.id.iv_sina)
+    ImageView iv_sina;
+
+
     CountDownTimer timer;
 
     boolean isCodeSended = false;
@@ -96,6 +113,9 @@ public class RegisterActivity extends BaseActivity {
                 tvGetCode.setEnabled(true);
             }
         };
+        iv_sina.setOnClickListener(this);
+        iv_weixin.setOnClickListener(this);
+        iv_qq.setOnClickListener(this);
     }
 
     @Override
@@ -285,8 +305,25 @@ public class RegisterActivity extends BaseActivity {
             UIUtil.showToast("网络连接失败，请检查您的网络");
             return;
         }
-        final String tel = etPhone.getText().toString();
-        final String code = etCode.getText().toString();
+        if (TextUtils.isEmpty(etPhone.getText())) {
+            UIUtil.showToast("手机号不能为空");
+            return;
+        }
+        if (TextUtils.isEmpty(etCode.getText())) {
+            UIUtil.showToast("验证码不能为空");
+            return;
+        }
+        if (TextUtils.isEmpty(user_nick_name.getText())) {
+            UIUtil.showToast("昵称不能为空");
+            return;
+        }
+        if (TextUtils.isEmpty(user_password.getText())) {
+            UIUtil.showToast("密码不能为空");
+            return;
+        }
+
+//        final String tel = etPhone.getText().toString();
+//        final String code = etCode.getText().toString();
         HashMap<String, String> map = new HashMap<>();
 //        "phone": "13691525924",
 //                "checkCode": "5924",
@@ -360,4 +397,54 @@ public class RegisterActivity extends BaseActivity {
             }
         }
     }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_weixin:
+                //微信登录
+                //测试时，需要打包签名；sample测试时，用项目里面的demokey.keystore
+                //打包签名apk,然后才能产生微信的登录
+
+                Platform wechat = ShareSDK.getPlatform(Wechat.NAME);
+                if (wechat.isClientValid()) {
+
+                    login(wechat.getName());
+                } else {
+                    UIUtil.showToast("未安装微信");
+                }
+                break;
+            case R.id.iv_qq:
+                Platform qq = ShareSDK.getPlatform(QQ.NAME);
+                login(qq.getName());
+                break;
+            case R.id.iv_sina:
+                //新浪微博
+                Platform sina = ShareSDK.getPlatform(SinaWeibo.NAME);
+                login(sina.getName());
+                break;
+
+        }
+    }
+
+    private void login(String platformName) {
+        LoginApi api = new LoginApi();
+        //设置登陆的平台后执行登陆的方法
+        api.setPlatform(platformName);
+        api.setOnLoginListener(new OnLoginListener() {
+            public boolean onLogin(String platform, HashMap<String, Object> res) {
+                // 在这个方法填写尝试的代码，返回true表示还不能登录，需要注册
+                // 此处全部给回需要注册
+                return true;
+            }
+
+            public boolean onRegister(UserInfo info) {
+                // 填写处理注册信息的代码，返回true表示数据合法，注册页面可以关闭
+                return true;
+            }
+        });
+        api.login(this);
+    }
+
+
 }

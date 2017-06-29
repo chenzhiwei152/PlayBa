@@ -93,7 +93,12 @@ public class MyMemberRankActivity extends BaseActivity {
         if (BaseContext.getInstance().getUserInfo() != null) {
 
             tv_payed_deposit.setText("￥" + BaseContext.getInstance().getUserInfo().deposit);
-            rb_rank.setNumStars(BaseContext.getInstance().getUserInfo().vipgrade);
+            if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
+                rb_rank.setNumStars(BaseContext.getInstance().getUserInfo().vipgrade);
+                rb_rank.setVisibility(View.VISIBLE);
+            } else {
+                rb_rank.setVisibility(View.GONE);
+            }
             tv_commit_time.setText(BaseContext.getInstance().getUserInfo().paytime);
             tv_effective_time.setText(BaseContext.getInstance().getUserInfo().endtime);
         }

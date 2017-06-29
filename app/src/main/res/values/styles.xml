@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="Custom_Progress" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
@@ -29,11 +30,13 @@
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
         <item name="android:backgroundDimEnabled">true</item>
     </style>
+
     <style name="view_line_width_eeeeee">
         <item name="android:layout_height">0.7dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">#eeeeee</item>
     </style>
+
     <style name="btn_blue_btn">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">40dp</item>
@@ -42,6 +45,7 @@
         <item name="android:textColor">@color/text_color_enable_selecor</item>
         <item name="android:background">@drawable/btn_blue_selector</item>
     </style>
+
     <style name="clearEditText_userName">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
@@ -55,6 +59,7 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:background">@drawable/bg_bbb_4</item>
     </style>
+
     <style name="Theme.AppStartLoadTranslucent" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
@@ -79,4 +84,25 @@
         <item name="android:windowEnterAnimation">@anim/popupwindow_show_anim</item>
         <item name="android:windowExitAnimation">@anim/popupwindow_hidden_anim</item>
     </style>
+
+    <style name="roomRatingBar" parent="@android:style/Widget.RatingBar">
+
+        <item name="android:progressDrawable">@drawable/ratingbar_drawable</item>
+
+        <item name="android:minHeight">10dip</item>
+
+        <item name="android:maxHeight">48dip</item>
+
+    </style>
+    <!-- dialog -->
+    <style name="CommonDialog" parent="@android:style/Theme.Dialog">
+        <!--  <item name="android:windowBackground">@drawable/smssdk_dialog_bg</item> -->
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <!-- white dialog -->
+    <style name="WhiteDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@color/color_ffffff</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>
