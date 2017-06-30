@@ -17,6 +17,7 @@ public class BaseContext extends Application {
     private static BaseContext instance;
     //用户信息
     public static UserInfoBean userInfo;
+    public static int type = 0;//照片选择，分为最多九张和只选一张,1代表选择一张，其他九张
 //    private ResponseBodyBeanDao userInfoDao;
 //    private DaoMaster.DevOpenHelper mHelper;
 //    private SQLiteDatabase db;

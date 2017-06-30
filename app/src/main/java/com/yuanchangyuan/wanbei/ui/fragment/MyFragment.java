@@ -95,9 +95,13 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
     private void setUserInfo() {
         if (BaseContext.getInstance().getUserInfo() != null) {
             rl_quit_login.setVisibility(View.VISIBLE);
-            tv_user_name.setText(BaseContext.getInstance().getUserInfo().name);
-            rb_rank.setNumStars(BaseContext.getInstance().getUserInfo().vipgrade);
-            rb_rank.setVisibility(View.VISIBLE);
+            tv_user_name.setText(BaseContext.getInstance().getUserInfo().nickname);
+            if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
+                rb_rank.setNumStars(BaseContext.getInstance().getUserInfo().vipgrade);
+                rb_rank.setVisibility(View.VISIBLE);
+            } else {
+                rb_rank.setVisibility(View.GONE);
+            }
             ImageLoadedrManager.getInstance().display(getActivity(), BaseContext.getInstance().getUserInfo().headimg, ivHead, R.mipmap.ic_head_default, R.mipmap.ic_head_default);
         } else {
             rl_quit_login.setVisibility(View.GONE);

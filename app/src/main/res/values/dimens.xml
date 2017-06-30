@@ -84,4 +84,6 @@
     <!--欢迎小球-->
     <dimen name="guide_point_bottom_margin">14dp</dimen>
     <dimen name="guide_point_padding">8dp</dimen>
+    <!-- 选项文字大小 需要配合 bools.xml 的 pickerview_customTextSize 为 true 才有效果-->
+    <dimen name="pickerview_textsize">20sp</dimen>
 </resources>

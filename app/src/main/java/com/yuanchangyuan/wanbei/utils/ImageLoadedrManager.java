@@ -36,7 +36,15 @@ public class ImageLoadedrManager {
         return instance;
     }
 
-
+    /**
+     * 加载本地图片，url不作处理
+     * @param context
+     * @param url
+     * @param imageView
+     */
+    public void displayNoFilter(Context context, String url, ImageView imageView) {
+        Glide.with(context).load(url).placeholder(R.mipmap.ic_default).error(R.mipmap.ic_default).into(imageView);
+    }
     public void display(Context context, String url, ImageView imageView) {
         url= compatibleUrl(url);
         Glide.with(context).load(url).placeholder(R.mipmap.ic_default).error(R.mipmap.ic_default).into(imageView);

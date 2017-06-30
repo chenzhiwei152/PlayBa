@@ -22,6 +22,7 @@ import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.ui.utils.LoginUtils;
 import com.yuanchangyuan.wanbei.ui.utils.login.LoginApi;
 import com.yuanchangyuan.wanbei.ui.utils.login.OnLoginListener;
 import com.yuanchangyuan.wanbei.ui.utils.login.UserInfo;
@@ -439,6 +440,7 @@ public class RegisterActivity extends BaseActivity implements
             }
 
             public boolean onRegister(UserInfo info) {
+                LoginUtils.thirdLogin(RegisterActivity.this, info);
                 // 填写处理注册信息的代码，返回true表示数据合法，注册页面可以关闭
                 return true;
             }

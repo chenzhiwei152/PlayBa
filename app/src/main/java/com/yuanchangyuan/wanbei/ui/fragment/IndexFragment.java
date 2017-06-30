@@ -31,12 +31,15 @@ import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.BaseFragment;
+import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.activity.GoodsDetailsActivity;
 import com.yuanchangyuan.wanbei.ui.adapter.MainListItemAdapter;
 import com.yuanchangyuan.wanbei.ui.adapter.PoPuMenuListAdapter;
+import com.yuanchangyuan.wanbei.ui.adapter.PoPuMenuListShopAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
+import com.yuanchangyuan.wanbei.ui.bean.ShopsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.bannerBean;
 import com.yuanchangyuan.wanbei.utils.EndlessRecyclerOnScrollListener;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
@@ -44,6 +47,7 @@ import com.yuanchangyuan.wanbei.utils.LogUtils;
 import com.yuanchangyuan.wanbei.view.DropDownMenu;
 import com.yuanchangyuan.wanbei.view.MaxHeighListView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,12 +88,13 @@ public class IndexFragment extends BaseFragment {
     //筛选view的list
     private List<View> popupViews = new ArrayList<>();
     //    private List<SelectedBean> demands = new ArrayList<>();
-    private List<GoodsFilterBean> shopsList = new ArrayList<>();
+    private List<ShopsFilterBean> shopsList = new ArrayList<>();
     private List<GoodsFilterBean> typesList = new ArrayList<>();
-    private PoPuMenuListAdapter mMenuAdapter2;
+    private PoPuMenuListShopAdapter mMenuAdapter2;
+    private PoPuMenuListAdapter mMenuAdapter;
     private MainListItemAdapter listAdapter;
 
-    private Call<List<GoodsFilterBean>> shopsCall;
+    private Call<List<ShopsFilterBean>> shopsCall;
     private Call<List<GoodsFilterBean>> typesCall;
     private Call<List<GoodsListBean>> goodsListCall;
     private Call<List<GoodsListBean>> adListCall;
@@ -177,6 +182,7 @@ public class IndexFragment extends BaseFragment {
     @Override
     protected void loadData() {
         getAdList();
+        getFilterList();
         getList();
     }
 
@@ -187,16 +193,21 @@ public class IndexFragment extends BaseFragment {
 
     @Override
     public boolean isRegistEventBus() {
-        return false;
+        return true;
     }
 
     @Override
     public void onMsgEvent(EventBusCenter eventBusCenter) {
+        if (eventBusCenter != null) {
+            if (eventBusCenter.getEvenCode() == Constants.LOGIN_FAILURE||eventBusCenter.getEvenCode() == Constants.LOGIN_SUCCESS) {
+                loadData();
+            }
+        }
 
     }
 
     private void getAdList() {
-        String userId = "";
+        String userId = "0";
         list.clear();
         adList.clear();
         if (BaseContext.getInstance().getUserInfo() != null) {
@@ -245,6 +256,8 @@ public class IndexFragment extends BaseFragment {
         }
         if (BaseContext.getInstance().getUserInfo() != null) {
             map.put("userId", BaseContext.getInstance().getUserInfo().userId);
+        } else {
+            map.put("userId", "0");
         }
         goodsListCall = RestAdapterManager.getApi().getGoodsList(map);
         goodsListCall.enqueue(new JyCallBack<List<GoodsListBean>>() {
@@ -298,8 +311,8 @@ public class IndexFragment extends BaseFragment {
         final MaxHeighListView sortView = new MaxHeighListView(getActivity());
         sortView.setDividerHeight(0);
         sortView.setMaxHeight(199);
-        mMenuAdapter2 = new PoPuMenuListAdapter(getActivity(), typesList);
-        sortView.setAdapter(mMenuAdapter2);
+        mMenuAdapter = new PoPuMenuListAdapter(getActivity(), typesList);
+        sortView.setAdapter(mMenuAdapter);
         sortView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -316,12 +329,12 @@ public class IndexFragment extends BaseFragment {
         final MaxHeighListView softView = new MaxHeighListView(getActivity());
         softView.setDividerHeight(0);
         softView.setMaxHeight(199);
-        mMenuAdapter2 = new PoPuMenuListAdapter(getActivity(), shopsList);
+        mMenuAdapter2 = new PoPuMenuListShopAdapter(getActivity(), shopsList);
         softView.setAdapter(mMenuAdapter2);
         softView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                dropDownMenu.setTabText(shopsList.get(position).getTypename());
+                dropDownMenu.setTabText(shopsList.get(position).getShopname());
                 dropDownMenu.closeMenu();
                 shop = shopsList.get(position).getId() + "";
                 getList();
@@ -334,15 +347,15 @@ public class IndexFragment extends BaseFragment {
 
     private void getFilterList() {
         shopsCall = RestAdapterManager.getApi().getAllFilterShops();
-        shopsCall.enqueue(new JyCallBack<List<GoodsFilterBean>>() {
+        shopsCall.enqueue(new JyCallBack<List<ShopsFilterBean>>() {
             @Override
-            public void onSuccess(Call<List<GoodsFilterBean>> call, Response<List<GoodsFilterBean>> response) {
+            public void onSuccess(Call<List<ShopsFilterBean>> call, Response<List<ShopsFilterBean>> response) {
 
                 if (response != null && response.body() != null) {
 
                     shopsList.clear();
                     shopsList.addAll(response.body());
-                    shopsList.add(0, new GoodsFilterBean(0, "全部"));
+                    shopsList.add(0, new ShopsFilterBean(0, "全部"));
                     typesCall = RestAdapterManager.getApi().getAllFilterType();
                     typesCall.enqueue(new JyCallBack<List<GoodsFilterBean>>() {
                         @Override
@@ -357,12 +370,16 @@ public class IndexFragment extends BaseFragment {
 
                         @Override
                         public void onError(Call<List<GoodsFilterBean>> call, Throwable t) {
-
+                            LogUtils.e(t.getMessage());
                         }
 
                         @Override
                         public void onError(Call<List<GoodsFilterBean>> call, Response<List<GoodsFilterBean>> response) {
-
+                            try {
+                                LogUtils.e(response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 }
@@ -371,13 +388,17 @@ public class IndexFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Call<List<GoodsFilterBean>> call, Throwable t) {
-
+            public void onError(Call<List<ShopsFilterBean>> call, Throwable t) {
+                LogUtils.e(t.getMessage());
             }
 
             @Override
-            public void onError(Call<List<GoodsFilterBean>> call, Response<List<GoodsFilterBean>> response) {
-
+            public void onError(Call<List<ShopsFilterBean>> call, Response<List<ShopsFilterBean>> response) {
+                try {
+                    LogUtils.e(response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -431,7 +452,7 @@ public class IndexFragment extends BaseFragment {
     private void initAD(final List<bannerBean> list) {
 //        View header = LayoutInflater.from(getActivity()).inflate(R.layout.kanner_index, sf_listview, false);//headview,广告栏
 
-        getFilterList();
+
 //自定义你的Holder，实现更多复杂的界面，不一定是图片翻页，其他任何控件翻页亦可。
         kanner.setPages(
                 new CBViewHolderCreator<LocalImageHolderView>() {

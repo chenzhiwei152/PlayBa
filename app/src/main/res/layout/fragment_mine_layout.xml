@@ -101,7 +101,7 @@
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="10dp"
                             android:layout_toRightOf="@+id/tv_member"
-                            android:numStars="5"
+                            android:numStars="1"
                             style="@style/roomRatingBar"
                             android:rating="5" />
                     </RelativeLayout>

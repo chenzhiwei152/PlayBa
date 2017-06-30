@@ -21,12 +21,16 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
+import com.yuanchangyuan.wanbei.api.JyCallBack;
+import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.BaseContext;
+import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.adapter.GoodsDetailItemAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.bannerBean;
+import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
@@ -34,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by chen.zhiwei on 2017-6-21.
@@ -58,6 +64,8 @@ public class GoodsDetailsActivity extends BaseActivity {
     private TextView tv_member_price;
     private TextView tv_member_price_title;
     private TextView tv_price;
+    private Call<GoodsListBean> call;
+    private boolean isNewData = true;
 
     @Override
     public int getContentViewLayoutId() {
@@ -98,17 +106,55 @@ public class GoodsDetailsActivity extends BaseActivity {
 
     @Override
     public boolean isRegistEventBus() {
-        return false;
+        return true;
     }
 
     @Override
     public void onMsgEvent(EventBusCenter eventBusCenter) {
-
+        if (eventBusCenter != null) {
+            if (eventBusCenter.getEvenCode() == Constants.LOGIN_SUCCESS) {
+                isNewData = false;
+                getGoodsDetail();
+            }
+        }
     }
 
     @Override
     protected View isNeedLec() {
         return null;
+    }
+
+    private void getGoodsDetail() {
+        if (goodsBean == null) {
+            return;
+        }
+        DialogUtils.showDialog(this, "加载中", false);
+        if (BaseContext.getInstance().getUserInfo() != null) {
+            call = RestAdapterManager.getApi().getGoodsDetail(goodsBean.getId() + "", BaseContext.getInstance().getUserInfo().userId);
+        } else {
+            call = RestAdapterManager.getApi().getGoodsDetail(goodsBean.getId() + "", "");
+        }
+        call.enqueue(new JyCallBack<GoodsListBean>() {
+            @Override
+            public void onSuccess(Call<GoodsListBean> call, Response<GoodsListBean> response) {
+                DialogUtils.closeDialog();
+                if (response != null && response.body() != null) {
+                    goodsBean = response.body();
+                    setData();
+                    isNewData = true;
+                }
+            }
+
+            @Override
+            public void onError(Call<GoodsListBean> call, Throwable t) {
+                DialogUtils.closeDialog();
+            }
+
+            @Override
+            public void onError(Call<GoodsListBean> call, Response<GoodsListBean> response) {
+                DialogUtils.closeDialog();
+            }
+        });
     }
 
     private void setData() {
@@ -213,9 +259,12 @@ public class GoodsDetailsActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 if (BaseContext.getInstance().getUserInfo() == null) {
-                    new Intent(GoodsDetailsActivity.this, LoginActivity.class);
+                    startActivity(new Intent(GoodsDetailsActivity.this, LoginActivity.class));
                 } else {
-
+                    if (!isNewData) {
+                        getGoodsDetail();
+                        return;
+                    }
                     Intent intent = new Intent(GoodsDetailsActivity.this, CommitOrderActivity.class);
                     Bundle bundle = new Bundle();
 
@@ -225,7 +274,7 @@ public class GoodsDetailsActivity extends BaseActivity {
                             bundle.putString("type", "rent");
 //                            bundle.putInt("price", goodsBean.getVipprice());
 //                            bundle.putString("id", goodsBean.getId() + "");
-                            bundle.putSerializable("detail",goodsBean);
+                            bundle.putSerializable("detail", goodsBean);
                             intent.putExtras(bundle);
                             startActivity(intent);
                         }
@@ -234,7 +283,7 @@ public class GoodsDetailsActivity extends BaseActivity {
                             bundle.putString("type", "sale");
 //                            bundle.putInt("price", goodsBean.getPrice());
 //                            bundle.putString("id", goodsBean.getId() + "");
-                            bundle.putSerializable("detail",goodsBean);
+                            bundle.putSerializable("detail", goodsBean);
                             intent.putExtras(bundle);
                             startActivity(intent);
                         }
@@ -305,5 +354,11 @@ public class GoodsDetailsActivity extends BaseActivity {
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        if (call != null) {
+            call.cancel();
+        }
+        super.onDestroy();
+    }
 }

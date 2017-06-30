@@ -158,6 +158,11 @@ public class ShoppingAddressActivity extends BaseActivity {
                 if (response != null && response.body() != null) {
                     shoppingAddressListAdapter.ClearData();
                     shoppingAddressListAdapter.addList(response.body());
+                    if (response.body().size() > 0) {
+                        mCollectView.setVisibility(View.GONE);
+                    } else {
+                        mCollectView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -206,7 +211,7 @@ public class ShoppingAddressActivity extends BaseActivity {
             @Override
             public void onError(Call<ErrorBean> call, Response<ErrorBean> response) {
                 try {
-                    ErrorMessageUtils.taostErrorMessage(ShoppingAddressActivity.this,response.errorBody().string(),"");
+                    ErrorMessageUtils.taostErrorMessage(ShoppingAddressActivity.this, response.errorBody().string(), "");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -30,7 +30,7 @@ public class MyDialog extends Dialog {
 		setContentView(layout);
 		Window window = getWindow();
 		WindowManager.LayoutParams params = window.getAttributes();
-		params.gravity = Gravity.CENTER;
+		params.gravity = Gravity.BOTTOM;
 		window.setAttributes(params);
 	}
 }

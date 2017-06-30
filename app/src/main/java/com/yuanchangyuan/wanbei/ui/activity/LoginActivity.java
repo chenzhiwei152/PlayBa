@@ -209,7 +209,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onMsgEvent(EventBusCenter eventCenter) {
         if (null != eventCenter) {
-            if (Constants.SHOW_CHECK_CODE == eventCenter.getEvenCode()) {
+            if (Constants.LOGIN_SUCCESS == eventCenter.getEvenCode()) {
+                finish();
             }
 
         }

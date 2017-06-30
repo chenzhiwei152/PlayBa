@@ -9,6 +9,9 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.yuanchangyuan.wanbei.R;
+import com.yuanchangyuan.wanbei.utils.timepicker.TimePickerView;
+
+import java.util.Date;
 
 /**
  * Created by liu.zhenrong on 2016/5/7.
@@ -142,4 +145,32 @@ public class DialogUtils {
         dialog.show();
     }
 
+    /**
+     * 时间选择器
+     *
+     * @param context
+     * @param listener
+     */
+    private static TimePickerView pvTime;
+
+    public static void showTimePcikerDialog(final Context context, final TimePickerView.OnTimeSelectListener listener) {
+        //时间选择器
+        pvTime = new TimePickerView(context, TimePickerView.Type.YEAR_MONTH_DAY);
+        pvTime.setTime(new Date());
+        pvTime.setCyclic(false);
+        pvTime.setCancelable(true);
+        pvTime.setTitle("请选择日期");
+        //时间选择后回调
+        pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                if (listener != null) {
+                    listener.onTimeSelect(date);
+                    pvTime.dismiss();
+                }
+            }
+        });
+        pvTime.show();
+    }
 }

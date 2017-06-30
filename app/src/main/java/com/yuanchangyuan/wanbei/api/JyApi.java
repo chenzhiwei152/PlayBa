@@ -6,15 +6,19 @@ import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.MemberRankBean;
 import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
+import com.yuanchangyuan.wanbei.ui.bean.ShopsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
 
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 
@@ -30,6 +34,12 @@ public interface JyApi {
      */
     @POST("/resource/user/login")
     Call<UserInfoBean> login(@Body Map<String, String> map);
+
+    /**
+     * 第三方登录
+     */
+    @POST("/resource/user/userAuthLogin")
+    Call<UserInfoBean> authLogin(@Body Map<String, String> map);
 
     /**
      * 注册
@@ -101,7 +111,7 @@ public interface JyApi {
      * @return
      */
     @POST("/resource/shop/getAllList")
-    Call<List<GoodsFilterBean>> getAllFilterShops();
+    Call<List<ShopsFilterBean>> getAllFilterShops();
 
     /**
      * 获取首页列表
@@ -131,8 +141,36 @@ public interface JyApi {
 
     /**
      * 广告位数据
-     *
      */
     @GET("/resource/goods/adList")
     Call<List<GoodsListBean>> getAdList(@Query("userId") String userId);
+
+    /**
+     * 上传图片
+     *
+     * @param file
+     * @return
+     */
+    @Multipart
+    @POST("/sys/uploadFile")
+    Call<String> uploadFile(@Part MultipartBody.Part file);
+
+    /**
+     * 上传个人信息
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/user/userUpdate")
+    Call<String> upLoadInfo(@Body Map<String, String> map);
+
+    /**
+     * 获取商品详细信息
+     *
+     * @param id
+     * @param userId
+     * @return
+     */
+    @GET("/resource/goods/getDetail")
+    Call<GoodsListBean> getGoodsDetail(@Query("id") String id, @Query("userId") String userId);
 }

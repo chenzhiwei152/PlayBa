@@ -44,15 +44,20 @@
         android:paddingTop="10dp">
 
         <TextView
+            android:id="@+id/tv_sick_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="昵称" />
 
-        <TextView
+        <EditText
             android:id="@+id/tv_sick_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_sick_title"
+            android:background="@null"
+            android:gravity="right"
             android:text="" />
     </RelativeLayout>
 
@@ -71,15 +76,18 @@
         android:paddingTop="10dp">
 
         <TextView
+            android:id="@+id/tv_sex_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="性别" />
 
         <TextView
             android:id="@+id/tv_sex"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/tv_sex_title"
+            android:gravity="right"
             android:text="" />
     </RelativeLayout>
 
@@ -98,6 +106,7 @@
         android:paddingTop="10dp">
 
         <TextView
+            android:id="@+id/tv_birth_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="出生年月" />
@@ -107,7 +116,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/tv_birth_title"
+            android:gravity="right"
             android:text="" />
     </RelativeLayout>
 
+    <Button
+        android:id="@+id/bt_commit"
+        style="@style/btn_blue_btn"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="40dp"
+        android:text="保存" />
 </LinearLayout>
