@@ -23,6 +23,7 @@ import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
 import com.yuanchangyuan.wanbei.ui.index.MainActivity;
 import com.yuanchangyuan.wanbei.ui.utils.LoginUtils;
@@ -89,7 +90,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @BindString(R.string.login)
     String logins;
 
-    Call<UserInfoBean> loginCall;
+    Call<SuperBean<UserInfoBean>> loginCall;
 
     @Override
     public int getContentViewLayoutId() {
@@ -248,45 +249,4 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         win.setAttributes(winParams);
     }
 
-    private void commitlogin() {
-        DialogUtils.showDialog(LoginActivity.this, "登陆...", false);
-        Map<String, String> map = new HashMap<>();
-        map.put("phone", userName.getText().toString().trim());
-        map.put("pwd", passWord.getText().toString().trim());
-        loginCall = RestAdapterManager.getApi().login(map);
-        loginCall.enqueue(new JyCallBack<UserInfoBean>() {
-            @Override
-            public void onSuccess(Call<UserInfoBean> call, Response<UserInfoBean> response) {
-                DialogUtils.closeDialog();
-                if (response != null && response.body() != null) {
-                    BaseContext.getInstance().setUserInfo(response.body());
-                    Timestamp now = new Timestamp(System.currentTimeMillis());
-                    SharePreManager.instance(LoginActivity.this).setLoginTime(now.getTime());
-                    SharePreManager.instance(LoginActivity.this).setUserInfo(response.body());
-
-                    Intent jmActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(jmActivityIntent);
-                    finish();
-                } else {
-                    UIUtil.showToast(response.body().msg);
-                }
-            }
-
-            @Override
-            public void onError(Call<UserInfoBean> call, Throwable t) {
-                UIUtil.showToast("登陆失败~请稍后重试");
-                DialogUtils.closeDialog();
-            }
-
-            @Override
-            public void onError(Call<UserInfoBean> call, Response<UserInfoBean> response) {
-                try {
-                    DialogUtils.closeDialog();
-                    ErrorMessageUtils.taostErrorMessage(LoginActivity.this, response.errorBody().string(), "");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 }

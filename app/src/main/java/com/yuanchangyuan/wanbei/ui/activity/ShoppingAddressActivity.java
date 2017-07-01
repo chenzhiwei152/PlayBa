@@ -25,6 +25,7 @@ import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.bean.ErrorBean;
 import com.yuanchangyuan.wanbei.ui.adapter.ShoppingAddressListAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
+import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.listerner.ShoppingAddressItemOnClickListerner;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
@@ -50,7 +51,7 @@ public class ShoppingAddressActivity extends BaseActivity {
     TitleBar title_view;
     private ShoppingAddressListAdapter shoppingAddressListAdapter;
     private ImageView mCollectView;
-    private Call<List<ShoppingAddressListItemBean>> call;
+    private Call<SuperBean<List<ShoppingAddressListItemBean>>> call;
 
     private Call<ErrorBean> deleteCall;
     private String type;
@@ -150,24 +151,29 @@ public class ShoppingAddressActivity extends BaseActivity {
     private void loadAddressData() {
         DialogUtils.showDialog(ShoppingAddressActivity.this, "加载中", false);
         call = RestAdapterManager.getApi().getAddressList(BaseContext.getInstance().getUserInfo().userId);
-        call.enqueue(new JyCallBack<List<ShoppingAddressListItemBean>>() {
+        call.enqueue(new JyCallBack<SuperBean<List<ShoppingAddressListItemBean>>>() {
             @Override
-            public void onSuccess(Call<List<ShoppingAddressListItemBean>> call, Response<List<ShoppingAddressListItemBean>> response) {
+            public void onSuccess(Call<SuperBean<List<ShoppingAddressListItemBean>>> call, Response<SuperBean<List<ShoppingAddressListItemBean>>> response) {
                 DialogUtils.closeDialog();
                 sf_listview.setOnRefreshComplete();
-                if (response != null && response.body() != null) {
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                     shoppingAddressListAdapter.ClearData();
-                    shoppingAddressListAdapter.addList(response.body());
-                    if (response.body().size() > 0) {
+                    shoppingAddressListAdapter.addList(response.body().getData());
+                    if (response.body().getData().size() > 0) {
                         mCollectView.setVisibility(View.GONE);
                     } else {
                         mCollectView.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    try {
+                        UIUtil.showToast(response.body().getMsg());
+                    } catch (Exception e) {
                     }
                 }
             }
 
             @Override
-            public void onError(Call<List<ShoppingAddressListItemBean>> call, Throwable t) {
+            public void onError(Call<SuperBean<List<ShoppingAddressListItemBean>>> call, Throwable t) {
                 DialogUtils.closeDialog();
                 if (sf_listview != null) {
                     sf_listview.setOnRefreshComplete();
@@ -175,7 +181,7 @@ public class ShoppingAddressActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Call<List<ShoppingAddressListItemBean>> call, Response<List<ShoppingAddressListItemBean>> response) {
+            public void onError(Call<SuperBean<List<ShoppingAddressListItemBean>>> call, Response<SuperBean<List<ShoppingAddressListItemBean>>> response) {
                 DialogUtils.closeDialog();
                 if (sf_listview != null) {
                     sf_listview.setOnRefreshComplete();

@@ -20,9 +20,11 @@ import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.BaseContext;
+import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.adapter.MemberRankItemAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.MemberRankBean;
+import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.TitleBar;
@@ -54,7 +56,7 @@ public class MyMemberRankActivity extends BaseActivity {
     Button bt_go_commit;
     @BindView(R.id.rv_list)
     RecyclerView rv_list;
-    private Call<List<MemberRankBean>> call;
+    private Call<SuperBean<List<MemberRankBean>>> call;
     private MemberRankItemAdapter adapter;
     private List<MemberRankBean> list = new ArrayList<>();
 
@@ -122,27 +124,31 @@ public class MyMemberRankActivity extends BaseActivity {
     private void getMenberRankInfo() {
         DialogUtils.showDialog(MyMemberRankActivity.this, "加载中", false);
         call = RestAdapterManager.getApi().getMemberRank();
-        call.enqueue(new JyCallBack<List<MemberRankBean>>() {
+        call.enqueue(new JyCallBack<SuperBean<List<MemberRankBean>>>() {
             @Override
-            public void onSuccess(Call<List<MemberRankBean>> call, Response<List<MemberRankBean>> response) {
+            public void onSuccess(Call<SuperBean<List<MemberRankBean>>> call, Response<SuperBean<List<MemberRankBean>>> response) {
                 DialogUtils.closeDialog();
-                if (response != null && response.body() != null) {
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                     adapter.ClearData();
-                    adapter.addList(response.body());
-                    list.addAll(response.body());
+                    adapter.addList(response.body().getData());
+                    list.addAll(response.body().getData());
                 } else {
-                    UIUtil.showToast("获取会员信息失败");
+                    try {
+                        UIUtil.showToast(response.body().getMsg());
+                    } catch (Exception e) {
+                    }
+
                 }
             }
 
             @Override
-            public void onError(Call<List<MemberRankBean>> call, Throwable t) {
+            public void onError(Call<SuperBean<List<MemberRankBean>>> call, Throwable t) {
                 UIUtil.showToast("获取会员信息失败");
                 DialogUtils.closeDialog();
             }
 
             @Override
-            public void onError(Call<List<MemberRankBean>> call, Response<List<MemberRankBean>> response) {
+            public void onError(Call<SuperBean<List<MemberRankBean>>> call, Response<SuperBean<List<MemberRankBean>>> response) {
                 UIUtil.showToast("获取会员信息失败");
                 DialogUtils.closeDialog();
             }

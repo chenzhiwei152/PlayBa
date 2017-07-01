@@ -40,10 +40,12 @@ import com.yuanchangyuan.wanbei.ui.adapter.PoPuMenuListShopAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.ShopsFilterBean;
+import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.bean.bannerBean;
 import com.yuanchangyuan.wanbei.utils.EndlessRecyclerOnScrollListener;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 import com.yuanchangyuan.wanbei.utils.LogUtils;
+import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.DropDownMenu;
 import com.yuanchangyuan.wanbei.view.MaxHeighListView;
 
@@ -94,10 +96,10 @@ public class IndexFragment extends BaseFragment {
     private PoPuMenuListAdapter mMenuAdapter;
     private MainListItemAdapter listAdapter;
 
-    private Call<List<ShopsFilterBean>> shopsCall;
-    private Call<List<GoodsFilterBean>> typesCall;
-    private Call<List<GoodsListBean>> goodsListCall;
-    private Call<List<GoodsListBean>> adListCall;
+    private Call<SuperBean<List<ShopsFilterBean>>> shopsCall;
+    private Call<SuperBean<List<GoodsFilterBean>>> typesCall;
+    private Call<SuperBean<List<GoodsListBean>>> goodsListCall;
+    private Call<SuperBean<List<GoodsListBean>>> adListCall;
 
 
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -199,7 +201,7 @@ public class IndexFragment extends BaseFragment {
     @Override
     public void onMsgEvent(EventBusCenter eventBusCenter) {
         if (eventBusCenter != null) {
-            if (eventBusCenter.getEvenCode() == Constants.LOGIN_FAILURE||eventBusCenter.getEvenCode() == Constants.LOGIN_SUCCESS) {
+            if (eventBusCenter.getEvenCode() == Constants.LOGIN_FAILURE || eventBusCenter.getEvenCode() == Constants.LOGIN_SUCCESS) {
                 loadData();
             }
         }
@@ -214,16 +216,22 @@ public class IndexFragment extends BaseFragment {
             userId = BaseContext.getInstance().getUserInfo().userId;
         }
         adListCall = RestAdapterManager.getApi().getAdList(userId);
-        adListCall.enqueue(new JyCallBack<List<GoodsListBean>>() {
+        adListCall.enqueue(new JyCallBack<SuperBean<List<GoodsListBean>>>() {
             @Override
-            public void onSuccess(Call<List<GoodsListBean>> call, Response<List<GoodsListBean>> response) {
+            public void onSuccess(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
                 //初始化广告栏
-                if (response != null && response.body() != null) {
-                    adList.addAll(response.body());
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
+                    adList.addAll(response.body().getData());
                     for (int i = 0; i < adList.size(); i++) {
                         bannerBean bannerBean = new bannerBean();
                         bannerBean.setImage(adList.get(i).getGoodsImg());
                         list.add(bannerBean);
+                    }
+                } else {
+                    try {
+                        UIUtil.showToast(response.body().getMsg());
+                    } catch (Exception E) {
+
                     }
                 }
                 if (list.size() > 0) {
@@ -235,12 +243,12 @@ public class IndexFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Call<List<GoodsListBean>> call, Throwable t) {
+            public void onError(Call<SuperBean<List<GoodsListBean>>> call, Throwable t) {
                 kanner.setVisibility(View.GONE);
             }
 
             @Override
-            public void onError(Call<List<GoodsListBean>> call, Response<List<GoodsListBean>> response) {
+            public void onError(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
                 kanner.setVisibility(View.GONE);
             }
         });
@@ -260,16 +268,16 @@ public class IndexFragment extends BaseFragment {
             map.put("userId", "0");
         }
         goodsListCall = RestAdapterManager.getApi().getGoodsList(map);
-        goodsListCall.enqueue(new JyCallBack<List<GoodsListBean>>() {
+        goodsListCall.enqueue(new JyCallBack<SuperBean<List<GoodsListBean>>>() {
             @Override
-            public void onSuccess(Call<List<GoodsListBean>> call, Response<List<GoodsListBean>> response) {
+            public void onSuccess(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
                 swiperefreshlayout.setRefreshing(false);
-                if (response != null && response.body() != null) {
-                    if (response.body().size() > 0) {
+                if (response != null && response.body() != null&&response.code()==Constants.successCode) {
+                    if (response.body().getData().size() > 0) {
                         ll_empty.setVisibility(View.GONE);
                         sf_listview.setVisibility(View.VISIBLE);
                         listAdapter.ClearData();
-                        listAdapter.addList(response.body());
+                        listAdapter.addList(response.body().getData());
                     } else {
                         if (!TextUtils.isEmpty(keyWord)) {
                             //搜索数据为空
@@ -283,11 +291,15 @@ public class IndexFragment extends BaseFragment {
                         listAdapter.ClearData();
                     }
 
+                }else {
+                    try {
+                        UIUtil.showToast(response.body().getMsg());
+                    }catch (Exception e){}
                 }
             }
 
             @Override
-            public void onError(Call<List<GoodsListBean>> call, Throwable t) {
+            public void onError(Call<SuperBean<List<GoodsListBean>>> call, Throwable t) {
                 if (swiperefreshlayout != null) {
                     swiperefreshlayout.setRefreshing(false);
                 }
@@ -295,7 +307,7 @@ public class IndexFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Call<List<GoodsListBean>> call, Response<List<GoodsListBean>> response) {
+            public void onError(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
                 if (swiperefreshlayout != null) {
                     swiperefreshlayout.setRefreshing(false);
                 }
@@ -347,34 +359,38 @@ public class IndexFragment extends BaseFragment {
 
     private void getFilterList() {
         shopsCall = RestAdapterManager.getApi().getAllFilterShops();
-        shopsCall.enqueue(new JyCallBack<List<ShopsFilterBean>>() {
+        shopsCall.enqueue(new JyCallBack<SuperBean<List<ShopsFilterBean>>>() {
             @Override
-            public void onSuccess(Call<List<ShopsFilterBean>> call, Response<List<ShopsFilterBean>> response) {
+            public void onSuccess(Call<SuperBean<List<ShopsFilterBean>>> call, Response<SuperBean<List<ShopsFilterBean>>> response) {
 
-                if (response != null && response.body() != null) {
+                if (response != null && response.body() != null&&response.body().getCode()==Constants.successCode) {
 
                     shopsList.clear();
-                    shopsList.addAll(response.body());
+                    shopsList.addAll(response.body().getData());
                     shopsList.add(0, new ShopsFilterBean(0, "全部"));
                     typesCall = RestAdapterManager.getApi().getAllFilterType();
-                    typesCall.enqueue(new JyCallBack<List<GoodsFilterBean>>() {
+                    typesCall.enqueue(new JyCallBack<SuperBean<List<GoodsFilterBean>>>() {
                         @Override
-                        public void onSuccess(Call<List<GoodsFilterBean>> call, Response<List<GoodsFilterBean>> response) {
-                            if (response != null && response.body() != null) {
+                        public void onSuccess(Call<SuperBean<List<GoodsFilterBean>>> call, Response<SuperBean<List<GoodsFilterBean>>> response) {
+                            if (response != null && response.body() != null&&response.body().getCode()==Constants.successCode) {
                                 typesList.clear();
-                                typesList.addAll(response.body());
+                                typesList.addAll(response.body().getData());
                                 typesList.add(0, new GoodsFilterBean(0, "全部"));
                                 setFilter();
+                            }else {
+                                try {
+                                    UIUtil.showToast(response.body().getMsg());
+                                }catch (Exception e){}
                             }
                         }
 
                         @Override
-                        public void onError(Call<List<GoodsFilterBean>> call, Throwable t) {
+                        public void onError(Call<SuperBean<List<GoodsFilterBean>>> call, Throwable t) {
                             LogUtils.e(t.getMessage());
                         }
 
                         @Override
-                        public void onError(Call<List<GoodsFilterBean>> call, Response<List<GoodsFilterBean>> response) {
+                        public void onError(Call<SuperBean<List<GoodsFilterBean>>> call, Response<SuperBean<List<GoodsFilterBean>>> response) {
                             try {
                                 LogUtils.e(response.errorBody().string());
                             } catch (IOException e) {
@@ -382,18 +398,22 @@ public class IndexFragment extends BaseFragment {
                             }
                         }
                     });
+                }else {
+                    try {
+                        UIUtil.showToast(response.body().getMsg());
+                    }catch (Exception e){}
                 }
 
 
             }
 
             @Override
-            public void onError(Call<List<ShopsFilterBean>> call, Throwable t) {
+            public void onError(Call<SuperBean<List<ShopsFilterBean>>> call, Throwable t) {
                 LogUtils.e(t.getMessage());
             }
 
             @Override
-            public void onError(Call<List<ShopsFilterBean>> call, Response<List<ShopsFilterBean>> response) {
+            public void onError(Call<SuperBean<List<ShopsFilterBean>>> call, Response<SuperBean<List<ShopsFilterBean>>> response) {
                 try {
                     LogUtils.e(response.errorBody().string());
                 } catch (IOException e) {

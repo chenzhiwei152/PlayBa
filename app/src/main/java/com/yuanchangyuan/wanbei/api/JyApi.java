@@ -7,7 +7,9 @@ import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.MemberRankBean;
 import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
 import com.yuanchangyuan.wanbei.ui.bean.ShopsFilterBean;
+import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
+import com.yuanchangyuan.wanbei.ui.utils.login.UserInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -33,13 +35,13 @@ public interface JyApi {
      * 登陆
      */
     @POST("/resource/user/login")
-    Call<UserInfoBean> login(@Body Map<String, String> map);
+    Call<SuperBean<UserInfoBean>> login(@Body Map<String, String> map);
 
     /**
      * 第三方登录
      */
     @POST("/resource/user/userAuthLogin")
-    Call<UserInfoBean> authLogin(@Body Map<String, String> map);
+    Call<SuperBean<UserInfoBean>> authLogin(@Body Map<String, String> map);
 
     /**
      * 注册
@@ -94,7 +96,7 @@ public interface JyApi {
      * @return
      */
     @GET("/resource/deliveryAddress/getAllDeliveryAddress")
-    Call<List<ShoppingAddressListItemBean>> getAddressList(@Query("userid") String userid);
+    Call<SuperBean<List<ShoppingAddressListItemBean>>> getAddressList(@Query("userid") String userid);
 
 
     /**
@@ -103,7 +105,7 @@ public interface JyApi {
      * @return
      */
     @GET("/resource/goodstype/getAllList")
-    Call<List<GoodsFilterBean>> getAllFilterType();
+    Call<SuperBean<List<GoodsFilterBean>>> getAllFilterType();
 
     /**
      * 获取商品门店筛选条件
@@ -111,7 +113,7 @@ public interface JyApi {
      * @return
      */
     @POST("/resource/shop/getAllList")
-    Call<List<ShopsFilterBean>> getAllFilterShops();
+    Call<SuperBean<List<ShopsFilterBean>>> getAllFilterShops();
 
     /**
      * 获取首页列表
@@ -120,7 +122,7 @@ public interface JyApi {
      * @return
      */
     @POST("/resource/goods/goodsAllList")
-    Call<List<GoodsListBean>> getGoodsList(@Body Map<String, String> map);
+    Call<SuperBean<List<GoodsListBean>>> getGoodsList(@Body Map<String, String> map);
 
     /**
      * 实名认证
@@ -137,13 +139,13 @@ public interface JyApi {
      * @return
      */
     @GET("/resource/viptype/getAllList")
-    Call<List<MemberRankBean>> getMemberRank();
+    Call<SuperBean<List<MemberRankBean>>> getMemberRank();
 
     /**
      * 广告位数据
      */
     @GET("/resource/goods/adList")
-    Call<List<GoodsListBean>> getAdList(@Query("userId") String userId);
+    Call<SuperBean<List<GoodsListBean>>> getAdList(@Query("userId") String userId);
 
     /**
      * 上传图片
@@ -172,5 +174,5 @@ public interface JyApi {
      * @return
      */
     @GET("/resource/goods/getDetail")
-    Call<GoodsListBean> getGoodsDetail(@Query("id") String id, @Query("userId") String userId);
+    Call<SuperBean<GoodsListBean>> getGoodsDetail(@Query("id") String id, @Query("userId") String userId);
 }

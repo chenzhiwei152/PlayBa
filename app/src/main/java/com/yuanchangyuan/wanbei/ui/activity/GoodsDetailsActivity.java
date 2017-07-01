@@ -29,9 +29,11 @@ import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.adapter.GoodsDetailItemAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
+import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.bean.bannerBean;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
+import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ public class GoodsDetailsActivity extends BaseActivity {
     private TextView tv_member_price;
     private TextView tv_member_price_title;
     private TextView tv_price;
-    private Call<GoodsListBean> call;
+    private Call<SuperBean<GoodsListBean>> call;
     private boolean isNewData = true;
 
     @Override
@@ -134,24 +136,29 @@ public class GoodsDetailsActivity extends BaseActivity {
         } else {
             call = RestAdapterManager.getApi().getGoodsDetail(goodsBean.getId() + "", "");
         }
-        call.enqueue(new JyCallBack<GoodsListBean>() {
+        call.enqueue(new JyCallBack<SuperBean<GoodsListBean>>() {
             @Override
-            public void onSuccess(Call<GoodsListBean> call, Response<GoodsListBean> response) {
+            public void onSuccess(Call<SuperBean<GoodsListBean>> call, Response<SuperBean<GoodsListBean>> response) {
                 DialogUtils.closeDialog();
-                if (response != null && response.body() != null) {
-                    goodsBean = response.body();
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
+                    goodsBean = response.body().getData();
                     setData();
                     isNewData = true;
+                } else {
+                    try {
+                        UIUtil.showToast(response.body().getMsg());
+                    } catch (Exception e) {
+                    }
                 }
             }
 
             @Override
-            public void onError(Call<GoodsListBean> call, Throwable t) {
+            public void onError(Call<SuperBean<GoodsListBean>> call, Throwable t) {
                 DialogUtils.closeDialog();
             }
 
             @Override
-            public void onError(Call<GoodsListBean> call, Response<GoodsListBean> response) {
+            public void onError(Call<SuperBean<GoodsListBean>> call, Response<SuperBean<GoodsListBean>> response) {
                 DialogUtils.closeDialog();
             }
         });
