@@ -272,7 +272,7 @@ public class IndexFragment extends BaseFragment {
             @Override
             public void onSuccess(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
                 swiperefreshlayout.setRefreshing(false);
-                if (response != null && response.body() != null&&response.code()==Constants.successCode) {
+                if (response != null && response.body() != null&&response.body().getCode()==Constants.successCode) {
                     if (response.body().getData().size() > 0) {
                         ll_empty.setVisibility(View.GONE);
                         sf_listview.setVisibility(View.VISIBLE);

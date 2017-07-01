@@ -104,7 +104,7 @@ public interface JyApi {
      *
      * @return
      */
-    @GET("/resource/goodstype/getAllList")
+    @GET("/resource/goodstype/appGetAllList")
     Call<SuperBean<List<GoodsFilterBean>>> getAllFilterType();
 
     /**
@@ -112,7 +112,7 @@ public interface JyApi {
      *
      * @return
      */
-    @POST("/resource/shop/getAllList")
+    @POST("/resource/shop/appGetAllList")
     Call<SuperBean<List<ShopsFilterBean>>> getAllFilterShops();
 
     /**
