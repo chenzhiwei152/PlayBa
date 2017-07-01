@@ -1,5 +1,7 @@
 package com.yuanchangyuan.wanbei.ui.bean;
 
+import com.yuanchangyuan.wanbei.bean.ErrorBean;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -7,7 +9,7 @@ import java.util.List;
  * Created by chen.zhiwei on 2017-6-26.
  */
 
-public class GoodsListBean implements Serializable {
+public class GoodsListBean extends ErrorBean implements Serializable {
 
     /**
      * id : 1
