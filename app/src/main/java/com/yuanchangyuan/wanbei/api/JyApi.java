@@ -138,7 +138,7 @@ public interface JyApi {
      *
      * @return
      */
-    @GET("/resource/viptype/getAllList")
+    @GET("/resource/viptype/appGetAllList")
     Call<SuperBean<List<MemberRankBean>>> getMemberRank();
 
     /**
