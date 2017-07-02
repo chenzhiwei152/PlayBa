@@ -22,6 +22,7 @@ import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.bean.ErrorBean;
 import com.yuanchangyuan.wanbei.ui.utils.LoginUtils;
 import com.yuanchangyuan.wanbei.ui.utils.login.LoginApi;
 import com.yuanchangyuan.wanbei.ui.utils.login.OnLoginListener;
@@ -90,6 +91,7 @@ public class RegisterActivity extends BaseActivity implements
 
     boolean isCodeSended = false;
     Call<String> call;//注册
+    Call<ErrorBean> getCheckCodeCall;
 
     @Override
     public int getContentViewLayoutId() {
@@ -140,43 +142,10 @@ public class RegisterActivity extends BaseActivity implements
             UIUtil.showToast("网络连接失败，请检查您的网络");
             return;
         }
-        checkRegist(phoneNumber);
-
-
-    }
-
-    private void checkRegist(final String phoneNumber) {
-
-//        RestAdapterManager.getApi().CheckRegiste(phoneNumber, "1").enqueue(new JyCallBack<String>() {
-//            @Override
-//            public void onSuccess(Call<String> call, Response<String> response) {
-//                if (!TextUtils.isEmpty(response.body())) {
-//                    if ("true".equals(response.body())) {
-//                        UIUtil.showToast("手机号已注册，请直接登录");
-//                    } else {
-//                        getCode(phoneNumber);
-//                    }
-//                } else {
-//                    UIUtil.showToast(response.body());
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Call<String> call, Throwable t) {
-//
-//            }
-//
-//            @Override
-//            public void onError(Call<String> call, Response<String> response) {
-//                try {
-//                    ErrorMessageUtils.taostErrorMessage(BaseContext.getInstance(), response.errorBody().string());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+        getCode(phoneNumber);
 
     }
+
 
     private void getCode(String phoneNumber) {
 
@@ -190,29 +159,27 @@ public class RegisterActivity extends BaseActivity implements
         }
 
         timer.start();
+        getCheckCodeCall = RestAdapterManager.getApi().getCheckCode(phoneNumber);
+        getCheckCodeCall.enqueue(new JyCallBack<ErrorBean>() {
+            @Override
+            public void onSuccess(Call<ErrorBean> call, Response<ErrorBean> response) {
+                if (response != null && response.body().code == Constants.successCode) {
+                    UIUtil.showToast(response.body().msg);
+                } else {
+                    UIUtil.showToast("发送验证码失败");
+                }
+            }
 
-//        RestAdapterManager.getApi().GetCodeMessage(RestAdapterManager.getHeaderMap(),phoneNumber).enqueue(new JyCallBack<String>() {
-//            @Override
-//            public void onSuccess(Call<String> call, Response<String> response) {
-//                isCodeSended = true;
-//                LogUtils.e(response.body());
-//                UIUtil.showToast("验证码已发送");
-//            }
-//
-//            @Override
-//            public void onError(Call<String> call, Throwable t) {
-//
-//            }
-//
-//            @Override
-//            public void onError(Call<String> call, Response<String> response) {
-//                try {
-//                    ErrorMessageUtils.taostErrorMessage(BaseContext.getInstance(), response.errorBody().string());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+            @Override
+            public void onError(Call<ErrorBean> call, Throwable t) {
+
+            }
+
+            @Override
+            public void onError(Call<ErrorBean> call, Response<ErrorBean> response) {
+
+            }
+        });
 
 
     }
@@ -380,6 +347,9 @@ public class RegisterActivity extends BaseActivity implements
         timer.cancel();
         if (call != null) {
             call.cancel();
+        }
+        if (getCheckCodeCall != null) {
+            getCheckCodeCall.cancel();
         }
         super.onDestroy();
     }

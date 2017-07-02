@@ -44,6 +44,14 @@ public interface JyApi {
     Call<SuperBean<UserInfoBean>> authLogin(@Body Map<String, String> map);
 
     /**
+     * 发送短信验证码
+     *
+     * @param phone
+     * @return
+     */
+    @GET("/resource/sms/getCheckCode")
+    Call<ErrorBean> getCheckCode(@Query("phone") String phone);
+    /**
      * 注册
      *
      * @param map
@@ -173,6 +181,6 @@ public interface JyApi {
      * @param userId
      * @return
      */
-    @GET("/resource/goods/getDetail")
+    @GET("/resource/goods/appGetDetail")
     Call<SuperBean<GoodsListBean>> getGoodsDetail(@Query("id") String id, @Query("userId") String userId);
 }
