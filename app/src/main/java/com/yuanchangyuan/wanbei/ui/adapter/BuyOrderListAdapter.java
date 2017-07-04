@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yuanchangyuan.wanbei.R;
-import com.yuanchangyuan.wanbei.ui.bean.HomeListBean;
+import com.yuanchangyuan.wanbei.ui.bean.BuyOrderListItemBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
  * Created by chenzhiwei 2016/6/14.
  */
 public class BuyOrderListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static List<HomeListBean> list;
+    private static List<BuyOrderListItemBean> list;
     private static Context context;
     private boolean isLight;
     private final LayoutInflater mLayoutInflater;
@@ -33,14 +33,14 @@ public class BuyOrderListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public BuyOrderListAdapter(Context context, List<HomeListBean> items) {
+    public BuyOrderListAdapter(Context context, List<BuyOrderListItemBean> items) {
         this.context = context;
         this.list = new ArrayList<>();
         this.list.addAll(items);
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public void addList(List<HomeListBean> items) {
+    public void addList(List<BuyOrderListItemBean> items) {
         this.list.addAll(items);
         notifyDataSetChanged();
     }
@@ -50,7 +50,7 @@ public class BuyOrderListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
-    public static List<HomeListBean> getEntities() {
+    public static List<BuyOrderListItemBean> getEntities() {
         return list;
     }
 
@@ -63,8 +63,8 @@ public class BuyOrderListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (list != null) {
-//            ImageLoadedrManager.getInstance().display(context, list.get(position).getImageId(), ((ImageViewHolder) viewHolder).iv_image);
-//            ((ImageViewHolder) viewHolder).tv_title.setText(list.get(position).getTitle());
+//            ImageLoadedrManager.getInstance().display(context, list.get(position).(), ((ImageViewHolder) viewHolder).iv_goods);
+//            ((ImageViewHolder) viewHolder).tv_store_name.setText(list.get(position).);
 //            ((ImageViewHolder) viewHolder).iv_image.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {

@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
@@ -146,6 +147,10 @@ public class FindPasswordActivity extends BaseActivity {
             UIUtil.showToast("请输入手机号");
             return;
         }
+        if (phoneNumber.trim().length() != 11) {
+            Toast.makeText(this, "请输入11位账号", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!TelephoneUtils.isMobile(phoneNumber)) {
             UIUtil.showToast("手机号格式错误");
             return;
@@ -197,6 +202,10 @@ public class FindPasswordActivity extends BaseActivity {
         String phoneNumber = etPhone.getText().toString();
         if (TextUtils.isEmpty(phoneNumber)) {
             UIUtil.showToast("请输入手机号");
+            return;
+        }
+        if (phoneNumber.trim().length() != 11) {
+            Toast.makeText(this, "请输入11位账号", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!TelephoneUtils.isMobile(phoneNumber)) {

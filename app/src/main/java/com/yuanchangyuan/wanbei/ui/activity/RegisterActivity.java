@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
@@ -133,6 +134,10 @@ public class RegisterActivity extends BaseActivity implements
             UIUtil.showToast("请输入手机号");
             return;
         }
+        if (phoneNumber.trim().length() != 11) {
+            Toast.makeText(this, "请输入11位账号", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!TelephoneUtils.isMobile(phoneNumber)) {
             UIUtil.showToast("手机号格式错误");
             return;
@@ -142,6 +147,7 @@ public class RegisterActivity extends BaseActivity implements
             UIUtil.showToast("网络连接失败，请检查您的网络");
             return;
         }
+
         getCode(phoneNumber);
 
     }
@@ -287,6 +293,10 @@ public class RegisterActivity extends BaseActivity implements
         }
         if (TextUtils.isEmpty(user_password.getText())) {
             UIUtil.showToast("密码不能为空");
+            return;
+        }
+        if (user_password.getText().length() < 6) {
+            Toast.makeText(this, "密码至少为6位", Toast.LENGTH_SHORT).show();
             return;
         }
 

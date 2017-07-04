@@ -6,12 +6,8 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.yuanchangyuan.wanbei.base.BaseContext;
@@ -23,7 +19,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -48,12 +43,28 @@ public class UIUtil {
         return (int) (dipValue * scale + 0.5f);
     }
     /**
+     * 比较真实完整的判断身份证号码的工具
+     *
+     * @param IdCard 用户输入的身份证号码
+     * @return [true符合规范, false不符合规范]
+     */
+    public static boolean isRealIDCard(String IdCard) {
+        if (IdCard != null) {
+            int correct = new IdCardUtil(IdCard).isCorrect();
+            if (0 == correct) {// 符合规范
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
      * Convert Dp to Pixel
      */
-    public static int dpToPx(float dp, Resources resources){
+    public static int dpToPx(float dp, Resources resources) {
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
         return (int) px;
     }
+
     /**
      * 将px值转换为sp值，保证文字大小不变
      *
@@ -84,50 +95,43 @@ public class UIUtil {
     }
 
     /**
-     * 获取状态栏高度
+     * 计算两个日期型的时间相差多少时间
      *
+     * @param startDate 开始日期
+     * @param endDate   结束日期
      * @return
      */
-    public static int getStatuBarHeight() {
-        Class<?> c = null;
-        Object obj = null;
-        Field field = null;
-        int x = 0, sbar = 38;// 默认为38，貌似大部分是这样的
-        try {
-            c = Class.forName("com.android.internal.R$dimen");
-            obj = c.newInstance();
-            field = c.getField("status_bar_height");
-            x = Integer.parseInt(field.get(obj).toString());
-            sbar = BaseContext.getInstance().getResources().getDimensionPixelSize(x);
+    public static String twoDateDistance(Date startDate, Date endDate) {
 
-        } catch (Exception e1) {
-            e1.printStackTrace();
+        if (startDate == null || endDate == null) {
+            return null;
         }
-        return sbar;
+        long timeLong = endDate.getTime() - startDate.getTime();
+//        if (timeLong<60*1000)
+//            return timeLong/1000 + "秒前";
+//        else if (timeLong<60*60*1000){
+//            timeLong = timeLong/1000 /60;
+//            return timeLong + "分钟前";
+//        }
+//        else
+        if (timeLong < 60 * 60 * 24 * 1000) {
+            timeLong = timeLong / 60 / 60 / 1000;
+            return timeLong + "小时前";
+        } else if (timeLong < 60 * 60 * 24 * 1000 * 7) {
+            timeLong = timeLong / 1000 / 60 / 60 / 24;
+            return timeLong + "天前";
+        }
+        return "";
+//        else if (timeLong<60*60*24*1000*7*4){
+//            timeLong = timeLong/1000/ 60 / 60 / 24/7;
+//            return timeLong + "周前";
+//        }
+//        else {
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+//            return sdf.format(startDate);
+//        }
     }
-
-/*
-    */
-/**
- * @param context
- * @throws
- * @Description: 设置进入下一个界面的动画
- *//*
-
-    public static void setGoActivityAnim(Activity context) {
-        context.overridePendingTransition(R.anim.tran_shownext_in, R.anim.tran_shownext_out);
-    }
-
-    */
-/**
- * 返回上一个界面的动画
- *//*
-
-    public static void setBackActivityAnim(Activity context) {
-        context.overridePendingTransition(R.anim.tran_showlast_in, R.anim.tran_showlast_out);
-    }
-*/
-
 
     /**
      * 上次点击时间
@@ -204,6 +208,28 @@ public class UIUtil {
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(new Date(Long.valueOf(seconds)));
+    }
+
+    /**
+     * 根据data获取相应的格式时间
+     *
+     * @param date
+     * @return
+     */
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
+    }
+
+    public static String getTime(Date date, String formate) {
+        SimpleDateFormat format;
+        if (!TextUtils.isEmpty(formate)) {
+            format = new SimpleDateFormat(formate);
+        } else {
+
+            format = new SimpleDateFormat("yyyy-MM-dd");
+        }
+        return format.format(date);
     }
 
     /**
@@ -319,32 +345,6 @@ public class UIUtil {
         }
     }
 
-    /**
-     * 解决ListView在ScrollView中只能显示一行数据的问题
-     *
-     * @param listView
-     */
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        // 获取ListView对应的Adapter
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) {
-            return;
-        }
-
-        int totalHeight = 0;
-        for (int i = 0, len = listAdapter.getCount(); i < len; i++) { // listAdapter.getCount()返回数据项的数目
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(0, 0); // 计算子项View 的宽高
-            totalHeight += listItem.getMeasuredHeight(); // 统计所有子项的总高度
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight
-                + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        // listView.getDividerHeight()获取子项间分隔符占用的高度
-        // params.height最后得到整个ListView完整显示需要的高度
-        listView.setLayoutParams(params);
-    }
 
     /**
      * @param ctx

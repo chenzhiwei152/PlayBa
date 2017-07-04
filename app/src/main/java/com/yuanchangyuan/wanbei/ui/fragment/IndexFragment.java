@@ -482,7 +482,7 @@ public class IndexFragment extends BaseFragment {
                     }
                 }, list)
                 //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
-                .setPageIndicator(new int[]{R.mipmap.dot_blur, R.mipmap.dot_focus})
+                .setPageIndicator(new int[]{R.mipmap.dot_blur, R.mipmap.dot_black})
                 //设置指示器的方向
                 .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL).startTurning(3000);
         //设置翻页的效果，不需要翻页效果可用不设

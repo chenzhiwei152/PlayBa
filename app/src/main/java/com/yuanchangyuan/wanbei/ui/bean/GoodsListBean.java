@@ -33,6 +33,20 @@ public class GoodsListBean extends ErrorBean implements Serializable {
     private int purchase;
     private int goodstype;
     private int shop;
+    private int stock;//商品库存
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
     private String goodsdetail;
     private String shopName;
     private String typeName;

@@ -120,6 +120,10 @@ public class CommitRealNameActivity extends BaseActivity {
             UIUtil.showToast("身份证号不能为空");
             return false;
         }
+        if (!UIUtil.isRealIDCard(et_id_number.getText().toString())) {
+            UIUtil.showToast("请输入正确的身份证号码");
+            return false;
+        }
         return true;
     }
 

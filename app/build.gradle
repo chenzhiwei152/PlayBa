@@ -47,7 +47,7 @@ dependencies {
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     testCompile 'junit:junit:4.12'
     compile 'com.bigkoo:convenientbanner:2.0.5'
-    compile 'io.github.mayubao:pay_library:1.0.1'//支付
+    compile 'com.javen205.jpay:jpaysdk:0.0.2'//支付
     compile files('libs/fastjson-1.2.5.jar')
     compile files('libs/MobCommons-2017.0608.1618.jar')
     compile files('libs/MobTools-2017.0608.1618.jar')

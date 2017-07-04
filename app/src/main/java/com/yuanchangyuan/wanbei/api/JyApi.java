@@ -2,6 +2,7 @@ package com.yuanchangyuan.wanbei.api;
 
 
 import com.yuanchangyuan.wanbei.bean.ErrorBean;
+import com.yuanchangyuan.wanbei.ui.bean.BuyOrderListItemBean;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.MemberRankBean;
@@ -9,7 +10,6 @@ import com.yuanchangyuan.wanbei.ui.bean.ShoppingAddressListItemBean;
 import com.yuanchangyuan.wanbei.ui.bean.ShopsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
-import com.yuanchangyuan.wanbei.ui.utils.login.UserInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -51,6 +51,7 @@ public interface JyApi {
      */
     @GET("/resource/sms/getCheckCode")
     Call<ErrorBean> getCheckCode(@Query("phone") String phone);
+
     /**
      * 注册
      *
@@ -183,4 +184,33 @@ public interface JyApi {
      */
     @GET("/resource/goods/appGetDetail")
     Call<SuperBean<GoodsListBean>> getGoodsDetail(@Query("id") String id, @Query("userId") String userId);
+
+    /**
+     * 提交订单
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/buyorder/insert")
+    Call<SuperBean<String>> getCommitOrder(@Body Map<String, String> map);
+
+    /**
+     * 获取购买订单
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/buyorder/getAllList")
+    Call<SuperBean<List<BuyOrderListItemBean>>> getBuyOrderList(@Body Map<String, String> map);
+
+    /**
+     * 获取购买订单
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/pay/payConfirm")
+    Call<SuperBean<String>> getRsaOrderInfo(@Body Map<String, String> map);
+
+
 }

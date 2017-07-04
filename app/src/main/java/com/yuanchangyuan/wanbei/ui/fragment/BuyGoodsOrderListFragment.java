@@ -6,12 +6,24 @@ import android.view.View;
 
 import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 import com.yuanchangyuan.wanbei.R;
+import com.yuanchangyuan.wanbei.api.JyCallBack;
+import com.yuanchangyuan.wanbei.api.RestAdapterManager;
+import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.BaseFragment;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.adapter.BuyOrderListAdapter;
+import com.yuanchangyuan.wanbei.ui.bean.BuyOrderListItemBean;
+import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.utils.LogUtils;
+import com.yuanchangyuan.wanbei.utils.UIUtil;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * 买卖订单
@@ -22,6 +34,9 @@ public class BuyGoodsOrderListFragment extends BaseFragment {
     @BindView(R.id.sf_listview)
     PullToRefreshRecyclerView sf_listview;
     private BuyOrderListAdapter buyOrderListAdapter;
+    private Call<SuperBean<List<BuyOrderListItemBean>>> orderListCall;
+    private int pageNum = 10;
+    private int pageSize = 1;
 
     @Override
     protected int getContentViewLayoutId() {
@@ -30,31 +45,34 @@ public class BuyGoodsOrderListFragment extends BaseFragment {
 
     @Override
     protected void initViewsAndEvents() {
-
         sf_listview.setSwipeEnable(true);//open swipe
         sf_listview.setLayoutManager(new LinearLayoutManager(getActivity()));
         sf_listview.setPagingableListener(new PullToRefreshRecyclerView.PagingableListener() {
             @Override
             public void onLoadMoreItems() {
                 LogUtils.e("onLoadMoreItems", "加载更多~");
-//                loadMore(Interface.BEFORE + date);
+                getOrderList();
             }
         });
+
         sf_listview.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 LogUtils.e("onRefresh", "刷新数据~");
-//                loadLatest();
-                sf_listview.setOnRefreshComplete();
+                pageNum = 1;
+                getOrderList();
+
             }
         });
+        sf_listview.setLoadMoreCount(pageSize);
         buyOrderListAdapter = new BuyOrderListAdapter(getActivity());
         sf_listview.setAdapter(buyOrderListAdapter);
+        sf_listview.onFinishLoading(true, false);
     }
 
     @Override
     protected void loadData() {
-
+        getOrderList();
     }
 
     @Override
@@ -70,5 +88,56 @@ public class BuyGoodsOrderListFragment extends BaseFragment {
     @Override
     public void onMsgEvent(EventBusCenter eventBusCenter) {
 
+    }
+
+    private void getOrderList() {
+        Map<String, String> map = new HashMap<>();
+        map.put("pageNum", pageNum + "");
+        map.put("pageSize", pageSize + "");
+        map.put("userid", BaseContext.getInstance().getUserInfo().userId);
+        orderListCall = RestAdapterManager.getApi().getBuyOrderList(map);
+        orderListCall.enqueue(new JyCallBack<SuperBean<List<BuyOrderListItemBean>>>() {
+            @Override
+            public void onSuccess(Call<SuperBean<List<BuyOrderListItemBean>>> call, Response<SuperBean<List<BuyOrderListItemBean>>> response) {
+                sf_listview.setOnRefreshComplete();
+                sf_listview.onFinishLoading(true, false);
+                if (response != null && response.body() != null) {
+                    if (response.body().getData().size() > 0) {
+                        if (pageNum == 1) {
+                            buyOrderListAdapter.ClearData();
+                        }
+                        buyOrderListAdapter.addList(response.body().getData());
+                        pageNum++;
+                    } else {
+                        if (pageNum == 1) {
+//无数据
+                        } else {
+                            UIUtil.showToast("已加载完全部数据");
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Call<SuperBean<List<BuyOrderListItemBean>>> call, Throwable t) {
+                sf_listview.setOnRefreshComplete();
+                sf_listview.onFinishLoading(true, false);
+            }
+
+            @Override
+            public void onError(Call<SuperBean<List<BuyOrderListItemBean>>> call, Response<SuperBean<List<BuyOrderListItemBean>>> response) {
+                sf_listview.setOnRefreshComplete();
+                sf_listview.onFinishLoading(true, false);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (orderListCall != null) {
+            orderListCall.cancel();
+        }
     }
 }
