@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,7 +19,6 @@ import android.widget.TextView;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
@@ -272,30 +272,24 @@ public class GoodsDetailsActivity extends BaseActivity {
                         getGoodsDetail();
                         return;
                     }
-                    Intent intent = new Intent(GoodsDetailsActivity.this, CommitOrderActivity.class);
-                    Bundle bundle = new Bundle();
+                    if (checkbuyOrRentValiable()) {
+                        Intent intent = new Intent(GoodsDetailsActivity.this, CommitOrderActivity.class);
+                        Bundle bundle = new Bundle();
 
-                    if (bt_buy.getText().equals("立即租赁")) {
-//可以走会员价
-                        if (goodsBean.getVipprice() > 0) {
+                        if (bt_buy.getText().equals("立即租赁")) {
+//                        if (goodsBean.getVipprice() > 0) {
                             bundle.putString("type", "rent");
-//                            bundle.putInt("price", goodsBean.getVipprice());
-//                            bundle.putString("id", goodsBean.getId() + "");
-                            bundle.putSerializable("detail", goodsBean);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                        }
-                    } else {
-                        if (goodsBean.getPrice() > 0) {
+//                        }
+                        } else {
+//                        if (goodsBean.getPrice() > 0) {
                             bundle.putString("type", "sale");
-//                            bundle.putInt("price", goodsBean.getPrice());
-//                            bundle.putString("id", goodsBean.getId() + "");
-                            bundle.putSerializable("detail", goodsBean);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
+//                        }
                         }
-
+                        bundle.putSerializable("detail", goodsBean);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                     }
+
 
                 }
             }
@@ -311,23 +305,28 @@ public class GoodsDetailsActivity extends BaseActivity {
                     }
                 }, list)
                 //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
-                .setPageIndicator(new int[]{R.mipmap.dot_blur, R.mipmap.dot_focus})
+                .setPageIndicator(new int[]{R.mipmap.dot_blur, R.mipmap.dot_black})
                 //设置指示器的方向
                 .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL).startTurning(3000);
         //设置翻页的效果，不需要翻页效果可用不设
         //.setPageTransformer(Transformer.DefaultTransformer);    集成特效之后会有白屏现象，新版已经分离，如果要集成特效的例子可以看Demo的点击响应。
 //        convenientBanner.setManualPageable(false);//设置不能手动影响
 
-        kanner.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-//                int[] startingLocation = new int[2];
-//                v.getLocationOnScreen(startingLocation);
-//                startingLocation[0] += v.getWidth() / 2;
+    }
+
+    private boolean checkbuyOrRentValiable() {
+        if (bt_buy.getText().equals("立即租赁")) {
+            if (TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().phone) || TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().ID)) {
+                UIUtil.showToast("请先绑定手机号码并实名制");
+                return false;
             }
-        });
-//增加headview
-//        sf_listview.addHeaderView(header);
+        } else {
+            if (TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().phone)) {
+                UIUtil.showToast("请先绑定手机号码");
+                return false;
+            }
+        }
+        return true;
     }
 
     private void setPriceValue() {

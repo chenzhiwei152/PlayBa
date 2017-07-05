@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -111,7 +113,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     private GoodsListBean goodsBean;
     private Date beginDate;
     private Date endDate;
-    private int payChannel;//支付通道0为支付宝1为微信
+    private int payChannel = 0;//支付通道0为支付宝1为微信
     private int totalMoney;//订单总额单位是分
     private int orderType;//订单类型0为购买1租
     private int deliverytype = 1;//0为快递配送，1为店铺自取
@@ -205,7 +207,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
 
     private void setSalePrice() {
         price = goodsBean.getPurchase() * count;
-        tv_num_price.setText("共计" + count + "件商品，合计" + price / 100.00 + "元");
+        tv_num_price.setText("共计" + count + "件商品，合计￥" + price / 100.00);
         tv_price_all.setText("￥" + price / 100.00);
     }
 
@@ -220,12 +222,12 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (tag.equals("rent")) {
             if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
 
-                tv_price.setText(goodsBean.getVipprice() / 100.00 + "");
+                tv_price.setText("￥" + goodsBean.getVipprice() / 100.00 );
             } else {
-                tv_price.setText(goodsBean.getPrice() / 100.00 + "");
+                tv_price.setText("￥" + goodsBean.getPrice() / 100.00);
             }
         } else {
-            tv_price.setText(goodsBean.getPurchase() / 100.00 + "");
+            tv_price.setText("￥" + goodsBean.getPurchase() / 100.00);
         }
 
 
@@ -318,41 +320,69 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
      */
     public void payStyleDialog() {
 
-        View view = View.inflate(CommitOrderActivity.this, R.layout.dialog_publish_photo, null);
+        View view = View.inflate(CommitOrderActivity.this, R.layout.dialog_pay_type, null);
         showdialog(view);
 
-        final TextView photo = (TextView) view.findViewById(R.id.photo);
-        final TextView picture = (TextView) view.findViewById(R.id.picture);
-        photo.setText("支付宝");
-        picture.setText("微信");
-        final LinearLayout ll_content3 = (LinearLayout) view.findViewById(R.id.ll_content3);
-        ll_content3.setVisibility(View.VISIBLE);
-        final TextView tv_content1 = (TextView) view.findViewById(R.id.tv_content1);
-        tv_content1.setText("线下支付");
-        photo.setOnClickListener(new View.OnClickListener() {
 
+        final CheckBox aliCheck = (CheckBox) view.findViewById(R.id.cb_ali);
+        final CheckBox wxCheck = (CheckBox) view.findViewById(R.id.cb_wx);
+        final CheckBox offLineCheck = (CheckBox) view.findViewById(R.id.cb_off);
+        final Button commit = (Button) view.findViewById(R.id.bt_commit);
+
+        aliCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                payChannel = 0;
-                getRSAOrderInfo();
-                myDialog.dismiss();
-
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    wxCheck.setChecked(false);
+                    offLineCheck.setChecked(false);
+                    payChannel = 0;
+                } else {
+                    aliCheck.setChecked(false);
+                    payChannel = 3;
+                }
             }
         });
-        picture.setOnClickListener(new View.OnClickListener() {
-
+        wxCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                payChannel = 1;
-                getRSAOrderInfo();
-                myDialog.dismiss();
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    aliCheck.setChecked(false);
+                    offLineCheck.setChecked(false);
+                    payChannel = 1;
+                } else {
+                    wxCheck.setChecked(false);
+                    payChannel = 3;
+                }
             }
         });
-        tv_content1.setOnClickListener(new View.OnClickListener() {
+        offLineCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+
+                    wxCheck.setChecked(false);
+                    aliCheck.setChecked(false);
+                    payChannel = 2;
+                } else {
+                    offLineCheck.setChecked(false);
+                    payChannel = 3;
+                }
+            }
+        });
+        commit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                payChannel = 2;
-                myDialog.dismiss();
+                if (!UIUtil.isFastDoubleClick()) {
+                    if (payChannel == 3) {
+                        UIUtil.showToast("请选择支付方式");
+                    } else if (payChannel == 2) {
+                        myDialog.dismiss();
+                    } else {
+                        getRSAOrderInfo();
+                        myDialog.dismiss();
+                    }
+                }
+
             }
         });
 
@@ -425,7 +455,9 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.bt_commit:
                 if (checkData())
-                    commitOrder();
+                    if (!UIUtil.isFastDoubleClick()) {
+                        commitOrder();
+                    }
                 break;
             case R.id.ll_end_time:
                 DialogUtils.showTimePcikerDialog(this, TimePickerView.Type.YEAR_MONTH_DAY_HOUS, new TimePickerView.OnTimeSelectListener() {
@@ -480,26 +512,30 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         map.put("payChannel", payChannel + "");
         map.put("totalMoney", price + "");
         map.put("orderType", orderType + "");
-
+        DialogUtils.showDialog(CommitOrderActivity.this, "加载...", false);
         getRsaOrderCall = RestAdapterManager.getApi().getRsaOrderInfo(map);
         getRsaOrderCall.enqueue(new JyCallBack<SuperBean<String>>() {
             @Override
             public void onSuccess(Call<SuperBean<String>> call, Response<SuperBean<String>> response) {
+                DialogUtils.closeDialog();
                 if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                     LogUtils.e(response.body().getMsg());
-                    DialogUtils.closeDialog();
                     pay(response.body().getData());
+                } else {
+                    UIUtil.showToast("支付失败");
                 }
             }
 
             @Override
             public void onError(Call<SuperBean<String>> call, Throwable t) {
-
+                DialogUtils.closeDialog();
+                UIUtil.showToast("支付失败");
             }
 
             @Override
             public void onError(Call<SuperBean<String>> call, Response<SuperBean<String>> response) {
-
+                DialogUtils.closeDialog();
+                UIUtil.showToast("支付失败");
             }
         });
     }
@@ -565,16 +601,19 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
             @Override
             public void onPaySuccess() {
+                DialogUtils.closeDialog();
                 Toast.makeText(CommitOrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onPayError(int error_code, String message) {
+                DialogUtils.closeDialog();
                 Toast.makeText(CommitOrderActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onPayCancel() {
+                DialogUtils.closeDialog();
                 Toast.makeText(CommitOrderActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
             }
         });

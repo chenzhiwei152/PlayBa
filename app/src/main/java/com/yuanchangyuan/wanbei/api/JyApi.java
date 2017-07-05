@@ -3,6 +3,7 @@ package com.yuanchangyuan.wanbei.api;
 
 import com.yuanchangyuan.wanbei.bean.ErrorBean;
 import com.yuanchangyuan.wanbei.ui.bean.BuyOrderListItemBean;
+import com.yuanchangyuan.wanbei.ui.bean.OrderDetailBean;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.MemberRankBean;
@@ -62,13 +63,22 @@ public interface JyApi {
     Call<String> reister(@Body Map<String, String> map);
 
     /**
-     * 修改密码，忘记密码
+     * 忘记密码
      *
      * @param map
      * @return
      */
     @POST("/resource/user/forgetPwd")
     Call<ErrorBean> commitNewPassword(@Body Map<String, String> map);
+
+    /**
+     * 修改密码
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/user/accountSecurity")
+    Call<ErrorBean> accountSafety(@Body Map<String, String> map);
 
 
     /**
@@ -195,16 +205,16 @@ public interface JyApi {
     Call<SuperBean<String>> getCommitOrder(@Body Map<String, String> map);
 
     /**
-     * 获取购买订单
+     * 获取购买订单列表
      *
      * @param map
      * @return
      */
-    @POST("/resource/buyorder/getAllList")
-    Call<SuperBean<List<BuyOrderListItemBean>>> getBuyOrderList(@Body Map<String, String> map);
+    @POST("/resource/buyorder/appGetAllList")
+    Call<SuperBean<BuyOrderListItemBean>> getBuyOrderList(@Body Map<String, String> map);
 
     /**
-     * 获取购买订单
+     * 获取支付加密后的信息
      *
      * @param map
      * @return
@@ -212,5 +222,22 @@ public interface JyApi {
     @POST("/resource/pay/payConfirm")
     Call<SuperBean<String>> getRsaOrderInfo(@Body Map<String, String> map);
 
+    /**
+     * 获取订单详情
+     *
+     * @param id
+     * @return
+     */
+    @GET("/resource/buyorder/appGetBuyOrderDetail")
+    Call<SuperBean<OrderDetailBean>> getOrderDetails(@Query("id") String id);
 
+
+    /**
+     * 押金支付获取订单号
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/vipDeposit/insert")
+    Call<SuperBean<String>> getDepositOrder(@Body Map<String, String> map);
 }

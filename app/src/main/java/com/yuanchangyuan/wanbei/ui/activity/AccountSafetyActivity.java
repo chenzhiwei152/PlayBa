@@ -177,7 +177,8 @@ public class AccountSafetyActivity extends BaseActivity {
         map.put("checkCode", et_check_code.getText().toString());
         map.put("newPwd", user_password.getText().toString());
         map.put("phone", phoneNumber);
-        call = RestAdapterManager.getApi().commitNewPassword(map);
+        map.put("userId", BaseContext.getInstance().getUserInfo().userId);
+        call = RestAdapterManager.getApi().accountSafety(map);
         call.enqueue(new JyCallBack<ErrorBean>() {
             @Override
             public void onSuccess(Call<ErrorBean> call, Response<ErrorBean> response) {

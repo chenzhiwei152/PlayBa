@@ -75,7 +75,7 @@ public class PayMemberRankItemAdapter extends RecyclerView.Adapter<RecyclerView.
         if (list != null) {
 
 //            ((ImageViewHolder) viewHolder).tv_rank1_title.setText(list.get(position).getName());
-            ((ImageViewHolder) viewHolder).tv_rank.setText(list.get(position).getMoney() + "");
+            ((ImageViewHolder) viewHolder).tv_rank.setText(list.get(position).getMoney()/100.00 + "");
         }
     }
 

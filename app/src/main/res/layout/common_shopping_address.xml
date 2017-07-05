@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:id="@+id/ll_address"
     android:layout_height="wrap_content"
+    android:background="@color/color_ffffff"
     android:orientation="vertical">
     <!--收货地址-->
     <LinearLayout

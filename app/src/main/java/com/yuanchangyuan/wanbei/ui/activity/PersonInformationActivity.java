@@ -120,7 +120,7 @@ public class PersonInformationActivity extends BaseActivity implements View.OnCl
             if (!TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().sex)) {
                 tv_sex.setText(BaseContext.getInstance().getUserInfo().sex.equals("1") ? "男" : "女");
             }
-            tv_birthday.setText(UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().birthday, "yyyy-MM-dd"));
+            tv_birthday.setText(UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().birthday));
             ImageLoadedrManager.getInstance().displayNoFilter(this, BaseContext.getInstance().getUserInfo().headimg, iv_head);
         }
     }

@@ -94,7 +94,7 @@ public class MyMemberRankActivity extends BaseActivity {
         getMenberRankInfo();
         if (BaseContext.getInstance().getUserInfo() != null) {
 
-            tv_payed_deposit.setText("￥" + BaseContext.getInstance().getUserInfo().deposit);
+            tv_payed_deposit.setText("￥" + BaseContext.getInstance().getUserInfo().deposit / 100.00);
             if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
                 rb_rank.setNumStars(BaseContext.getInstance().getUserInfo().vipgrade);
                 rb_rank.setVisibility(View.VISIBLE);
@@ -108,12 +108,16 @@ public class MyMemberRankActivity extends BaseActivity {
 
     @Override
     public boolean isRegistEventBus() {
-        return false;
+        return true;
     }
 
     @Override
     public void onMsgEvent(EventBusCenter eventBusCenter) {
-
+        if (eventBusCenter != null) {
+            if (eventBusCenter.getEvenCode() == Constants.PAY_MEMBER_SUCCESS) {
+//                loadData();
+            }
+        }
     }
 
     @Override

@@ -32,12 +32,13 @@
             android:src="@mipmap/ic_default" />
 
         <TextView
+            android:id="@+id/tv_goods_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_toLeftOf="@+id/ll_price"
             android:layout_toRightOf="@+id/iv_goods"
-            android:text="测试标题测试标题测试标题测试标题测试标题测试标题测试标题" />
+            android:text="" />
 
         <LinearLayout
             android:id="@+id/ll_price"
@@ -47,11 +48,13 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="200" />
+                android:text="" />
 
             <TextView
+                android:id="@+id/tv_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="x1" />
@@ -76,11 +79,12 @@
             android:text="实付款" />
 
         <TextView
+            android:id="@+id/tv_real_pay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:text="￥20.00" />
+            android:text="" />
 
     </RelativeLayout>
 
@@ -106,11 +110,12 @@
                 android:text="订单编号：" />
 
             <TextView
+                android:id="@+id/tv_order_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
-                android:text="123454938534539480" />
+                android:text="" />
 
         </LinearLayout>
 
@@ -127,11 +132,12 @@
                 android:text="创建时间：" />
 
             <TextView
+                android:id="@+id/tv_order_create_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
-                android:text="123454938534539480" />
+                android:text="" />
 
         </LinearLayout>
 
@@ -146,11 +152,12 @@
                 android:text="付款时间：" />
 
             <TextView
+                android:id="@+id/tv_order_pay_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
-                android:text="123454938534539480" />
+                android:text="" />
 
         </LinearLayout>
 

@@ -109,7 +109,7 @@ public class ShoppingAddressEditActivity extends BaseActivity {
         map.put("userId", BaseContext.getInstance().getUserInfo().userId);
         if (tag.equals("1")) {
 
-            map.put("id", "");//如果是编辑的话是之前的地址id
+            map.put("id", id);//如果是编辑的话是之前的地址id
             call = RestAdapterManager.getApi().editAddress(map);
         } else {
             call = RestAdapterManager.getApi().addAddress(map);

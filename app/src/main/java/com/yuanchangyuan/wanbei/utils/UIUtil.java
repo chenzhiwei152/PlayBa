@@ -42,6 +42,7 @@ public class UIUtil {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dipValue * scale + 0.5f);
     }
+
     /**
      * 比较真实完整的判断身份证号码的工具
      *
@@ -57,6 +58,7 @@ public class UIUtil {
         }
         return false;
     }
+
     /**
      * Convert Dp to Pixel
      */
@@ -166,6 +168,7 @@ public class UIUtil {
         return dateFormater.format(curDate);
     }
 
+
     /**
      * 时间戳转换成日期格式字符串
      *
@@ -176,24 +179,11 @@ public class UIUtil {
         if (seconds == null || seconds.isEmpty() || seconds.equals("null")) {
             return "";
         }
-        if (format == null || format.isEmpty())
-            format = "MM-dd HH:mm";
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.CHINA);
-        return sdf.format(new Date(Long.valueOf(seconds + "000")));
-    }
-
-    /**
-     * 时间戳转换成日期格式字符串
-     *
-     * @param seconds
-     * @return
-     */
-    public static String timeStamp2Date2(String seconds) {
-        if (seconds == null || seconds.isEmpty() || seconds.equals("null")) {
-            return "";
+        if (TextUtils.isEmpty(format)) {
+            format = "yyyy-MM-dd";
         }
-
-        return dateFormater.format(new Date(Long.valueOf(seconds)));
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(new Date(Long.valueOf(seconds)));
     }
 
     /**
@@ -232,22 +222,6 @@ public class UIUtil {
         return format.format(date);
     }
 
-    /**
-     * 日期格式字符串转换成时间戳
-     *
-     * @param
-     * @param format 如：yyyy-MM-dd HH:mm:ss
-     * @return
-     */
-    public static String date2TimeStamp(String date_str, String format) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat(format);
-            return String.valueOf(sdf.parse(date_str).getTime() / 1000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
 
     /**
      * 取得当前时间戳（精确到秒）
@@ -258,21 +232,6 @@ public class UIUtil {
         long time = System.currentTimeMillis();
         String t = String.valueOf(time / 1000);
         return t;
-    }
-
-    //  输出结果：
-    //  timeStamp=1417792627
-    //  date=2014-12-05 23:17:07
-    //  1417792627
-    public static void main(String[] args) {
-        String timeStamp = timeStamp();
-        System.out.println("timeStamp=" + timeStamp);
-
-        String date = timeStamp2Date(timeStamp, "yyyy-MM-dd HH:mm:ss");
-        System.out.println("date=" + date);
-
-        String timeStamp2 = date2TimeStamp(date, "yyyy-MM-dd HH:mm:ss");
-        System.out.println(timeStamp2);
     }
 
     /**

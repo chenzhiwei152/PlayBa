@@ -18,7 +18,6 @@ import com.yuanchangyuan.wanbei.utils.LogUtils;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -34,9 +33,9 @@ public class BuyGoodsOrderListFragment extends BaseFragment {
     @BindView(R.id.sf_listview)
     PullToRefreshRecyclerView sf_listview;
     private BuyOrderListAdapter buyOrderListAdapter;
-    private Call<SuperBean<List<BuyOrderListItemBean>>> orderListCall;
-    private int pageNum = 10;
-    private int pageSize = 1;
+    private Call<SuperBean<BuyOrderListItemBean>> orderListCall;
+    private int pageNum = 1;
+    private int pageSize = 10;
 
     @Override
     protected int getContentViewLayoutId() {
@@ -96,23 +95,24 @@ public class BuyGoodsOrderListFragment extends BaseFragment {
         map.put("pageSize", pageSize + "");
         map.put("userid", BaseContext.getInstance().getUserInfo().userId);
         orderListCall = RestAdapterManager.getApi().getBuyOrderList(map);
-        orderListCall.enqueue(new JyCallBack<SuperBean<List<BuyOrderListItemBean>>>() {
+        orderListCall.enqueue(new JyCallBack<SuperBean<BuyOrderListItemBean>>() {
             @Override
-            public void onSuccess(Call<SuperBean<List<BuyOrderListItemBean>>> call, Response<SuperBean<List<BuyOrderListItemBean>>> response) {
+            public void onSuccess(Call<SuperBean<BuyOrderListItemBean>> call, Response<SuperBean<BuyOrderListItemBean>> response) {
                 sf_listview.setOnRefreshComplete();
                 sf_listview.onFinishLoading(true, false);
                 if (response != null && response.body() != null) {
-                    if (response.body().getData().size() > 0) {
+                    if (response.body().getData().getData().size() > 0) {
                         if (pageNum == 1) {
                             buyOrderListAdapter.ClearData();
                         }
-                        buyOrderListAdapter.addList(response.body().getData());
+                        buyOrderListAdapter.addList(response.body().getData().getData());
                         pageNum++;
                     } else {
                         if (pageNum == 1) {
 //无数据
                         } else {
                             UIUtil.showToast("已加载完全部数据");
+                            sf_listview.onFinishLoading(false, false);
                         }
 
                     }
@@ -120,13 +120,13 @@ public class BuyGoodsOrderListFragment extends BaseFragment {
             }
 
             @Override
-            public void onError(Call<SuperBean<List<BuyOrderListItemBean>>> call, Throwable t) {
+            public void onError(Call<SuperBean<BuyOrderListItemBean>> call, Throwable t) {
                 sf_listview.setOnRefreshComplete();
                 sf_listview.onFinishLoading(true, false);
             }
 
             @Override
-            public void onError(Call<SuperBean<List<BuyOrderListItemBean>>> call, Response<SuperBean<List<BuyOrderListItemBean>>> response) {
+            public void onError(Call<SuperBean<BuyOrderListItemBean>> call, Response<SuperBean<BuyOrderListItemBean>> response) {
                 sf_listview.setOnRefreshComplete();
                 sf_listview.onFinishLoading(true, false);
             }
