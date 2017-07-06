@@ -222,7 +222,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (tag.equals("rent")) {
             if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
 
-                tv_price.setText("￥" + goodsBean.getVipprice() / 100.00 );
+                tv_price.setText("￥" + goodsBean.getVipprice() / 100.00);
             } else {
                 tv_price.setText("￥" + goodsBean.getPrice() / 100.00);
             }
@@ -273,6 +273,17 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             ll_add_addresss.setVisibility(View.VISIBLE);
             UIUtil.showToast("地址获取失败");
         }
+    }
+
+    private void goNext() {
+        if (!TextUtils.isEmpty(orderId)) {
+            Intent intent = new Intent(this, OrderDetailsActivity.class);
+            intent.putExtra("orderId", orderId);
+            startActivity(intent);
+        } else {
+            UIUtil.showToast("订单id为空");
+        }
+
     }
 
     /**
@@ -359,7 +370,6 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-
                     wxCheck.setChecked(false);
                     aliCheck.setChecked(false);
                     payChannel = 2;
@@ -377,6 +387,8 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                         UIUtil.showToast("请选择支付方式");
                     } else if (payChannel == 2) {
                         myDialog.dismiss();
+                        goNext();
+                        finish();
                     } else {
                         getRSAOrderInfo();
                         myDialog.dismiss();
@@ -602,6 +614,8 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onPaySuccess() {
                 DialogUtils.closeDialog();
+                goNext();
+                finish();
                 Toast.makeText(CommitOrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
             }
 

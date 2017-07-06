@@ -67,6 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_toLeftOf="@+id/ll_price"
             android:layout_toRightOf="@+id/iv_goods"
             android:text="测试标题测试标题测试标题测试标题测试标题测试标题测试标题" />
@@ -129,6 +130,7 @@
             android:src="@mipmap/ic_rent_days" />
 
         <TextView
+            android:id="@+id/tv_rent_days"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
