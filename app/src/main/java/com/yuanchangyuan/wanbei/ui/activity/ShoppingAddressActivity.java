@@ -5,15 +5,17 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.lcodecore.tkrefreshlayout.header.progresslayout.ProgressLayout;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
@@ -29,7 +31,6 @@ import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.listerner.ShoppingAddressItemOnClickListerner;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
-import com.yuanchangyuan.wanbei.utils.LogUtils;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
@@ -46,7 +47,9 @@ import retrofit2.Response;
 
 public class ShoppingAddressActivity extends BaseActivity {
     @BindView(R.id.sf_listview)
-    PullToRefreshRecyclerView sf_listview;
+    RecyclerView sf_listview;
+    @BindView(R.id.swiperefreshlayout)
+    TwinklingRefreshLayout swiperefreshlayout;
     @BindView(R.id.title_view)
     TitleBar title_view;
     private ShoppingAddressListAdapter shoppingAddressListAdapter;
@@ -72,7 +75,6 @@ public class ShoppingAddressActivity extends BaseActivity {
 
         }
 
-        sf_listview.setSwipeEnable(true);//open swipe
         sf_listview.setLayoutManager(new LinearLayoutManager(this));
 
 
@@ -109,12 +111,22 @@ public class ShoppingAddressActivity extends BaseActivity {
         });
         sf_listview.setAdapter(shoppingAddressListAdapter);
         shoppingAddressListAdapter.setType(type);
-        sf_listview.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                LogUtils.e("onRefresh", "刷新数据~");
-                loadAddressData();
+        swiperefreshlayout.setFloatRefresh(true);
+        ProgressLayout headerView = new ProgressLayout(this);
+        swiperefreshlayout.setHeaderView(headerView);
+        swiperefreshlayout.setEnableLoadmore(false);
 
+        swiperefreshlayout.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
+                loadAddressData();
+//                UIUtil.showToast("刷新数据~");
+            }
+
+            @Override
+            public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
+//                getOrderList();
+//                UIUtil.showToast("加载更多");
             }
         });
     }
@@ -155,7 +167,7 @@ public class ShoppingAddressActivity extends BaseActivity {
             @Override
             public void onSuccess(Call<SuperBean<List<ShoppingAddressListItemBean>>> call, Response<SuperBean<List<ShoppingAddressListItemBean>>> response) {
                 DialogUtils.closeDialog();
-                sf_listview.setOnRefreshComplete();
+                swiperefreshlayout.finishRefreshing();
                 if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                     shoppingAddressListAdapter.ClearData();
                     shoppingAddressListAdapter.addList(response.body().getData());
@@ -175,16 +187,16 @@ public class ShoppingAddressActivity extends BaseActivity {
             @Override
             public void onError(Call<SuperBean<List<ShoppingAddressListItemBean>>> call, Throwable t) {
                 DialogUtils.closeDialog();
-                if (sf_listview != null) {
-                    sf_listview.setOnRefreshComplete();
+                if (swiperefreshlayout != null) {
+                    swiperefreshlayout.finishRefreshing();
                 }
             }
 
             @Override
             public void onError(Call<SuperBean<List<ShoppingAddressListItemBean>>> call, Response<SuperBean<List<ShoppingAddressListItemBean>>> response) {
                 DialogUtils.closeDialog();
-                if (sf_listview != null) {
-                    sf_listview.setOnRefreshComplete();
+                if (swiperefreshlayout != null) {
+                    swiperefreshlayout.finishRefreshing();
                 }
                 try {
                     ErrorMessageUtils.taostErrorMessage(ShoppingAddressActivity.this, response.errorBody().string(), "");
