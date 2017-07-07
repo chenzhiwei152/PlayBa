@@ -318,7 +318,7 @@ public class GoodsDetailsActivity extends BaseActivity {
         if (bt_buy.getText().equals("立即租赁")) {
             if (TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().phone) || TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().ID)) {
                 UIUtil.showToast("请先绑定手机号码并实名制");
-                return false;
+                return true;
             }
         } else {
             if (TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().phone)) {

@@ -105,10 +105,23 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     TextView tv_delivery_type;
     @BindView(R.id.rl_delivery_type)
     RelativeLayout rl_delivery_type;
+    @BindView(R.id.tv_begin_time)
+    TextView tv_begin_time;
+    @BindView(R.id.tv_end_time)
+    TextView tv_end_time;
+    @BindView(R.id.tv_during_days)
+    TextView tv_during_days;
+    @BindView(R.id.tv_end_week)
+    TextView tv_end_week;
+    @BindView(R.id.tv_begin_week)
+    TextView tv_begin_week;
+
+
     private String tag;//rent,sale
     private String id;
     private int price;
     private int count = 1;
+    private int days;
     private int mxCount = 200;
     private GoodsListBean goodsBean;
     private Date beginDate;
@@ -119,7 +132,8 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     private int deliverytype = 1;//0为快递配送，1为店铺自取
     private Call<SuperBean<String>> getRsaOrderCall;
     private String orderId;
-
+    Call<SuperBean<String>> commitOrderCall;
+    Call<SuperBean<String>> commitRentCall;
 
     @Override
     public int getContentViewLayoutId() {
@@ -141,6 +155,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             rl_rent_days.setVisibility(View.VISIBLE);
             vv_v2.setVisibility(View.VISIBLE);
             orderType = 1;
+            setRentPrice();
         } else {
             rl_number.setVisibility(View.VISIBLE);
             vv_v1.setVisibility(View.VISIBLE);
@@ -151,6 +166,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             setSalePrice();
         }
         setDeliveryType();
+        setDefaultTimeArea();
         ll_add_addresss.setOnClickListener(this);
         ll_address.setOnClickListener(this);
         bt_commit.setOnClickListener(this);
@@ -202,7 +218,14 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void setRentPrice() {
+        if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
+            price = goodsBean.getVipprice() * days + goodsBean.getDeposit();
+        } else {
+            price = goodsBean.getPrice() * days + goodsBean.getDeposit();
+        }
 
+        tv_num_price.setText("共计1件商品，合计￥" + price / 100.00);
+        tv_price_all.setText("￥" + price / 100.00);
     }
 
     private void setSalePrice() {
@@ -468,11 +491,15 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             case R.id.bt_commit:
                 if (checkData())
                     if (!UIUtil.isFastDoubleClick()) {
-                        commitOrder();
+                        if (tag.equals("rent")) {
+                            commitRentOrder();
+                        } else {
+                            commitOrder();
+                        }
                     }
                 break;
             case R.id.ll_end_time:
-                DialogUtils.showTimePcikerDialog(this, TimePickerView.Type.YEAR_MONTH_DAY_HOUS, new TimePickerView.OnTimeSelectListener() {
+                DialogUtils.showTimePcikerDialog(this, TimePickerView.Type.YEAR_MONTH_DAY, new TimePickerView.OnTimeSelectListener() {
                     @Override
                     public void onTimeSelect(Date date) {
                         endDate = date;
@@ -482,7 +509,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                 });
                 break;
             case R.id.ll_begin_time:
-                DialogUtils.showTimePcikerDialog(this, TimePickerView.Type.YEAR_MONTH_DAY_HOUS, new TimePickerView.OnTimeSelectListener() {
+                DialogUtils.showTimePcikerDialog(this, TimePickerView.Type.YEAR_MONTH_DAY, new TimePickerView.OnTimeSelectListener() {
                     @Override
                     public void onTimeSelect(Date date) {
                         beginDate = date;
@@ -500,9 +527,44 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void setTimeArea() {
-        if (beginDate != null && endDate != null) {
+        if (beginDate != null) {
+            tv_begin_time.setText(UIUtil.getTime(beginDate));
+            tv_begin_week.setText(UIUtil.getWeekOfDate(beginDate));
+        }
+        if (endDate != null) {
+            tv_end_time.setText(UIUtil.getTime(endDate));
+            tv_end_week.setText(UIUtil.getWeekOfDate(endDate));
+        }
 
-            UIUtil.showToast(UIUtil.twoDateDistance(beginDate, endDate));
+        if (beginDate != null && endDate != null) {
+            if (UIUtil.twoDateDistance(beginDate, endDate) < 0) {
+                //
+                beginDate = endDate;
+                tv_begin_time.setText(UIUtil.getTime(beginDate));
+                tv_begin_week.setText(UIUtil.getWeekOfDate(beginDate));
+                UIUtil.showToast("请选择正确的时间");
+            }
+            days = (int) (UIUtil.twoDateDistance(beginDate, endDate));
+            setRentPrice();
+            tv_during_days.setText((UIUtil.twoDateDistance(beginDate, endDate)) + "天");
+        }
+    }
+
+    private void setDefaultTimeArea() {
+        if (beginDate == null) {
+            beginDate = new Date();
+        }
+        if (endDate == null) {
+            endDate = new Date();
+        }
+        tv_begin_time.setText(UIUtil.getTime(beginDate));
+        tv_begin_week.setText(UIUtil.getWeekOfDate(beginDate));
+        tv_end_time.setText(UIUtil.getTime(endDate));
+        tv_end_week.setText(UIUtil.getWeekOfDate(endDate));
+        if (beginDate != null && endDate != null) {
+            tv_during_days.setText((UIUtil.twoDateDistance(beginDate, endDate)) + "天");
+            days = (int) (UIUtil.twoDateDistance(beginDate, endDate));
+            setRentPrice();
         }
     }
 
@@ -553,7 +615,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     }
 
     /**
-     * 提交订单
+     * 提交购买订单
      */
     private void commitOrder() {
         if (!NetUtil.isNetworkConnected(this)) {
@@ -575,6 +637,60 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         DialogUtils.showDialog(CommitOrderActivity.this, "获取订单...", false);
         commitOrderCall = RestAdapterManager.getApi().getCommitOrder(map);
         commitOrderCall.enqueue(new JyCallBack<SuperBean<String>>() {
+            @Override
+            public void onSuccess(Call<SuperBean<String>> call, Response<SuperBean<String>> response) {
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
+                    LogUtils.e(response.body().getMsg());
+                    DialogUtils.closeDialog();
+                    orderId = response.body().getData();
+                    payStyleDialog();
+
+                }
+            }
+
+            @Override
+            public void onError(Call<SuperBean<String>> call, Throwable t) {
+                DialogUtils.closeDialog();
+                UIUtil.showToast(t.getMessage());
+            }
+
+            @Override
+            public void onError(Call<SuperBean<String>> call, Response<SuperBean<String>> response) {
+                DialogUtils.closeDialog();
+                try {
+                    UIUtil.showToast(response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * 提交租赁订单
+     */
+    private void commitRentOrder() {
+        if (!NetUtil.isNetworkConnected(this)) {
+            UIUtil.showToast(R.string.net_state_error);
+            return;
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("ordername", tv_address_name.getText().toString());
+        map.put("orderphone", tv_address_phone.getText().toString());
+        map.put("orderaddress", tv_address_detail.getText().toString());
+        map.put("goodsid", goodsBean.getId() + "");
+        map.put("price", goodsBean.getPrice() + "");
+        map.put("count", "1");
+        map.put("starttime", UIUtil.getTime(beginDate));
+        map.put("endtime", UIUtil.getTime(endDate));
+        map.put("deliverytype", deliverytype + "");
+        map.put("payType", orderType + "");
+        map.put("totalmoney", price + "");
+        map.put("userid", BaseContext.getInstance().getUserInfo().userId);
+        map.put("deposit", goodsBean.getDeposit() + "");
+        DialogUtils.showDialog(CommitOrderActivity.this, "获取订单...", false);
+        commitRentCall = RestAdapterManager.getApi().getRentOrder(map);
+        commitRentCall.enqueue(new JyCallBack<SuperBean<String>>() {
             @Override
             public void onSuccess(Call<SuperBean<String>> call, Response<SuperBean<String>> response) {
                 if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
@@ -631,5 +747,16 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                 Toast.makeText(CommitOrderActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (commitRentCall != null) {
+            commitRentCall.cancel();
+        }
+        if (commitOrderCall != null) {
+            commitOrderCall.cancel();
+        }
+        super.onDestroy();
     }
 }

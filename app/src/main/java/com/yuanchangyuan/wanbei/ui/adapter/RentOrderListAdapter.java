@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.ui.activity.OrderDetailsActivity;
-import com.yuanchangyuan.wanbei.ui.bean.HomeListBean;
+import com.yuanchangyuan.wanbei.ui.bean.BuyOrderListItemBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
  * Created by chenzhiwei 2016/6/14.
  */
 public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static List<HomeListBean> list;
+    private static List<BuyOrderListItemBean.DataBean> list;
     private static Context context;
     private boolean isLight;
     private final LayoutInflater mLayoutInflater;
@@ -36,14 +36,14 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public RentOrderListAdapter(Context context, List<HomeListBean> items) {
+    public RentOrderListAdapter(Context context, List<BuyOrderListItemBean.DataBean> items) {
         this.context = context;
         this.list = new ArrayList<>();
         this.list.addAll(items);
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public void addList(List<HomeListBean> items) {
+    public void addList(List<BuyOrderListItemBean.DataBean> items) {
         this.list.addAll(items);
         notifyDataSetChanged();
     }
@@ -53,7 +53,7 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyDataSetChanged();
     }
 
-    public static List<HomeListBean> getEntities() {
+    public static List<BuyOrderListItemBean.DataBean> getEntities() {
         return list;
     }
 

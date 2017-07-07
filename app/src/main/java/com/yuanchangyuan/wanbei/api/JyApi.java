@@ -196,7 +196,7 @@ public interface JyApi {
     Call<SuperBean<GoodsListBean>> getGoodsDetail(@Query("id") String id, @Query("userId") String userId);
 
     /**
-     * 提交订单
+     * 提交购买订单
      *
      * @param map
      * @return
@@ -240,4 +240,25 @@ public interface JyApi {
      */
     @POST("/resource/vipDeposit/insert")
     Call<SuperBean<String>> getDepositOrder(@Body Map<String, String> map);
+
+
+
+    /**
+     * 提交租赁订单
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/zuorder/insert")
+    Call<SuperBean<String>> getRentOrder(@Body Map<String, String> map);
+
+
+    /**
+     * 获取租赁订单列表
+     *
+     * @param map
+     * @return
+     */
+    @POST("/resource/zuorder/appGetAllList")
+    Call<SuperBean<BuyOrderListItemBean>> getRentOrderList(@Body Map<String, String> map);
 }

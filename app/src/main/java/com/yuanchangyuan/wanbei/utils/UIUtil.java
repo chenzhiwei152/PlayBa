@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -103,10 +104,10 @@ public class UIUtil {
      * @param endDate   结束日期
      * @return
      */
-    public static String twoDateDistance(Date startDate, Date endDate) {
+    public static long twoDateDistance(Date startDate, Date endDate) {
 
         if (startDate == null || endDate == null) {
-            return null;
+            return 0L;
         }
         long timeLong = endDate.getTime() - startDate.getTime();
 //        if (timeLong<60*1000)
@@ -116,14 +117,21 @@ public class UIUtil {
 //            return timeLong + "分钟前";
 //        }
 //        else
+        LogUtils.e("timeLong----------:"+timeLong+"");
+        if (timeLong<=0){
+            return 1l;
+        }else
         if (timeLong < 60 * 60 * 24 * 1000) {
             timeLong = timeLong / 60 / 60 / 1000;
-            return timeLong + "小时前";
-        } else if (timeLong < 60 * 60 * 24 * 1000 * 7) {
+            return 2l;
+        } else
+//            if (timeLong < 60 * 60 * 24 * 1000 * 7)
+            {
             timeLong = timeLong / 1000 / 60 / 60 / 24;
-            return timeLong + "天前";
+                LogUtils.e("return______timeLong----------:"+timeLong+"");
+            return timeLong;
         }
-        return "";
+//        return 0L;
 //        else if (timeLong<60*60*24*1000*7*4){
 //            timeLong = timeLong/1000/ 60 / 60 / 24/7;
 //            return timeLong + "周前";
@@ -134,7 +142,21 @@ public class UIUtil {
 //            return sdf.format(startDate);
 //        }
     }
-
+    /**
+     * 获取当前日期是星期几
+     *
+     * @param dt
+     * @return 当前日期是星期几
+     */
+    public static String getWeekOfDate(Date dt) {
+        String[] weekDays = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dt);
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0)
+            w = 0;
+        return weekDays[w];
+    }
     /**
      * 上次点击时间
      */
