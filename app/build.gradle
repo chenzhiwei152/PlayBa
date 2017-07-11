@@ -21,6 +21,19 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+    //修改生成的apk名字
+    applicationVariants.all{ variant->
+        variant.outputs.each { output->
+            def oldFile = output.outputFile
+            def newName = '';
+            if(variant.buildType.name.equals('release')){
+//                println(variant.productFlavors[0].name)
+                def releaseApkName = 'playba-v' + defaultConfig.versionName+ '-' + getDate() + '.apk'
+                output.outputFile = new File(oldFile.parent, releaseApkName)
+            }
+
+        }
+    }
 }
 
 dependencies {
@@ -59,4 +72,9 @@ dependencies {
     //下拉刷新
     compile 'com.lcodecorex:tkrefreshlayout:1.0.7'
 
+}
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMdd_HHmmss')
+    return formattedDate
 }

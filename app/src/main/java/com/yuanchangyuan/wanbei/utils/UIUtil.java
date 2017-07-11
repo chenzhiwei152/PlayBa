@@ -359,11 +359,11 @@ public class UIUtil {
             }
         } else {
 
-            if (activity.getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+//            if (activity.getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
                 if (activity.getCurrentFocus() != null)
                     imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
-            }
+//            }
         }
 
 

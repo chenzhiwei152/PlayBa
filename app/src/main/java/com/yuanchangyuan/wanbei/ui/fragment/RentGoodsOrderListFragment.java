@@ -67,14 +67,14 @@ public class RentGoodsOrderListFragment extends BaseFragment {
                     }
                 }, 10);
 
-//                pageNum = 1;
-//                getOrderList();
+                pageNum = 1;
+                getOrderList();
 //                UIUtil.showToast("刷新数据~");
             }
 
             @Override
             public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
-//                getOrderList();
+                getOrderList();
 //                UIUtil.showToast("加载更多");
             }
         });
@@ -82,7 +82,7 @@ public class RentGoodsOrderListFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
-
+getOrderList();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class RentGoodsOrderListFragment extends BaseFragment {
         map.put("pageNum", pageNum + "");
         map.put("pageSize", pageSize + "");
         map.put("userid", BaseContext.getInstance().getUserInfo().userId);
-        orderListCall = RestAdapterManager.getApi().getBuyOrderList(map);
+        orderListCall = RestAdapterManager.getApi().getRentOrderList(map);
         orderListCall.enqueue(new JyCallBack<SuperBean<BuyOrderListItemBean>>() {
             @Override
             public void onSuccess(Call<SuperBean<BuyOrderListItemBean>> call, Response<SuperBean<BuyOrderListItemBean>> response) {

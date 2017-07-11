@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -81,7 +79,8 @@ public class IndexFragment extends BaseFragment {
     LinearLayout ll_empty;
     @BindView(R.id.tv_no_data)
     TextView tv_no_data;
-
+    @BindView(R.id.bt_search)
+    TextView bt_search;
 
     List<bannerBean> list = new ArrayList<>();
     List<GoodsListBean> adList = new ArrayList<>();
@@ -121,9 +120,7 @@ public class IndexFragment extends BaseFragment {
     @Override
     protected void initViewsAndEvents() {
         initTitle();
-//        kanner = (ConvenientBanner) findViewById(R.id.convenientBanner);
-//        dropDownMenu = (DropDownMenu) findViewById(R.id.dropDownMenu);
-//        sf_listview.setSwipeEnable(true);//open swipe
+
 
         sf_listview.setLayoutManager(linearLayoutManager);
         sf_listview.setNestedScrollingEnabled(false);
@@ -152,30 +149,22 @@ public class IndexFragment extends BaseFragment {
 
         listAdapter = new MainListItemAdapter(getActivity());
         sf_listview.setAdapter(listAdapter);
-        edit_search.addTextChangedListener(new TextWatcher() {
+        bt_search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                keyWord = edit_search.getText().toString();
-                getList();
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(edit_search.getText().toString())) {
+                    keyWord = edit_search.getText().toString();
+                    getList();
+                    UIUtil.ShowOrHideSoftInput(getActivity(), false);
+                }
             }
         });
-
         iv_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 edit_search.setText("");
-//                keyWord = "";
-//                getList();
+                keyWord = "";
+                getList();
             }
         });
     }

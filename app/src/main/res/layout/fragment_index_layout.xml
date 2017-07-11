@@ -19,6 +19,8 @@
             android:id="@+id/edit_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/bt_search"
             android:background="@drawable/bg_bbb_ffd2b2"
             android:paddingLeft="25dp" />
 
@@ -35,10 +37,20 @@
             android:id="@+id/iv_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="-20dp"
+            android:layout_toRightOf="@+id/edit_search"
+            android:src="@mipmap/ic_clear" />
+
+        <TextView
+            android:id="@+id/bt_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:src="@mipmap/ic_clear" />
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/bg_bbb_ffd2b2_5"
+            android:text="搜索" />
     </RelativeLayout>
 
     <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
