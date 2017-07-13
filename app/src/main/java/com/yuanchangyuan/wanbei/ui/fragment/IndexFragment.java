@@ -119,7 +119,7 @@ public class IndexFragment extends BaseFragment {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void initViewsAndEvents() {
-        initTitle();
+//        initTitle();
 
 
         sf_listview.setLayoutManager(linearLayoutManager);
