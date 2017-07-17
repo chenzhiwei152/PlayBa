@@ -3,6 +3,7 @@ package com.yuanchangyuan.wanbei.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,10 @@ import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.ui.activity.OrderDetailsActivity;
 import com.yuanchangyuan.wanbei.ui.bean.BuyOrderListItemBean;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
+import com.yuanchangyuan.wanbei.utils.UIUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -70,15 +73,37 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
             ImageLoadedrManager.getInstance().display(context, list.get(position).getGoodsimg(), ((ImageViewHolder) viewHolder).iv_goods);
             ((ImageViewHolder) viewHolder).tv_store_name.setText(list.get(position).getShopName());
             ((ImageViewHolder) viewHolder).tv_goods_name.setText(list.get(position).getGoodsName());
-            ((ImageViewHolder) viewHolder).tv_goods_price.setText(list.get(position).getPurchase()/100.00 + "");
+            ((ImageViewHolder) viewHolder).tv_goods_price.setText(list.get(position).getPrice() / 100.00 + "");
             ((ImageViewHolder) viewHolder).tv_goods_number.setText("x" + list.get(position).getCount());
             ((ImageViewHolder) viewHolder).tv_translate_state.setText(list.get(position).getOrderStatus());
+
+            ((ImageViewHolder) viewHolder).tv_receive_store_name.setText(list.get(position).getShopName());
+            ((ImageViewHolder) viewHolder).tv_back_store_name.setText(list.get(position).getShopName());
+            ((ImageViewHolder) viewHolder).tv_deposit.setText("押金：￥" + list.get(position).getDeposit() / 100.00 + "");
+            if (!TextUtils.isEmpty(list.get(position).getStarttime())) {
+                ((ImageViewHolder) viewHolder).tv_start_time.setText(UIUtil.timeStamp2Date(list.get(position).getStarttime(), "yyyy-MM-dd HH") + "时");
+                ((ImageViewHolder) viewHolder).tv_start_week.setText(UIUtil.getWeekOfDate(new Date(Long.valueOf(list.get(position).getStarttime()))));
+            }else {
+                ((ImageViewHolder) viewHolder).tv_start_time.setText("");
+                ((ImageViewHolder) viewHolder).tv_start_week.setText("");
+            }
+            if (!TextUtils.isEmpty(list.get(position).getEndtime())) {
+
+                ((ImageViewHolder) viewHolder).tv_end_time.setText(UIUtil.timeStamp2Date(list.get(position).getEndtime(), "yyyy-MM-dd HH") + "时");
+                ((ImageViewHolder) viewHolder).tv_end_week.setText(UIUtil.getWeekOfDate(new Date(Long.valueOf(list.get(position).getEndtime()))));
+            }else {
+                ((ImageViewHolder) viewHolder).tv_end_time.setText("");
+                ((ImageViewHolder) viewHolder).tv_end_week.setText("");
+            }
+            ((ImageViewHolder) viewHolder).tv_rent_days.setText(list.get(position).getDays() + "天");
+
+
             ((ImageViewHolder) viewHolder).ll_content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, OrderDetailsActivity.class);
                     intent.putExtra("orderId", list.get(position).getId() + "");
-                    intent.putExtra("type","rent");
+                    intent.putExtra("type", "rent");
                     context.startActivity(intent);
                 }
             });
@@ -106,6 +131,22 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 LinearLayout ll_content;
         @BindView(R.id.tv_translate_state)//交易状态
                 TextView tv_translate_state;
+        @BindView(R.id.tv_receive_store_name)
+        TextView tv_receive_store_name;
+        @BindView(R.id.tv_back_store_name)
+        TextView tv_back_store_name;
+        @BindView(R.id.tv_deposit)//押金
+                TextView tv_deposit;
+        @BindView(R.id.tv_start_time)//开始时间
+                TextView tv_start_time;
+        @BindView(R.id.tv_end_time)//结束时间
+                TextView tv_end_time;
+        @BindView(R.id.tv_rent_days)//租赁时长
+                TextView tv_rent_days;
+        @BindView(R.id.tv_start_week)//开始星期
+                TextView tv_start_week;
+        @BindView(R.id.tv_end_week)//结束星期
+                TextView tv_end_week;
 
         ImageViewHolder(final View view) {
             super(view);

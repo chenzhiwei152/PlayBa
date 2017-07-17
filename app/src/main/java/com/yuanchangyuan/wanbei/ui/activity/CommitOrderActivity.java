@@ -566,6 +566,13 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             UIUtil.showToast("请选择收货地址");
             return false;
         }
+        if (tag.equals("rent")){
+            if (hour==0){
+                UIUtil.showToast("请选择正确的时间");
+                return false;
+            }
+        }
+
         return true;
     }
 

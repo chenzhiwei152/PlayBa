@@ -87,7 +87,52 @@ public class BuyOrderListItemBean implements Serializable {
         private int totalmoney;
         private String goodsName;
         private String id;
+        private int deposit;
+        private int days;
+        private int price;
 
+        public int getPrice() {
+            return price;
+        }
+
+        public void setPrice(int price) {
+            this.price = price;
+        }
+
+        public int getDays() {
+            return days;
+        }
+
+        public void setDays(int days) {
+            this.days = days;
+        }
+
+        public String getStarttime() {
+            return starttime;
+        }
+
+        public void setStarttime(String starttime) {
+            this.starttime = starttime;
+        }
+
+        public String getEndtime() {
+            return endtime;
+        }
+
+        public void setEndtime(String endtime) {
+            this.endtime = endtime;
+        }
+
+        private String starttime;
+        private String endtime;
+
+        public int getDeposit() {
+            return deposit;
+        }
+
+        public void setDeposit(int deposit) {
+            this.deposit = deposit;
+        }
         public String getGoodsName() {
             return goodsName;
         }

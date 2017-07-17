@@ -112,7 +112,7 @@ public class UIUtil {
 //        else
         LogUtils.e("timeLong----------:" + timeLong + "");
         if (timeLong <= 0) {
-            return 1l;
+            return 0l;
         } else {
 //        if (timeLong < 60 * 60 * 24 * 1000) {
 //            timeLong = timeLong / 60 / 60 / 1000;
@@ -157,9 +157,9 @@ public class UIUtil {
 //        }
 //        else
         LogUtils.e("timeLong----------:" + timeLong + "");
-//        if (timeLong<=0){
-//            return 1l;
-//        }else
+        if (timeLong<=0){
+            return 0l;
+        }else
         if (timeLong <= 60 * 60 * 24 * 1000) {
             timeLong = timeLong / 60 / 60 / 1000;
             return 1l;
@@ -284,6 +284,9 @@ public class UIUtil {
     }
 
     public static String getTime(Date date, String formate) {
+        if (date==null){
+            return "";
+        }
         SimpleDateFormat format;
         if (!TextUtils.isEmpty(formate)) {
             format = new SimpleDateFormat(formate);
