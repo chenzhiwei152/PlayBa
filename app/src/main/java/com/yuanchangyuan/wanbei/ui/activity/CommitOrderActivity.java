@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.javen205.jpay.JPay;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
@@ -545,10 +546,11 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
 
     private void setDefaultTimeArea() {
         if (beginDate == null) {
-            beginDate = new Date();
+//            beginDate=new Date(Long.valueOf(UIUtil.getTime(new Date(),"yyyy-MM-dd HH")));
+            beginDate=UIUtil.strToDate(UIUtil.getTime(new Date(),"yyyy-MM-dd HH"));
         }
         if (endDate == null) {
-            endDate = new Date();
+            endDate = UIUtil.strToDate(UIUtil.getTime(new Date(),"yyyy-MM-dd HH"));
         }
         tv_begin_time.setText(UIUtil.getTime(beginDate, "yyyy-MM-dd HH") + "时");
         tv_begin_week.setText(UIUtil.getWeekOfDate(beginDate));
@@ -566,8 +568,8 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             UIUtil.showToast("请选择收货地址");
             return false;
         }
-        if (tag.equals("rent")){
-            if (hour==0){
+        if (tag.equals("rent")) {
+            if (hour == 0) {
                 UIUtil.showToast("请选择正确的时间");
                 return false;
             }
@@ -681,13 +683,14 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         map.put("goodsid", goodsBean.getId() + "");
         map.put("price", goodsBean.getPrice() + "");
         map.put("count", "1");
-        map.put("starttime", UIUtil.getTime(beginDate));
-        map.put("endtime", UIUtil.getTime(endDate));
+        map.put("starttime", UIUtil.getTime(beginDate, "yyyy-MM-dd HH"));
+        map.put("endtime", UIUtil.getTime(endDate, "yyyy-MM-dd HH"));
         map.put("deliverytype", deliverytype + "");
         map.put("payType", orderType + "");
         map.put("totalmoney", price + "");
         map.put("userid", BaseContext.getInstance().getUserInfo().userId);
         map.put("deposit", goodsBean.getDeposit() + "");
+        LogUtils.e(JSON.toJSONString(map));
         DialogUtils.showDialog(CommitOrderActivity.this, "获取订单...", false);
         commitRentCall = RestAdapterManager.getApi().getRentOrder(map);
         commitRentCall.enqueue(new JyCallBack<SuperBean<String>>() {

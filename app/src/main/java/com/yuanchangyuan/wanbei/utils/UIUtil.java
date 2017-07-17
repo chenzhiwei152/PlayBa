@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -296,8 +297,18 @@ public class UIUtil {
         }
         return format.format(date);
     }
-
-
+    /**
+     * 将短时间格式字符串转换为时间 yyyy-MM-dd
+     *
+     * @param strDate
+     * @return
+     */
+    public static Date strToDate(String strDate) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH");
+        ParsePosition pos = new ParsePosition(0);
+        Date strtodate = formatter.parse(strDate, pos);
+        return strtodate;
+    }
     /**
      * 取得当前时间戳（精确到秒）
      *
