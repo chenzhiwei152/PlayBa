@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.ui.activity.OrderDetailsActivity;
 import com.yuanchangyuan.wanbei.ui.bean.BuyOrderListItemBean;
+import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,18 +67,19 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (list != null) {
-//            ImageLoadedrManager.getInstance().display(context, list.get(position).getImageId(), ((ImageViewHolder) viewHolder).iv_image);
-//            ((ImageViewHolder) viewHolder).tv_title.setText(list.get(position).getTitle());
-//            ((ImageViewHolder) viewHolder).iv_image.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    context.startActivity(new Intent(context, GoodsDetailsActivity.class));
-//                }
-//            });
-            ((ImageViewHolder)viewHolder).ll_content.setOnClickListener(new View.OnClickListener() {
+            ImageLoadedrManager.getInstance().display(context, list.get(position).getGoodsimg(), ((ImageViewHolder) viewHolder).iv_goods);
+            ((ImageViewHolder) viewHolder).tv_store_name.setText(list.get(position).getShopName());
+            ((ImageViewHolder) viewHolder).tv_goods_name.setText(list.get(position).getGoodsName());
+            ((ImageViewHolder) viewHolder).tv_goods_price.setText(list.get(position).getPurchase()/100.00 + "");
+            ((ImageViewHolder) viewHolder).tv_goods_number.setText("x" + list.get(position).getCount());
+            ((ImageViewHolder) viewHolder).tv_translate_state.setText(list.get(position).getOrderStatus());
+            ((ImageViewHolder) viewHolder).ll_content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    context.startActivity(new Intent(context, OrderDetailsActivity.class));
+                    Intent intent = new Intent(context, OrderDetailsActivity.class);
+                    intent.putExtra("orderId", list.get(position).getId() + "");
+                    intent.putExtra("type","rent");
+                    context.startActivity(intent);
                 }
             });
         }
@@ -85,7 +87,7 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return list == null ? 5 : 5;
+        return list == null ? 0 : list.size();
     }
 
 
@@ -100,8 +102,10 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView tv_goods_price;//商品价格
         @BindView(R.id.tv_goods_number)
         TextView tv_goods_number;//商品数量
-        @BindView(R.id.ll_content)
-        LinearLayout ll_content;
+        @BindView(R.id.ll_content)//全局
+                LinearLayout ll_content;
+        @BindView(R.id.tv_translate_state)//交易状态
+                TextView tv_translate_state;
 
         ImageViewHolder(final View view) {
             super(view);

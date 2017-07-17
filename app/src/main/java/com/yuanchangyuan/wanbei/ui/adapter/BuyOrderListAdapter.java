@@ -79,6 +79,7 @@ public class BuyOrderListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 public void onClick(View view) {
                     Intent intent = new Intent(context, OrderDetailsActivity.class);
                     intent.putExtra("orderId", list.get(position).getId() + "");
+                    intent.putExtra("type","sale");
                     context.startActivity(intent);
                 }
             });

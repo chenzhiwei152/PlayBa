@@ -55,6 +55,7 @@ public class OrderDetailsActivity extends BaseActivity {
 
 
     private String orderId;
+    private String type;
     Call<SuperBean<OrderDetailBean>> call;
 
     @Override
@@ -65,7 +66,12 @@ public class OrderDetailsActivity extends BaseActivity {
     @Override
     public void initViewsAndEvents() {
         initTitle();
-        orderId = getIntent().getExtras().getString("orderId");
+        try {
+            orderId = getIntent().getExtras().getString("orderId");
+            type = getIntent().getExtras().getString("type");
+        } catch (Exception e) {
+        }
+
     }
 
     @Override
@@ -117,7 +123,13 @@ public class OrderDetailsActivity extends BaseActivity {
             return;
         }
         DialogUtils.showDialog(this, "加载中", false);
-        call = RestAdapterManager.getApi().getOrderDetails(orderId);
+        if (type.equals("rent")){
+            call = RestAdapterManager.getApi().getRentOrderDetails(orderId);
+        }else {
+            call = RestAdapterManager.getApi().getOrderDetails(orderId);
+        }
+
+
         call.enqueue(new JyCallBack<SuperBean<OrderDetailBean>>() {
             @Override
             public void onSuccess(Call<SuperBean<OrderDetailBean>> call, Response<SuperBean<OrderDetailBean>> response) {

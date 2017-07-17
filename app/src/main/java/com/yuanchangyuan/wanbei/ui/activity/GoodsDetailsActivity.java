@@ -311,6 +311,11 @@ public class GoodsDetailsActivity extends BaseActivity {
             if (goodsBean.getPrice() > 0) {
                 tv_price_title.setText("￥" + goodsBean.getPrice() / 100.00);
                 tv_price.setVisibility(View.VISIBLE);
+                if (goodsBean.getBillingmode()==1){
+                    tv_price.setText("/日");
+                }else {
+                    tv_price.setText("/时");
+                }
             } else {
                 tv_price_title.setText("");
                 tv_price.setVisibility(View.GONE);
@@ -323,8 +328,8 @@ public class GoodsDetailsActivity extends BaseActivity {
                 tv_member_price_title.setVisibility(View.GONE);
             }
         } else {
-            if (goodsBean.getPrice() > 0) {
-                tv_price_title.setText("￥" + goodsBean.getPrice() / 100.00);
+            if (goodsBean.getPurchase() > 0) {
+                tv_price_title.setText("￥" + goodsBean.getPurchase() / 100.00);
                 tv_price.setVisibility(View.GONE);
             } else {
                 tv_price_title.setText("");

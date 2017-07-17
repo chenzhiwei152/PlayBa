@@ -1,14 +1,10 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -19,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.javen205.jpay.JPay;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
@@ -122,6 +117,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     private int price;
     private int count = 1;
     private int days;
+    private int hour;
     private int mxCount = 200;
     private GoodsListBean goodsBean;
     private Date beginDate;
@@ -155,6 +151,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             rl_rent_days.setVisibility(View.VISIBLE);
             vv_v2.setVisibility(View.VISIBLE);
             orderType = 1;
+            setDefaultTimeArea();
             setRentPrice();
         } else {
             rl_number.setVisibility(View.VISIBLE);
@@ -163,10 +160,10 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             vv_v2.setVisibility(View.GONE);
             mxCount = goodsBean.getStock();
             orderType = 0;
+            setDefaultTimeArea();
             setSalePrice();
         }
         setDeliveryType();
-        setDefaultTimeArea();
         ll_add_addresss.setOnClickListener(this);
         ll_address.setOnClickListener(this);
         bt_commit.setOnClickListener(this);
@@ -218,12 +215,21 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void setRentPrice() {
-        if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
-            price = goodsBean.getVipprice() * days + goodsBean.getDeposit();
+        if (goodsBean.getBillingmode() == 1) {
+            //按照天算
+            if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
+                price = goodsBean.getVipprice() * days + goodsBean.getDeposit();
+            } else {
+                price = goodsBean.getPrice() * days + goodsBean.getDeposit();
+            }
         } else {
-            price = goodsBean.getPrice() * days + goodsBean.getDeposit();
+            //按照小时算
+            if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
+                price = goodsBean.getVipprice() * hour + goodsBean.getDeposit();
+            } else {
+                price = goodsBean.getPrice() * hour + goodsBean.getDeposit();
+            }
         }
-
         tv_num_price.setText("共计1件商品，合计￥" + price / 100.00);
         tv_price_all.setText("￥" + price / 100.00);
     }
@@ -480,7 +486,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                     }
                 break;
             case R.id.ll_end_time:
-                DialogUtils.showTimePcikerDialog(this, TimePickerView.Type.YEAR_MONTH_DAY, new TimePickerView.OnTimeSelectListener() {
+                DialogUtils.showTimePcikerDialog(this, TimePickerView.Type.YEAR_MONTH_DAY_HOUS, new TimePickerView.OnTimeSelectListener() {
                     @Override
                     public void onTimeSelect(Date date) {
                         endDate = date;
@@ -490,7 +496,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                 });
                 break;
             case R.id.ll_begin_time:
-                DialogUtils.showTimePcikerDialog(this, TimePickerView.Type.YEAR_MONTH_DAY, new TimePickerView.OnTimeSelectListener() {
+                DialogUtils.showTimePcikerDialog(this, TimePickerView.Type.YEAR_MONTH_DAY_HOUS, new TimePickerView.OnTimeSelectListener() {
                     @Override
                     public void onTimeSelect(Date date) {
                         beginDate = date;
@@ -509,11 +515,11 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
 
     private void setTimeArea() {
         if (beginDate != null) {
-            tv_begin_time.setText(UIUtil.getTime(beginDate));
+            tv_begin_time.setText(UIUtil.getTime(beginDate, "yyyy-MM-dd HH") + "时");
             tv_begin_week.setText(UIUtil.getWeekOfDate(beginDate));
         }
         if (endDate != null) {
-            tv_end_time.setText(UIUtil.getTime(endDate));
+            tv_end_time.setText(UIUtil.getTime(endDate, "yyyy-MM-dd HH") + "时");
             tv_end_week.setText(UIUtil.getWeekOfDate(endDate));
         }
 
@@ -521,12 +527,18 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             if (UIUtil.twoDateDistance(beginDate, endDate) < 0) {
                 //
                 beginDate = endDate;
-                tv_begin_time.setText(UIUtil.getTime(beginDate));
+                tv_begin_time.setText(UIUtil.getTime(beginDate, "yyyy-MM-dd HH") + "时");
                 tv_begin_week.setText(UIUtil.getWeekOfDate(beginDate));
                 UIUtil.showToast("请选择正确的时间");
             }
             days = (int) (UIUtil.twoDateDistance(beginDate, endDate));
-            setRentPrice();
+            hour = (int) UIUtil.twoDateHourDistance(beginDate, endDate);
+            UIUtil.showToast(hour + "个小时");
+            if (tag.endsWith("rent")) {
+                setRentPrice();
+            } else {
+                setSalePrice();
+            }
             tv_during_days.setText((UIUtil.twoDateDistance(beginDate, endDate)) + "天");
         }
     }
@@ -538,14 +550,14 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (endDate == null) {
             endDate = new Date();
         }
-        tv_begin_time.setText(UIUtil.getTime(beginDate));
+        tv_begin_time.setText(UIUtil.getTime(beginDate, "yyyy-MM-dd HH") + "时");
         tv_begin_week.setText(UIUtil.getWeekOfDate(beginDate));
-        tv_end_time.setText(UIUtil.getTime(endDate));
+        tv_end_time.setText(UIUtil.getTime(endDate, "yyyy-MM-dd HH") + "时");
         tv_end_week.setText(UIUtil.getWeekOfDate(endDate));
         if (beginDate != null && endDate != null) {
             tv_during_days.setText((UIUtil.twoDateDistance(beginDate, endDate)) + "天");
             days = (int) (UIUtil.twoDateDistance(beginDate, endDate));
-            setRentPrice();
+            hour = (int) UIUtil.twoDateHourDistance(beginDate, endDate);
         }
     }
 

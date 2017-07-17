@@ -97,6 +97,45 @@ public class UIUtil {
         return (int) (pxValue / scale + 0.5f);
     }
 
+    public static long twoDateHourDistance(Date startDate, Date endDate) {
+
+        if (startDate == null || endDate == null) {
+            return 0L;
+        }
+        long timeLong = endDate.getTime() - startDate.getTime();
+//        if (timeLong<60*1000)
+//            return timeLong/1000 + "秒前";
+//        else if (timeLong<60*60*1000){
+//            timeLong = timeLong/1000 /60;
+//            return timeLong + "分钟前";
+//        }
+//        else
+        LogUtils.e("timeLong----------:" + timeLong + "");
+        if (timeLong <= 0) {
+            return 1l;
+        } else {
+//        if (timeLong < 60 * 60 * 24 * 1000) {
+//            timeLong = timeLong / 60 / 60 / 1000;
+//            return timeLong;
+//        } else
+//            if (timeLong < 60 * 60 * 24 * 1000 * 7)
+//        {
+            timeLong = timeLong / 1000 / 60 / 60;
+            LogUtils.e("return______timeLong----------:" + timeLong + "");
+            return timeLong;
+        }
+//        return 0L;
+//        else if (timeLong<60*60*24*1000*7*4){
+//            timeLong = timeLong/1000/ 60 / 60 / 24/7;
+//            return timeLong + "周前";
+//        }
+//        else {
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+//            return sdf.format(startDate);
+//        }
+    }
+
     /**
      * 计算两个日期型的时间相差多少时间
      *
@@ -117,19 +156,28 @@ public class UIUtil {
 //            return timeLong + "分钟前";
 //        }
 //        else
-        LogUtils.e("timeLong----------:"+timeLong+"");
-        if (timeLong<=0){
-            return 1l;
-        }else
-        if (timeLong < 60 * 60 * 24 * 1000) {
+        LogUtils.e("timeLong----------:" + timeLong + "");
+//        if (timeLong<=0){
+//            return 1l;
+//        }else
+        if (timeLong <= 60 * 60 * 24 * 1000) {
             timeLong = timeLong / 60 / 60 / 1000;
-            return 2l;
+            return 1l;
         } else
 //            if (timeLong < 60 * 60 * 24 * 1000 * 7)
-            {
-            timeLong = timeLong / 1000 / 60 / 60 / 24;
-                LogUtils.e("return______timeLong----------:"+timeLong+"");
-            return timeLong;
+        {
+
+            LogUtils.e("return______timeLong----------:" + timeLong + "");
+
+
+            if (timeLong / 1000 / 60 / 60 % 24 == 0) {
+                timeLong = timeLong / 1000 / 60 / 60 / 24;
+                return timeLong;
+            } else {
+                timeLong = timeLong / 1000 / 60 / 60 / 24;
+                return timeLong + 1;
+            }
+
         }
 //        return 0L;
 //        else if (timeLong<60*60*24*1000*7*4){
@@ -142,6 +190,7 @@ public class UIUtil {
 //            return sdf.format(startDate);
 //        }
     }
+
     /**
      * 获取当前日期是星期几
      *
@@ -157,6 +206,7 @@ public class UIUtil {
             w = 0;
         return weekDays[w];
     }
+
     /**
      * 上次点击时间
      */
@@ -360,9 +410,9 @@ public class UIUtil {
         } else {
 
 //            if (activity.getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-                if (activity.getCurrentFocus() != null)
-                    imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);
+            if (activity.getCurrentFocus() != null)
+                imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
 //            }
         }
 

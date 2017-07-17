@@ -223,13 +223,21 @@ public interface JyApi {
     Call<SuperBean<String>> getRsaOrderInfo(@Body Map<String, String> map);
 
     /**
-     * 获取订单详情
+     * 获取买卖订单详情
      *
      * @param id
      * @return
      */
     @GET("/resource/buyorder/appGetBuyOrderDetail")
     Call<SuperBean<OrderDetailBean>> getOrderDetails(@Query("id") String id);
+    /**
+     * 获取租赁订单详情
+     *
+     * @param id
+     * @return
+     */
+    @GET("/resource/zuorder/getDetail")
+    Call<SuperBean<OrderDetailBean>> getRentOrderDetails(@Query("id") String id);
 
 
     /**
