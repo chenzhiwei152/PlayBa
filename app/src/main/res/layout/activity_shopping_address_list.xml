@@ -9,10 +9,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.lhh.ptrrv.library.PullToRefreshRecyclerView
-        android:id="@+id/sf_listview"
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/swiperefreshlayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    </com.lhh.ptrrv.library.PullToRefreshRecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/sf_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never">
+
+        </android.support.v7.widget.RecyclerView>
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
 </LinearLayout>

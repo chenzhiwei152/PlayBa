@@ -31,8 +31,42 @@ public class GoodsListBean extends ErrorBean implements Serializable {
     private int price;
     private int vipprice;
     private int purchase;
+
+    public int getBillingmode() {
+        return billingmode;
+    }
+
+    public void setBillingmode(int billingmode) {
+        this.billingmode = billingmode;
+    }
+
+    private int billingmode;
+
+    public int getDeposit() {
+        return deposit;
+    }
+
+    public void setDeposit(int deposit) {
+        this.deposit = deposit;
+    }
+
+    private int deposit;
     private int goodstype;
     private int shop;
+    private int stock;//商品库存
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
     private String goodsdetail;
     private String shopName;
     private String typeName;

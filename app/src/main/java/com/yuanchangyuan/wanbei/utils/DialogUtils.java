@@ -173,4 +173,30 @@ public class DialogUtils {
         });
         pvTime.show();
     }
+
+    public static void showTimePcikerDialog(final Context context, final TimePickerView.Type type, final TimePickerView.OnTimeSelectListener listener) {
+        //时间选择器
+        if (type != null) {
+            pvTime = new TimePickerView(context, type);
+        } else {
+            pvTime = new TimePickerView(context, TimePickerView.Type.YEAR_MONTH_DAY);
+        }
+        pvTime.setRange(Integer.parseInt(UIUtil.getTime(new Date(), "yyyy")), Integer.parseInt(UIUtil.getTime(new Date(), "yyyy")) + 10);
+        pvTime.setTime(new Date());
+        pvTime.setCyclic(false);
+        pvTime.setCancelable(true);
+        pvTime.setTitle("请选择日期");
+        //时间选择后回调
+        pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                if (listener != null) {
+                    listener.onTimeSelect(date);
+                    pvTime.dismiss();
+                }
+            }
+        });
+        pvTime.show();
+    }
 }

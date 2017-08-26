@@ -45,12 +45,14 @@ public class LoginUtils {
             @Override
             public void onSuccess(Call<SuperBean<UserInfoBean>> call, Response<SuperBean<UserInfoBean>> response) {
                 DialogUtils.closeDialog();
-                if (response != null && response.body() != null&&response.body().getCode()==Constants.successCode) {
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                     BaseContext.getInstance().setUserInfo(response.body().getData());
                     Timestamp now = new Timestamp(System.currentTimeMillis());
                     SharePreManager.instance(context).setLoginTime(now.getTime());
                     SharePreManager.instance(context).setUserInfo(response.body().getData());
+                    SharePreManager.instance(context).setUserInfo(response.body().getData());
                     EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.LOGIN_SUCCESS));
+
 //                    Intent jmActivityIntent = new Intent(context, MainActivity.class);
 //                    context.startActivity(jmActivityIntent);
                     ((Activity) context).finish();
@@ -77,6 +79,13 @@ public class LoginUtils {
         });
     }
 
+    /**
+     * 第三方登录
+     *
+     * @param context
+     * @param userInfo
+     * @return
+     */
     public static boolean thirdLogin(final Context context, final UserInfo userInfo) {
         DialogUtils.showDialog(context, "登陆...", false);
         Map<String, String> map = new HashMap<>();
@@ -89,7 +98,7 @@ public class LoginUtils {
             @Override
             public void onSuccess(Call<SuperBean<UserInfoBean>> call, Response<SuperBean<UserInfoBean>> response) {
                 DialogUtils.closeDialog();
-                if (response != null && response.body() != null&&response.body().getCode()==Constants.successCode) {
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                     BaseContext.getInstance().setUserInfo(response.body().getData());
                     Timestamp now = new Timestamp(System.currentTimeMillis());
                     SharePreManager.instance(context).setLoginTime(now.getTime());

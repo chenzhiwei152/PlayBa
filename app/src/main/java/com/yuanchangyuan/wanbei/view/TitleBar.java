@@ -122,6 +122,7 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
 
     public void setLeftImageResource(int resId) {
         mLeftText.setCompoundDrawablesWithIntrinsicBounds(resId, 0, 0, 0);
+        mLeftText.setCompoundDrawablePadding(mActionPadding);
     }
 
     public void setLeftClickListener(OnClickListener l) {
@@ -253,6 +254,7 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
 
     /**
      * Adds a list of {@link Action}s.
+     *
      * @param actionList the actions to add
      */
     public void addActions(ActionList actionList) {
@@ -264,6 +266,7 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
 
     /**
      * Adds a new {@link Action}.
+     *
      * @param action the action to add
      */
     public View addAction(Action action) {
@@ -273,8 +276,9 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
 
     /**
      * Adds a new {@link Action} at the specified index.
+     *
      * @param action the action to add
-     * @param index the position at which to add the action
+     * @param index  the position at which to add the action
      */
     public View addAction(Action action, int index) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -293,6 +297,7 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
 
     /**
      * Remove a action from the action bar.
+     *
      * @param index position of action to remove
      */
     public void removeActionAt(int index) {
@@ -301,6 +306,7 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
 
     /**
      * Remove a action from the action bar.
+     *
      * @param action The action to remove
      */
     public void removeAction(Action action) {
@@ -318,6 +324,7 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
 
     /**
      * Returns the number of actions currently registered with the action bar.
+     *
      * @return action count
      */
     public int getActionCount() {
@@ -326,6 +333,7 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
 
     /**
      * Inflates a {@link View} with the given {@link Action}.
+     *
      * @param action the action to inflate
      * @return a view
      */
@@ -406,6 +414,7 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
     /**
      * 计算状态栏高度高度
      * getStatusBarHeight
+     *
      * @return
      */
     public static int getStatusBarHeight() {
@@ -435,7 +444,9 @@ public class TitleBar extends ViewGroup implements View.OnClickListener {
      */
     public interface Action {
         String getText();
+
         int getDrawable();
+
         void performAction(View view);
     }
 

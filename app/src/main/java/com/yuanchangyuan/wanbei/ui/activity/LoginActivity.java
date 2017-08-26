@@ -1,13 +1,9 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,10 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
-import com.yuanchangyuan.wanbei.api.JyCallBack;
-import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.Constants;
@@ -27,24 +20,15 @@ import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
 import com.yuanchangyuan.wanbei.ui.index.MainActivity;
 import com.yuanchangyuan.wanbei.ui.utils.LoginUtils;
-import com.yuanchangyuan.wanbei.utils.DialogUtils;
-import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
 import com.yuanchangyuan.wanbei.utils.NetUtil;
-import com.yuanchangyuan.wanbei.utils.SharePreManager;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.CleanableEditText;
 import com.yuanchangyuan.wanbei.view.CustomProgressDialog;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
-
 import butterknife.BindString;
 import butterknife.BindView;
 import retrofit2.Call;
-import retrofit2.Response;
 
 
 /**
@@ -102,16 +86,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         initTitle();
         mDialog = new CustomProgressDialog(this, "登录中...");
 
-        //清除密码
-        passWord.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && isClearPwd) {
-//                    passWord.setText("");
-                    isClearPwd = false;
-                }
-            }
-        });
         login.setOnClickListener(this);
         forgetPassword.setOnClickListener(this);
         regist.setOnClickListener(this);
@@ -221,32 +195,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * 初始化标题
      */
     private void initTitle() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setTranslucentStatus(true);
-        }
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(R.color.color_ff6900);
-
-
         titleView.setTitle("登陆");
         titleView.setTitleColor(Color.WHITE);
         titleView.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
         titleView.setImmersive(true);
     }
 
-    @TargetApi(19)
-    private void setTranslucentStatus(boolean on) {
-        Window win = getWindow();
-        WindowManager.LayoutParams winParams = win.getAttributes();
-        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-        if (on) {
-            winParams.flags |= bits;
-        } else {
-            winParams.flags &= ~bits;
-        }
-        win.setAttributes(winParams);
-    }
 
 }

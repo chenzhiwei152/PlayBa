@@ -1,13 +1,18 @@
 package com.yuanchangyuan.wanbei.base;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.utils.LogUtils;
 import com.yuanchangyuan.wanbei.view.CustomProgressDialog;
@@ -70,7 +75,26 @@ public abstract class BaseFragment extends Fragment {
                 ((ViewGroup) obj).removeView(view);
             }
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            setTranslucentStatus(true);
+        }
+        SystemBarTintManager tintManager = new SystemBarTintManager(getActivity());
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintResource(R.color.color_ff6900);
         return view;
+    }
+
+    @TargetApi(19)
+    private void setTranslucentStatus(boolean on) {
+        Window win = getActivity().getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        if (on) {
+            winParams.flags |= bits;
+        } else {
+            winParams.flags &= ~bits;
+        }
+        win.setAttributes(winParams);
     }
 
 

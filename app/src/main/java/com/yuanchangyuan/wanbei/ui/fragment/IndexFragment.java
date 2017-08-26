@@ -6,12 +6,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -25,6 +22,9 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.lcodecore.tkrefreshlayout.header.progresslayout.ProgressLayout;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
@@ -42,7 +42,6 @@ import com.yuanchangyuan.wanbei.ui.bean.GoodsListBean;
 import com.yuanchangyuan.wanbei.ui.bean.ShopsFilterBean;
 import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.bean.bannerBean;
-import com.yuanchangyuan.wanbei.utils.EndlessRecyclerOnScrollListener;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
 import com.yuanchangyuan.wanbei.utils.LogUtils;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
@@ -71,7 +70,7 @@ public class IndexFragment extends BaseFragment {
     @BindView(R.id.dropDownMenu)
     DropDownMenu dropDownMenu;
     @BindView(R.id.swiperefreshlayout)
-    SwipeRefreshLayout swiperefreshlayout;
+    TwinklingRefreshLayout swiperefreshlayout;
     @BindView(R.id.edit_search)
     EditText edit_search;
     @BindView(R.id.iv_clear)
@@ -80,7 +79,8 @@ public class IndexFragment extends BaseFragment {
     LinearLayout ll_empty;
     @BindView(R.id.tv_no_data)
     TextView tv_no_data;
-
+    @BindView(R.id.bt_search)
+    TextView bt_search;
 
     List<bannerBean> list = new ArrayList<>();
     List<GoodsListBean> adList = new ArrayList<>();
@@ -108,6 +108,8 @@ public class IndexFragment extends BaseFragment {
     private String goodstype;
     private String shop;
     private String keyWord;
+    private int pageNum = 1;
+    private int pageSize = 10;
 
     @Override
     protected int getContentViewLayoutId() {
@@ -117,66 +119,52 @@ public class IndexFragment extends BaseFragment {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void initViewsAndEvents() {
-        initTitle();
-//        kanner = (ConvenientBanner) findViewById(R.id.convenientBanner);
-//        dropDownMenu = (DropDownMenu) findViewById(R.id.dropDownMenu);
-//        sf_listview.setSwipeEnable(true);//open swipe
+//        initTitle();
+
 
         sf_listview.setLayoutManager(linearLayoutManager);
         sf_listview.setNestedScrollingEnabled(false);
-        //设置刷新时动画的颜色，可以设置4个
-        swiperefreshlayout.setProgressBackgroundColorSchemeResource(android.R.color.white);
-        swiperefreshlayout.setColorSchemeResources(android.R.color.holo_blue_light,
-                android.R.color.holo_red_light, android.R.color.holo_orange_light,
-                android.R.color.holo_green_light);
-        swiperefreshlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getList();
-                getAdList();
-                LogUtils.e("onRefresh", "刷新数据~");
-            }
-        });
-        sf_listview.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+        swiperefreshlayout.setFloatRefresh(true);
+        ProgressLayout headerView = new ProgressLayout(getActivity());
+        swiperefreshlayout.setHeaderView(headerView);
+        swiperefreshlayout.setEnableLoadmore(false);
+//        BallPulseView footView = new BallPulseView(getActivity());
+//        swiperefreshlayout.setBottomView(footView);
 
-            }
-        });
-        //没有效果
-        sf_listview.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+        swiperefreshlayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
-            public void onLoadMore(int currentPage) {
-//                getList();
+            public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
+
+                getList();
+//                getAdList();
+//                UIUtil.showToast("刷新数据~");
+            }
+
+            @Override
+            public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
+                getList();
 //                UIUtil.showToast("加载更多");
             }
         });
+
         listAdapter = new MainListItemAdapter(getActivity());
         sf_listview.setAdapter(listAdapter);
-        edit_search.addTextChangedListener(new TextWatcher() {
+        bt_search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                keyWord = edit_search.getText().toString();
-                getList();
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(edit_search.getText().toString())) {
+                    keyWord = edit_search.getText().toString();
+                    getList();
+                    UIUtil.ShowOrHideSoftInput(getActivity(), false);
+                }
             }
         });
-
         iv_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 edit_search.setText("");
-//                keyWord = "";
-//                getList();
+                keyWord = "";
+                getList();
             }
         });
     }
@@ -256,6 +244,8 @@ public class IndexFragment extends BaseFragment {
 
     private void getList() {
         Map<String, String> map = new HashMap<>();
+//        map.put("pageNum", pageNum + "");
+//        map.put("pageSize", pageSize + "");
         map.put("shop", shop);
         map.put("goodstype", goodstype);
         if (!TextUtils.isEmpty(keyWord)) {
@@ -271,37 +261,50 @@ public class IndexFragment extends BaseFragment {
         goodsListCall.enqueue(new JyCallBack<SuperBean<List<GoodsListBean>>>() {
             @Override
             public void onSuccess(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
-                swiperefreshlayout.setRefreshing(false);
-                if (response != null && response.body() != null&&response.body().getCode()==Constants.successCode) {
+                swiperefreshlayout.finishRefreshing();
+                swiperefreshlayout.onFinishLoadMore();
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                     if (response.body().getData().size() > 0) {
                         ll_empty.setVisibility(View.GONE);
                         sf_listview.setVisibility(View.VISIBLE);
                         listAdapter.ClearData();
                         listAdapter.addList(response.body().getData());
+                        pageNum++;
                     } else {
                         if (!TextUtils.isEmpty(keyWord)) {
                             //搜索数据为空
                             tv_no_data.setText("没有“" + keyWord + "”的搜索结果");
                             ll_empty.setVisibility(View.VISIBLE);
                             sf_listview.setVisibility(View.GONE);
+                            listAdapter.ClearData();
                         } else {
                             ll_empty.setVisibility(View.GONE);
                             sf_listview.setVisibility(View.VISIBLE);
+                            if (pageNum == 1) {
+                                //无数据
+                                listAdapter.ClearData();
+                            } else {
+                                //加载完全部数据
+                                UIUtil.showToast("已加载完全部数据");
+                                swiperefreshlayout.setEnableLoadmore(false);
+                            }
                         }
-                        listAdapter.ClearData();
+
                     }
 
-                }else {
+                } else {
                     try {
                         UIUtil.showToast(response.body().getMsg());
-                    }catch (Exception e){}
+                    } catch (Exception e) {
+                    }
                 }
             }
 
             @Override
             public void onError(Call<SuperBean<List<GoodsListBean>>> call, Throwable t) {
                 if (swiperefreshlayout != null) {
-                    swiperefreshlayout.setRefreshing(false);
+                    swiperefreshlayout.finishRefreshing();
+                    swiperefreshlayout.onFinishLoadMore();
                 }
 
             }
@@ -309,7 +312,8 @@ public class IndexFragment extends BaseFragment {
             @Override
             public void onError(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
                 if (swiperefreshlayout != null) {
-                    swiperefreshlayout.setRefreshing(false);
+                    swiperefreshlayout.finishRefreshing();
+                    swiperefreshlayout.onFinishLoadMore();
                 }
             }
         });
@@ -363,7 +367,7 @@ public class IndexFragment extends BaseFragment {
             @Override
             public void onSuccess(Call<SuperBean<List<ShopsFilterBean>>> call, Response<SuperBean<List<ShopsFilterBean>>> response) {
 
-                if (response != null && response.body() != null&&response.body().getCode()==Constants.successCode) {
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
 
                     shopsList.clear();
                     shopsList.addAll(response.body().getData());
@@ -372,15 +376,16 @@ public class IndexFragment extends BaseFragment {
                     typesCall.enqueue(new JyCallBack<SuperBean<List<GoodsFilterBean>>>() {
                         @Override
                         public void onSuccess(Call<SuperBean<List<GoodsFilterBean>>> call, Response<SuperBean<List<GoodsFilterBean>>> response) {
-                            if (response != null && response.body() != null&&response.body().getCode()==Constants.successCode) {
+                            if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                                 typesList.clear();
                                 typesList.addAll(response.body().getData());
                                 typesList.add(0, new GoodsFilterBean(0, "全部"));
                                 setFilter();
-                            }else {
+                            } else {
                                 try {
                                     UIUtil.showToast(response.body().getMsg());
-                                }catch (Exception e){}
+                                } catch (Exception e) {
+                                }
                             }
                         }
 
@@ -398,10 +403,11 @@ public class IndexFragment extends BaseFragment {
                             }
                         }
                     });
-                }else {
+                } else {
                     try {
                         UIUtil.showToast(response.body().getMsg());
-                    }catch (Exception e){}
+                    } catch (Exception e) {
+                    }
                 }
 
 
@@ -482,7 +488,7 @@ public class IndexFragment extends BaseFragment {
                     }
                 }, list)
                 //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
-                .setPageIndicator(new int[]{R.mipmap.dot_blur, R.mipmap.dot_focus})
+                .setPageIndicator(new int[]{R.mipmap.dot_blur, R.mipmap.dot_black})
                 //设置指示器的方向
                 .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL).startTurning(3000);
         //设置翻页的效果，不需要翻页效果可用不设

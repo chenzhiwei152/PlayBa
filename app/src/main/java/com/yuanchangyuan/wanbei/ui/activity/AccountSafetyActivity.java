@@ -1,19 +1,15 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
-import android.annotation.TargetApi;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
@@ -50,6 +46,8 @@ public class AccountSafetyActivity extends BaseActivity {
     EditText et_check_code;
     @BindView(R.id.user_password)
     CleanableEditText user_password;
+    @BindView(R.id.user_phone)
+    CleanableEditText user_phone;
     @BindView(R.id.user_new_password)
     EditText user_new_password;
     @BindView(R.id.bt_commit)
@@ -107,18 +105,20 @@ public class AccountSafetyActivity extends BaseActivity {
     public void onMsgEvent(EventBusCenter eventBusCenter) {
 
     }
+
     @Override
     protected View isNeedLec() {
         return null;
     }
 
 
-
-
     @OnClick(R.id.tv_check_code)
     public void onGetCodeClick(View view) {
 
         String phoneNumber = BaseContext.getInstance().getUserInfo().phone;
+        if (TextUtils.isEmpty(phoneNumber)) {
+            phoneNumber = user_phone.getText().toString();
+        }
         if (TextUtils.isEmpty(phoneNumber)) {
             UIUtil.showToast("请输入手机号");
             return;
@@ -135,12 +135,6 @@ public class AccountSafetyActivity extends BaseActivity {
         }
         getCode(phoneNumber);
     }
-
-
-
-
-
-
 
 
     private void getCode(String phone) {
@@ -168,13 +162,18 @@ public class AccountSafetyActivity extends BaseActivity {
         });
 
     }
-    
+
     private void commitData() {
         Map<String, String> map = new HashMap<>();
+        String phoneNumber = BaseContext.getInstance().getUserInfo().phone;
+        if (TextUtils.isEmpty(phoneNumber)) {
+            phoneNumber = user_phone.getText().toString();
+        }
         map.put("checkCode", et_check_code.getText().toString());
         map.put("newPwd", user_password.getText().toString());
-        map.put("phone", BaseContext.getInstance().getUserInfo().phone);
-        call = RestAdapterManager.getApi().commitNewPassword(map);
+        map.put("phone", phoneNumber);
+        map.put("userId", BaseContext.getInstance().getUserInfo().userId);
+        call = RestAdapterManager.getApi().accountSafety(map);
         call.enqueue(new JyCallBack<ErrorBean>() {
             @Override
             public void onSuccess(Call<ErrorBean> call, Response<ErrorBean> response) {
@@ -207,6 +206,23 @@ public class AccountSafetyActivity extends BaseActivity {
     }
 
     private boolean checkData() {
+        String phoneNumber = BaseContext.getInstance().getUserInfo().phone;
+        if (TextUtils.isEmpty(phoneNumber)) {
+            phoneNumber = user_phone.getText().toString();
+        }
+
+        if (TextUtils.isEmpty(phoneNumber)) {
+            UIUtil.showToast("手机号不能为空");
+            return false;
+        }
+        if (phoneNumber.trim().length() != 11) {
+            Toast.makeText(this, "请输入11位账号", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!TelephoneUtils.isMobile(phoneNumber)) {
+            UIUtil.showToast("手机号格式错误");
+            return false;
+        }
         if (TextUtils.isEmpty(et_check_code.getText())) {
             UIUtil.showToast("验证码不能为空");
             return false;
@@ -243,27 +259,6 @@ public class AccountSafetyActivity extends BaseActivity {
         });
         title_view.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
         title_view.setImmersive(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setTranslucentStatus(true);
-        }
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(R.color.color_ff6900);
-
-    }
-
-    @TargetApi(19)
-    private void setTranslucentStatus(boolean on) {
-        Window win = getWindow();
-        WindowManager.LayoutParams winParams = win.getAttributes();
-        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-        if (on) {
-            winParams.flags |= bits;
-        } else {
-            winParams.flags &= ~bits;
-        }
-        win.setAttributes(winParams);
     }
 
     @Override

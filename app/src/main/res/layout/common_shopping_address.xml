@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:id="@+id/ll_address"
     android:layout_height="wrap_content"
+    android:background="@color/color_ffffff"
     android:orientation="vertical">
     <!--收货地址-->
     <LinearLayout
@@ -38,7 +39,7 @@
                     android:id="@+id/tv_address_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="测试"
+                    android:text=""
                     android:textSize="14sp" />
 
                 <TextView
@@ -46,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="199999999999"
+                    android:text=""
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -66,7 +67,7 @@
                     android:id="@+id/tv_address_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="北京市东城区广渠门外大街"
+                    android:text=""
                     android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>

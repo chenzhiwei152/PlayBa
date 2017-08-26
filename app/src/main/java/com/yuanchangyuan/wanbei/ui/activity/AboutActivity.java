@@ -6,11 +6,13 @@ import android.os.Build;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
+import com.yuanchangyuan.wanbei.utils.SysUtils;
 import com.yuanchangyuan.wanbei.view.TitleBar;
 
 import butterknife.BindView;
@@ -23,6 +25,8 @@ public class AboutActivity extends BaseActivity {
 
     @BindView(R.id.title_view)
     TitleBar title_view;
+    @BindView(R.id.tv_version)
+    TextView tv_version;
 
     @Override
     public int getContentViewLayoutId() {
@@ -32,6 +36,7 @@ public class AboutActivity extends BaseActivity {
     @Override
     public void initViewsAndEvents() {
         initTitle();
+        tv_version.setText("版本号V" + SysUtils.getVersionName(this));
     }
 
     @Override

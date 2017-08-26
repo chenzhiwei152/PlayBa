@@ -1,16 +1,13 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,8 +15,6 @@ import android.widget.TextView;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.bigkoo.convenientbanner.listener.OnItemClickListener;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
@@ -201,28 +196,8 @@ public class GoodsDetailsActivity extends BaseActivity {
         });
         title_view.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
         title_view.setImmersive(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setTranslucentStatus(true);
-        }
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(R.color.color_ff6900);
-
     }
 
-    @TargetApi(19)
-    private void setTranslucentStatus(boolean on) {
-        Window win = getWindow();
-        WindowManager.LayoutParams winParams = win.getAttributes();
-        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-        if (on) {
-            winParams.flags |= bits;
-        } else {
-            winParams.flags &= ~bits;
-        }
-        win.setAttributes(winParams);
-    }
 
     /**
      * 广告栏定义图片地址
@@ -272,30 +247,24 @@ public class GoodsDetailsActivity extends BaseActivity {
                         getGoodsDetail();
                         return;
                     }
-                    Intent intent = new Intent(GoodsDetailsActivity.this, CommitOrderActivity.class);
-                    Bundle bundle = new Bundle();
+                    if (checkbuyOrRentValiable()) {
+                        Intent intent = new Intent(GoodsDetailsActivity.this, CommitOrderActivity.class);
+                        Bundle bundle = new Bundle();
 
-                    if (bt_buy.getText().equals("立即租赁")) {
-//可以走会员价
-                        if (goodsBean.getVipprice() > 0) {
+                        if (bt_buy.getText().equals("立即租赁")) {
+//                        if (goodsBean.getVipprice() > 0) {
                             bundle.putString("type", "rent");
-//                            bundle.putInt("price", goodsBean.getVipprice());
-//                            bundle.putString("id", goodsBean.getId() + "");
-                            bundle.putSerializable("detail", goodsBean);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                        }
-                    } else {
-                        if (goodsBean.getPrice() > 0) {
+//                        }
+                        } else {
+//                        if (goodsBean.getPrice() > 0) {
                             bundle.putString("type", "sale");
-//                            bundle.putInt("price", goodsBean.getPrice());
-//                            bundle.putString("id", goodsBean.getId() + "");
-                            bundle.putSerializable("detail", goodsBean);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
+//                        }
                         }
-
+                        bundle.putSerializable("detail", goodsBean);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                     }
+
 
                 }
             }
@@ -311,23 +280,28 @@ public class GoodsDetailsActivity extends BaseActivity {
                     }
                 }, list)
                 //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
-                .setPageIndicator(new int[]{R.mipmap.dot_blur, R.mipmap.dot_focus})
+                .setPageIndicator(new int[]{R.mipmap.dot_blur, R.mipmap.dot_black})
                 //设置指示器的方向
                 .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL).startTurning(3000);
         //设置翻页的效果，不需要翻页效果可用不设
         //.setPageTransformer(Transformer.DefaultTransformer);    集成特效之后会有白屏现象，新版已经分离，如果要集成特效的例子可以看Demo的点击响应。
 //        convenientBanner.setManualPageable(false);//设置不能手动影响
 
-        kanner.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-//                int[] startingLocation = new int[2];
-//                v.getLocationOnScreen(startingLocation);
-//                startingLocation[0] += v.getWidth() / 2;
+    }
+
+    private boolean checkbuyOrRentValiable() {
+        if (bt_buy.getText().equals("立即租赁")) {
+            if (TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().phone) || TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().ID)) {
+                UIUtil.showToast("请先绑定手机号码并实名制");
+                return true;
             }
-        });
-//增加headview
-//        sf_listview.addHeaderView(header);
+        } else {
+            if (TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().phone)) {
+                UIUtil.showToast("请先绑定手机号码");
+                return false;
+            }
+        }
+        return true;
     }
 
     private void setPriceValue() {
@@ -337,6 +311,11 @@ public class GoodsDetailsActivity extends BaseActivity {
             if (goodsBean.getPrice() > 0) {
                 tv_price_title.setText("￥" + goodsBean.getPrice() / 100.00);
                 tv_price.setVisibility(View.VISIBLE);
+                if (goodsBean.getBillingmode()==1){
+                    tv_price.setText("/日");
+                }else {
+                    tv_price.setText("/时");
+                }
             } else {
                 tv_price_title.setText("");
                 tv_price.setVisibility(View.GONE);
@@ -349,8 +328,8 @@ public class GoodsDetailsActivity extends BaseActivity {
                 tv_member_price_title.setVisibility(View.GONE);
             }
         } else {
-            if (goodsBean.getPrice() > 0) {
-                tv_price_title.setText("￥" + goodsBean.getPrice() / 100.00);
+            if (goodsBean.getPurchase() > 0) {
+                tv_price_title.setText("￥" + goodsBean.getPurchase() / 100.00);
                 tv_price.setVisibility(View.GONE);
             } else {
                 tv_price_title.setText("");

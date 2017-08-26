@@ -12,6 +12,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/title_view">
 
         <LinearLayout
@@ -40,9 +41,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
                         android:layout_marginLeft="10dp"
-                        android:text="选择收货地址" />
+                        android:text="选择收货地址"
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
@@ -74,6 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
                     android:layout_toLeftOf="@+id/ll_price"
                     android:layout_toRightOf="@+id/iv_goods"
                     android:text="" />
@@ -89,7 +91,7 @@
                         android:id="@+id/tv_price"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="200" />
+                        android:text="" />
 
                     <TextView
                         android:id="@+id/tv_number_per"
@@ -101,30 +103,38 @@
 
 
             <View
+                android:id="@+id/vv_v2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/color_eeeeee" />
 
             <RelativeLayout
+                android:id="@+id/rl_rent_days"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp">
 
                 <LinearLayout
+                    android:id="@+id/ll_begin_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:layout_centerVertical="true"
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_begin_time"
                         android:layout_width="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_gravity="center_vertical"
                         android:layout_height="wrap_content"
-                        android:text="3-22" />
+                        android:text="" />
 
                     <TextView
+                        android:id="@+id/tv_begin_week"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="周日10:00" />
+                        android:text="" />
 
                 </LinearLayout>
 
@@ -135,12 +145,15 @@
                     android:src="@mipmap/ic_rent_days" />
 
                 <TextView
+                    android:id="@+id/tv_during_days"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="10天" />
+                    android:text="" />
 
                 <LinearLayout
+                    android:layout_centerVertical="true"
+                    android:id="@+id/ll_end_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -148,24 +161,28 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_end_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="04-01" />
+                        android:text="" />
 
                     <TextView
+                        android:id="@+id/tv_end_week"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="周三10:00" />
+                        android:text="" />
 
                 </LinearLayout>
             </RelativeLayout>
 
             <View
+                android:id="@+id/vv_v1"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/color_eeeeee" />
 
             <RelativeLayout
+                android:id="@+id/rl_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp">
@@ -193,6 +210,7 @@
                 android:background="@color/color_eeeeee" />
 
             <RelativeLayout
+                android:id="@+id/rl_delivery_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp">
@@ -210,9 +228,10 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv_delivery_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="到店自取" />
+                        android:text="" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -233,10 +252,11 @@
                 android:padding="10dp">
 
                 <TextView
+                    android:id="@+id/tv_num_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="共计1件商品，合计200元" />
+                    android:text="共计件商品，合计元" />
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>
@@ -264,7 +284,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
             android:layout_toLeftOf="@+id/bt_commit"
-            android:text="200.00"
+            android:text=""
             android:textColor="@color/color_ff6900"
             android:textSize="16sp" />
 

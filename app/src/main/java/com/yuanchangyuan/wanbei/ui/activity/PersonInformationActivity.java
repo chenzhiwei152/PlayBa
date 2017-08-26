@@ -3,7 +3,6 @@ package com.yuanchangyuan.wanbei.ui.activity;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
@@ -117,11 +115,11 @@ public class PersonInformationActivity extends BaseActivity implements View.OnCl
         if (BaseContext.getInstance().getUserInfo() != null) {
 
             tv_sick_name.setText(BaseContext.getInstance().getUserInfo().nickname);
-            if (!TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().sex)){
-                tv_sex.setText(BaseContext.getInstance().getUserInfo().sex.equals("1")?"男":"女");
+            if (!TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().sex)) {
+                tv_sex.setText(BaseContext.getInstance().getUserInfo().sex.equals("1") ? "男" : "女");
             }
-            tv_birthday.setText(BaseContext.getInstance().getUserInfo().birthday);
-            ImageLoadedrManager.getInstance().displayNoFilter(this,BaseContext.getInstance().getUserInfo().headimg,iv_head);
+            tv_birthday.setText(UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().birthday));
+            ImageLoadedrManager.getInstance().displayNoFilter(this, BaseContext.getInstance().getUserInfo().headimg, iv_head);
         }
     }
 
@@ -281,35 +279,20 @@ public class PersonInformationActivity extends BaseActivity implements View.OnCl
         title_view.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
         title_view.setImmersive(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setTranslucentStatus(true);
-        }
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(R.color.color_ff6900);
 
     }
 
-    @TargetApi(19)
-    private void setTranslucentStatus(boolean on) {
-        Window win = getWindow();
-        WindowManager.LayoutParams winParams = win.getAttributes();
-        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-        if (on) {
-            winParams.flags |= bits;
-        } else {
-            winParams.flags &= ~bits;
-        }
-        win.setAttributes(winParams);
-    }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bt_commit:
                 //保存
-                if (list.size() > 0&&TextUtils.isEmpty(headimg)) {
-                    upLoadImage();
+                if (list.size() > 0) {
+                    if (!TextUtils.isEmpty(headimg)) {
+                        upLoadInfo();
+                    } else
+                        upLoadImage();
                 } else {
                     upLoadInfo();
                 }

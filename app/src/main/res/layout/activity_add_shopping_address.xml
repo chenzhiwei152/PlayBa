@@ -50,6 +50,7 @@
             android:id="@+id/et_address_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
             android:background="@null" />
     </LinearLayout>
 
