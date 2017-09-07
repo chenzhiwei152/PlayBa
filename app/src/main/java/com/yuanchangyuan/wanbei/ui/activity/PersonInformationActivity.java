@@ -1,6 +1,5 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,8 +7,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -202,7 +199,7 @@ public class PersonInformationActivity extends BaseActivity implements View.OnCl
         });
     }
 
-    private void upLoadImage() {
+        private void upLoadImage() {
         DialogUtils.showDialog(this, "上传中", false);
         List<MultipartBody.Part> parts = UploadFile.filesToMultipartBody(list);
         upLoadImageCall = RestAdapterManager.getApi().uploadFile(parts.get(0));

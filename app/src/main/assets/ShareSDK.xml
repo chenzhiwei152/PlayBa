@@ -55,8 +55,8 @@
     <SinaWeibo
         Id="1"
         SortId="1"
-        AppKey="568898243"
-        AppSecret="38a4f8204cc784f81f9f0daaf31e02e3"
+        AppKey="1760301745"
+        AppSecret="02ac40155b5a2f529246fb7fd41cc75b"
         RedirectUrl="http://www.sharesdk.cn"
         ShareByAppClient="true"
 		IsNewApi = "true"
@@ -93,34 +93,34 @@
     <Wechat
         Id="4"
         SortId="4"
-        AppId="wx4868b35061f87885"
-        AppSecret="64020361b8ec4c99936c0e3999a9f249"
+        AppId="wxcdf5dd516eaf1599"
+        AppSecret="06e099e78782c5dd4b43afa7428f1ebf"
 		userName="gh_afb25ac019c9"
 		path="/page/API/pages/share/share"
-        BypassApproval="false"
+        BypassApproval="true"
         Enable="true" />
     
     <WechatMoments
         Id="5"
         SortId="5"
-        AppId="wx4868b35061f87885"
-        AppSecret="64020361b8ec4c99936c0e3999a9f249"
-        BypassApproval="false"
+        AppId="wxcdf5dd516eaf1599"
+        AppSecret="06e099e78782c5dd4b43afa7428f1ebf"
+        BypassApproval="true"
         Enable="true" />
-        
+
 	<WechatFavorite
         Id="6"
         SortId="6"
-        AppId="wx4868b35061f87885"
-        AppSecret="64020361b8ec4c99936c0e3999a9f249"
+        AppId="wxcdf5dd516eaf1599"
+        AppSecret="06e099e78782c5dd4b43afa7428f1ebf"
         Enable="true" />
     
 	<!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
 	<QQ
         Id="7"
         SortId="7"
-        AppId="100371282"
-        AppKey="aed9b0303e3ed1e27bae87c33761161d"
+        AppId="1106271014"
+        AppKey="cGSVkzURedvF2Cd8"
         ShareByAppClient="true"
         Enable="true" />
     

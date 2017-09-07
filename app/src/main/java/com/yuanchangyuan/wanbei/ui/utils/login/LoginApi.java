@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import com.mob.MobApplication;
 import com.mob.MobSDK;
+import com.yuanchangyuan.wanbei.utils.LogUtils;
+import com.yuanchangyuan.wanbei.utils.UIUtil;
 
 import java.util.HashMap;
 
@@ -100,6 +102,8 @@ public class LoginApi implements Callback {
      * 处理操作结果
      */
     public boolean handleMessage(Message msg) {
+        UIUtil.showToast(msg.what+"");
+        LogUtils.e("errcode"+msg.what+"");
         switch (msg.what) {
             case MSG_AUTH_CANCEL: {
                 // 取消
