@@ -29,7 +29,7 @@ public class RestAdapterManager {
     /**
      * 获取基础地址服务
      */
-    public static String BASEURL ="http://59.110.214.223:8080";  // BASE URL
+    public static String BASEURL ="http://47.92.24.138:8080";  // BASE URL
 //    public static String BASEURL ="http://192.168.51.85:8080";  // BASE URL
 
 
