@@ -14,9 +14,9 @@ android {
     signingConfigs {
         releaseConfig {
             keyAlias 'key0'
-            keyPassword '907653'
-            storeFile file('jyall.keystore')
-            storePassword 'wafamily'
+            keyPassword 'wafamily'
+            storeFile file('playbaleystore.jks')
+            storePassword '907653'
         }
     }
     buildTypes {
