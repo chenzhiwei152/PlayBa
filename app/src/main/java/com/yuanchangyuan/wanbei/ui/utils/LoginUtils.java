@@ -57,7 +57,8 @@ public class LoginUtils {
 //                    context.startActivity(jmActivityIntent);
                     ((Activity) context).finish();
                 } else {
-                    UIUtil.showToast(response.body().getMsg());
+                    try{UIUtil.showToast(response.body().getMsg());}catch (Exception e){}
+
                 }
             }
 

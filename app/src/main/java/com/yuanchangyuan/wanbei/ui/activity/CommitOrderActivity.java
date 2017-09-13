@@ -309,7 +309,9 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (!TextUtils.isEmpty(orderId)) {
             Intent intent = new Intent(this, OrderDetailsActivity.class);
             intent.putExtra("orderId", orderId);
+            intent.putExtra("type", tag);
             startActivity(intent);
+            finish();
         } else {
             UIUtil.showToast("订单id为空");
         }
@@ -399,7 +401,6 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                     } else if (payChannel == 2) {
                         myDialog.dismiss();
                         goNext();
-                        finish();
                     } else {
                         getRSAOrderInfo();
                         myDialog.dismiss();
@@ -734,7 +735,6 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             public void onPaySuccess() {
                 DialogUtils.closeDialog();
                 goNext();
-                finish();
                 Toast.makeText(CommitOrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
             }
 

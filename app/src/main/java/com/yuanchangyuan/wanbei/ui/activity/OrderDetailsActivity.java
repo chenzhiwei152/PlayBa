@@ -1,6 +1,7 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -122,10 +123,15 @@ public class OrderDetailsActivity extends BaseActivity {
             UIUtil.showToast(R.string.net_state_error);
             return;
         }
+        if (TextUtils.isEmpty(type)) {
+            UIUtil.showToast("dingdanid为空");
+            finish();
+            return;
+        }
         DialogUtils.showDialog(this, "加载中", false);
-        if (type.equals("rent")){
+        if (type.equals("rent")) {
             call = RestAdapterManager.getApi().getRentOrderDetails(orderId);
-        }else {
+        } else {
             call = RestAdapterManager.getApi().getOrderDetails(orderId);
         }
 
