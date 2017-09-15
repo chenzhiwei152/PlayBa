@@ -636,6 +636,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         map.put("payType", orderType + "");
         map.put("totalmoney", price + "");
         map.put("userid", BaseContext.getInstance().getUserInfo().userId);
+        LogUtils.e(JSON.toJSONString(map));
         Call<SuperBean<String>> commitOrderCall;
         DialogUtils.showDialog(CommitOrderActivity.this, "获取订单...", false);
         commitOrderCall = RestAdapterManager.getApi().getCommitOrder(map);
@@ -730,26 +731,50 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
      * @param string
      */
     private void pay(String string) {
-        JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
-            @Override
-            public void onPaySuccess() {
-                DialogUtils.closeDialog();
-                goNext();
-                Toast.makeText(CommitOrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
-            }
+        if (payChannel==0){
+            JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
+                @Override
+                public void onPaySuccess() {
+                    DialogUtils.closeDialog();
+                    goNext();
+                    Toast.makeText(CommitOrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onPayError(int error_code, String message) {
-                DialogUtils.closeDialog();
-                Toast.makeText(CommitOrderActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onPayError(int error_code, String message) {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(CommitOrderActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onPayCancel() {
-                DialogUtils.closeDialog();
-                Toast.makeText(CommitOrderActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onPayCancel() {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(CommitOrderActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else if (payChannel==1){
+            JPay.getIntance(this).toPay(JPay.PayMode.WXPAY, string, new JPay.JPayListener() {
+                @Override
+                public void onPaySuccess() {
+                    DialogUtils.closeDialog();
+                    goNext();
+                    Toast.makeText(CommitOrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onPayError(int error_code, String message) {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(CommitOrderActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onPayCancel() {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(CommitOrderActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
     @Override

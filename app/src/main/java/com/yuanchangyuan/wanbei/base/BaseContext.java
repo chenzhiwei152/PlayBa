@@ -1,12 +1,15 @@
 package com.yuanchangyuan.wanbei.base;
 
 import android.app.Application;
+import android.content.Intent;
 import android.os.Build;
 import android.os.StrictMode;
 
 import com.mob.MobSDK;
+import com.yuanchangyuan.wanbei.ui.activity.LoginActivity;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
 import com.yuanchangyuan.wanbei.utils.SharePreManager;
+import com.yuanchangyuan.wanbei.utils.Utils;
 
 
 /**
@@ -200,7 +203,7 @@ public class BaseContext extends Application {
     public void Exit() {
         SharePreManager.instance(this).clearUserInfO();
         userInfo = null;
-//        AppManager.getAppManager().finishAllActivity();
+        AppManager.getAppManager().finishAllActivity();
 //        exitfromServer();
     }
 
@@ -240,15 +243,15 @@ public class BaseContext extends Application {
 //        });
 //    }
 
-//    public void restartApp() {
-//        if (!Utils.isBackground(this)) {
-//            Intent intent = new Intent(instance, SplashActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            instance.startActivity(intent);
-//        }
-//        AppManager.getAppManager().AppExit(this);
-//        android.os.Process.killProcess(android.os.Process.myPid()); //
-//    }
+    public void restartApp() {
+        if (!Utils.isBackground(this)) {
+            Intent intent = new Intent(instance, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            instance.startActivity(intent);
+        }
+        AppManager.getAppManager().AppExit(this);
+        android.os.Process.killProcess(android.os.Process.myPid()); //
+    }
 //
 //    public DaoSession getDaoSession() {
 //        return mDaoSession;

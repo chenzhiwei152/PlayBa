@@ -114,15 +114,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
-            <!-- 集成Line客户端登录授权，需要添加如下格式的过滤器 -->
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="line.1477692153" />
-            </intent-filter>
         </activity>
         <!-- 微信分享回调 -->
         <activity
@@ -136,7 +127,14 @@
             android:name="com.javen205.jpay.weixin.WXPayEntryActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenSize"
             android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="wxcdf5dd516eaf1599" />
+            </intent-filter>
+
+        </activity>
         <activity-alias
             android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
@@ -151,15 +149,13 @@
             android:configChanges="orientation|keyboardHidden|navigation|screenSize"
             android:exported="false"
             android:screenOrientation="behind"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
             android:name="com.alipay.sdk.app.H5AuthActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:exported="false"
             android:screenOrientation="behind"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
 
         <!-- alipay sdk end -->
         <activity
@@ -170,8 +166,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.index.MainActivity"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
         <activity
             android:name=".ui.activity.GoodsDetailsActivity"
             android:screenOrientation="portrait" />
