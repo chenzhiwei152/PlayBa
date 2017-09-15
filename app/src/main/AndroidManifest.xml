@@ -124,7 +124,7 @@
 
         <!-- 微信支付 -->
         <activity
-            android:name="com.javen205.jpay.weixin.WXPayEntryActivity"
+            android:name="com.jpay.weixin.WXPayEntryActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenSize"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
@@ -138,7 +138,7 @@
         <activity-alias
             android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
-            android:targetActivity="com.javen205.jpay.weixin.WXPayEntryActivity" />
+            android:targetActivity="com.jpay.weixin.WXPayEntryActivity" />
         <!-- 微信支付 end -->
 
 
