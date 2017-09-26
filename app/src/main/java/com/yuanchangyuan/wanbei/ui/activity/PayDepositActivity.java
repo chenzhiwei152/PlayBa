@@ -67,7 +67,7 @@ public class PayDepositActivity extends BaseActivity {
     private String orderId;
     private int payChannel = 0;//支付通道0为支付宝1为微信
     private int totalMoney;//订单总额单位是分
-    private int orderType;//订单类型0为购买1租，2为会员押金支付
+    private int orderType=2;//订单类型0为购买1租，2为会员押金支付
     private Call<SuperBean<String>> getRsaOrderCall;
 
     @Override
@@ -183,6 +183,7 @@ public class PayDepositActivity extends BaseActivity {
                     if (payChannel == 3) {
                         UIUtil.showToast("请选择支付方式");
                     } else if (payChannel == 2) {
+//                        UIUtil.showToast("");
                         myDialog.dismiss();
                     } else {
                         getRSAOrderInfo();
@@ -277,7 +278,7 @@ public class PayDepositActivity extends BaseActivity {
                     LogUtils.e(response.body().getMsg());
                     pay(response.body().getData());
                 } else {
-                    UIUtil.showToast("支付失败");
+                    UIUtil.showToast(response.body().getMsg());
                 }
             }
 
@@ -301,27 +302,52 @@ public class PayDepositActivity extends BaseActivity {
      * @param string
      */
     private void pay(String string) {
-        JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
-            @Override
-            public void onPaySuccess() {
-                EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.PAY_MEMBER_SUCCESS));
-                DialogUtils.closeDialog();
-                Toast.makeText(PayDepositActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
-                finish();
-            }
+        if(payChannel==0){
+            JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
+                @Override
+                public void onPaySuccess() {
+                    EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.PAY_MEMBER_SUCCESS));
+                    DialogUtils.closeDialog();
+                    Toast.makeText(PayDepositActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
 
-            @Override
-            public void onPayError(int error_code, String message) {
-                DialogUtils.closeDialog();
-                Toast.makeText(PayDepositActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onPayError(int error_code, String message) {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(PayDepositActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onPayCancel() {
-                DialogUtils.closeDialog();
-                Toast.makeText(PayDepositActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onPayCancel() {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(PayDepositActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else  if(payChannel==1){
+            JPay.getIntance(this).toPay(JPay.PayMode.WXPAY, string, new JPay.JPayListener() {
+                @Override
+                public void onPaySuccess() {
+                    EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.PAY_MEMBER_SUCCESS));
+                    DialogUtils.closeDialog();
+                    Toast.makeText(PayDepositActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+                @Override
+                public void onPayError(int error_code, String message) {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(PayDepositActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onPayCancel() {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(PayDepositActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
     private void showpopupWindow(View v) {
