@@ -685,8 +685,8 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         map.put("goodsid", goodsBean.getId() + "");
         map.put("price", goodsBean.getPrice() + "");
         map.put("count", "1");
-        map.put("starttime", UIUtil.getTime(beginDate, "yyyy-MM-dd HH"));
-        map.put("endtime", UIUtil.getTime(endDate, "yyyy-MM-dd HH"));
+        map.put("starttime", UIUtil.getTime(beginDate, "yyyy-MM-dd HH:mm:ss"));
+        map.put("endtime", UIUtil.getTime(endDate, "yyyy-MM-dd HH:mm:ss"));
         map.put("deliverytype", deliverytype + "");
         map.put("payType", orderType + "");
         map.put("totalmoney", price + "");
