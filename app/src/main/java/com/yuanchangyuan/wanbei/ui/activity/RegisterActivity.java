@@ -81,7 +81,8 @@ public class RegisterActivity extends BaseActivity implements
     ImageView iv_qq;
     @BindView(R.id.iv_sina)
     ImageView iv_sina;
-
+    @BindView(R.id.tv_to_login)
+    TextView tv_to_login;
 
     CountDownTimer timer;
 
@@ -115,6 +116,7 @@ public class RegisterActivity extends BaseActivity implements
         iv_sina.setOnClickListener(this);
         iv_weixin.setOnClickListener(this);
         iv_qq.setOnClickListener(this);
+        tv_to_login.setOnClickListener(this);
     }
 
     @Override
@@ -295,7 +297,7 @@ public class RegisterActivity extends BaseActivity implements
                 try {
 
                     if (response != null && response.body() != null && !TextUtils.isEmpty(response.body())) {
-                        if (response.body().contains("注册成功")) {
+                        if (response.body().contains("成功")) {
                             Intent findPsIntent = new Intent(RegisterActivity.this, LoginActivity.class);
                             timer.cancel();
                             findPsIntent.putExtra("phone", etPhone.getText().toString());
@@ -378,6 +380,9 @@ public class RegisterActivity extends BaseActivity implements
                 //新浪微博
                 Platform sina = ShareSDK.getPlatform(SinaWeibo.NAME);
                 login(sina.getName());
+                break;
+            case R.id.tv_to_login:
+                finish();
                 break;
 
         }
