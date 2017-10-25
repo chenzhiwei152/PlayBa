@@ -77,7 +77,7 @@ public class CommitRealNameActivity extends BaseActivity {
         Map<String, String> map = new HashMap<>();
         map.put("userId", BaseContext.getInstance().getUserInfo().userId);
         map.put("name", user_name.getText().toString());
-        map.put("ID", et_id_number.getText().toString());
+        map.put("cardId", et_id_number.getText().toString());
         call = RestAdapterManager.getApi().commitRealName(map);
         call.enqueue(new JyCallBack<String>() {
             @Override
