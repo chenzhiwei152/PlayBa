@@ -743,7 +743,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                 @Override
                 public void onPayError(int error_code, String message) {
                     DialogUtils.closeDialog();
-                    Toast.makeText(CommitOrderActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CommitOrderActivity.this, "支付失败>"  + " " + message, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -764,7 +764,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                 @Override
                 public void onPayError(int error_code, String message) {
                     DialogUtils.closeDialog();
-                    Toast.makeText(CommitOrderActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CommitOrderActivity.this, "支付失败>" + " " + message, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override

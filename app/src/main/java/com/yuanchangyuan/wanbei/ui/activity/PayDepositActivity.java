@@ -315,7 +315,7 @@ public class PayDepositActivity extends BaseActivity {
                 @Override
                 public void onPayError(int error_code, String message) {
                     DialogUtils.closeDialog();
-                    Toast.makeText(PayDepositActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PayDepositActivity.this, "支付失败>"  + " " + message, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -337,7 +337,7 @@ public class PayDepositActivity extends BaseActivity {
                 @Override
                 public void onPayError(int error_code, String message) {
                     DialogUtils.closeDialog();
-                    Toast.makeText(PayDepositActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PayDepositActivity.this, "支付失败>"  + " " + message, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
