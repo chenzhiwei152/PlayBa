@@ -332,13 +332,17 @@ public class IndexFragment extends BaseFragment {
         sortView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                dropDownMenu.setTabText(typesList.get(position).getTypename());
+                if (shopsList.get(position).getShopname().equals("全部")){
+                    dropDownMenu.setTabText("商品分类");
+                }else {
+                    dropDownMenu.setTabText(shopsList.get(position).getShopname());
+                }
                 dropDownMenu.closeMenu();
                 goodstype = typesList.get(position).getId() + "";
                 getList();
             }
         });
-        types.add("全部");
+        types.add("商品分类");
         popupViews.add(sortView);
 
 
@@ -350,13 +354,17 @@ public class IndexFragment extends BaseFragment {
         softView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                dropDownMenu.setTabText(shopsList.get(position).getShopname());
+                if (shopsList.get(position).getShopname().equals("全部")){
+                    dropDownMenu.setTabText("店铺位置");
+                }else {
+                    dropDownMenu.setTabText(shopsList.get(position).getShopname());
+                }
                 dropDownMenu.closeMenu();
                 shop = shopsList.get(position).getId() + "";
                 getList();
             }
         });
-        types.add("全部");
+        types.add("店铺位置");
         popupViews.add(softView);
         dropDownMenu.setDropDownMenu(types, popupViews);
     }
