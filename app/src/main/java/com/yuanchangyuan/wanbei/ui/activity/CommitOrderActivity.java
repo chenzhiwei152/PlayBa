@@ -294,7 +294,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (bean != null && !TextUtils.isEmpty(bean.getName()) && !TextUtils.isEmpty(bean.getPhone()) && !TextUtils.isEmpty(bean.getDetail())) {
             tv_address_name.setText(bean.getName());
             tv_address_phone.setText(bean.getPhone());
-            tv_address_detail.setText(bean.getDetail());
+            tv_address_detail.setText(bean.getProvince()+bean.getCity()+bean.getArea()+bean.getDetail());
             ll_address.setVisibility(View.VISIBLE);
             ll_add_addresss.setVisibility(View.GONE);
         } else {

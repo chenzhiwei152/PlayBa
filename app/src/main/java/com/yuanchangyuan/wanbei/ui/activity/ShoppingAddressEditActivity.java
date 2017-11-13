@@ -67,7 +67,7 @@ public class ShoppingAddressEditActivity extends BaseActivity {
 
             etAddressName.setText(bundle.getString("name", ""));
             etAddressPhone.setText(bundle.getString("phone", ""));
-            etAddresspPovince.setText(bundle.getString("povince", ""));
+            etAddresspPovince.setText(bundle.getString("province", ""));
             etAddressCity.setText(bundle.getString("city", ""));
             etAddressArea.setText(bundle.getString("area", ""));
             etAddressDetail.setText(bundle.getString("detail", ""));

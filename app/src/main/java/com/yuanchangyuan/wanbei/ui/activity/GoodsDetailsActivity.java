@@ -343,7 +343,7 @@ public class GoodsDetailsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         if (call != null) {
-            call.cancel();
+                call.cancel();
         }
         super.onDestroy();
     }
