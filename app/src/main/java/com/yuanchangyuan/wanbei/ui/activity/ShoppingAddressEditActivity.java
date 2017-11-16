@@ -161,7 +161,7 @@ public class ShoppingAddressEditActivity extends BaseActivity {
 
     private boolean checkData() {
         if (TextUtils.isEmpty(etAddressName.getText().toString())) {
-            UIUtil.showToast("姓名不能为空");
+            UIUtil.showToast("收货人不能为空");
             return false;
         }
         if (TextUtils.isEmpty(etAddressPhone.getText().toString())) {

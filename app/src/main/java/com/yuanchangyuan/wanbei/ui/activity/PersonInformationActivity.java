@@ -115,8 +115,12 @@ public class PersonInformationActivity extends BaseActivity implements View.OnCl
             if (!TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().sex)) {
                 tv_sex.setText(BaseContext.getInstance().getUserInfo().sex.equals("1") ? "男" : "女");
             }
-            tv_birthday.setText(UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().birthday));
-            ImageLoadedrManager.getInstance().displayNoFilter(this, BaseContext.getInstance().getUserInfo().headimg, iv_head);
+            try {
+                tv_birthday.setText(UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().birthday));
+            } catch (Exception w) {
+                tv_birthday.setText(BaseContext.getInstance().getUserInfo().birthday);
+            }
+            ImageLoadedrManager.getInstance().display(this, BaseContext.getInstance().getUserInfo().headimg, iv_head, R.mipmap.ic_head_default);
         }
     }
 
@@ -199,7 +203,7 @@ public class PersonInformationActivity extends BaseActivity implements View.OnCl
         });
     }
 
-        private void upLoadImage() {
+    private void upLoadImage() {
         DialogUtils.showDialog(this, "上传中", false);
         List<MultipartBody.Part> parts = UploadFile.filesToMultipartBody(list);
         upLoadImageCall = RestAdapterManager.getApi().uploadFile(parts.get(0));

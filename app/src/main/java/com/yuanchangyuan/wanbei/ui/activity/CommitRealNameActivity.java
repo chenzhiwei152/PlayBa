@@ -54,8 +54,16 @@ public class CommitRealNameActivity extends BaseActivity {
         if (BaseContext.getInstance().getUserInfo() != null && !TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().ID) && !TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().name)) {
             et_id_number.setText(BaseContext.getInstance().getUserInfo().ID);
             user_name.setText(BaseContext.getInstance().getUserInfo().name);
-            et_id_number.setClickable(false);
-            user_name.setClickable(false);
+//            et_id_number.setClickable(false);
+//            user_name.setClickable(false);
+
+            et_id_number.setFocusable(false);
+            et_id_number.setFocusableInTouchMode(false);
+
+            user_name.setFocusable(false);
+            user_name.setFocusableInTouchMode(false);
+
+
             rl_commit.setVisibility(View.GONE);
         }
 

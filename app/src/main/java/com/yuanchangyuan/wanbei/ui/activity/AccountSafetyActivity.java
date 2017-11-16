@@ -215,12 +215,17 @@ public class AccountSafetyActivity extends BaseActivity {
             UIUtil.showToast("手机号不能为空");
             return false;
         }
+
         if (phoneNumber.trim().length() != 11) {
             Toast.makeText(this, "请输入11位账号", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (!TelephoneUtils.isMobile(phoneNumber)) {
             UIUtil.showToast("手机号格式错误");
+            return false;
+        }
+        if (!TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().phone) && !(BaseContext.getInstance().getUserInfo().phone.equals(phoneNumber))) {
+            UIUtil.showToast("手机号与该账号不符合");
             return false;
         }
         if (TextUtils.isEmpty(et_check_code.getText())) {
@@ -235,8 +240,9 @@ public class AccountSafetyActivity extends BaseActivity {
             UIUtil.showToast("新密码不能为空");
             return false;
         }
-        if (!user_new_password.getText().equals(user_password.getText())) {
+        if (!(user_new_password.getText().toString().equals(user_password.getText().toString()))) {
             UIUtil.showToast("密码不一致");
+            return false;
         }
         return true;
     }

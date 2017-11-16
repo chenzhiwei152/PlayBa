@@ -111,7 +111,8 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     TextView tv_end_week;
     @BindView(R.id.tv_begin_week)
     TextView tv_begin_week;
-
+    @BindView(R.id.rl_address)
+    RelativeLayout rl_address;
 
     private String tag;//rent,sale
     private String id;
@@ -294,7 +295,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (bean != null && !TextUtils.isEmpty(bean.getName()) && !TextUtils.isEmpty(bean.getPhone()) && !TextUtils.isEmpty(bean.getDetail())) {
             tv_address_name.setText(bean.getName());
             tv_address_phone.setText(bean.getPhone());
-            tv_address_detail.setText(bean.getProvince()+bean.getCity()+bean.getArea()+bean.getDetail());
+            tv_address_detail.setText(bean.getProvince() + bean.getCity() + bean.getArea() + bean.getDetail());
             ll_address.setVisibility(View.VISIBLE);
             ll_add_addresss.setVisibility(View.GONE);
         } else {
@@ -449,8 +450,10 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     private void setDeliveryType() {
         if (deliverytype == 0) {
             tv_delivery_type.setText("快递配送");
+            rl_address.setVisibility(View.VISIBLE);
         } else {
-            tv_delivery_type.setText("店铺自取");
+            tv_delivery_type.setText("到店自取");
+            rl_address.setVisibility(View.GONE);
         }
     }
 
@@ -548,10 +551,10 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     private void setDefaultTimeArea() {
         if (beginDate == null) {
 //            beginDate=new Date(Long.valueOf(UIUtil.getTime(new Date(),"yyyy-MM-dd HH")));
-            beginDate=UIUtil.strToDate(UIUtil.getTime(new Date(),"yyyy-MM-dd HH"));
+            beginDate = UIUtil.strToDate(UIUtil.getTime(new Date(), "yyyy-MM-dd HH"));
         }
         if (endDate == null) {
-            endDate = UIUtil.strToDate(UIUtil.getTime(new Date(),"yyyy-MM-dd HH"));
+            endDate = UIUtil.strToDate(UIUtil.getTime(new Date(), "yyyy-MM-dd HH"));
         }
         tv_begin_time.setText(UIUtil.getTime(beginDate, "yyyy-MM-dd HH") + "时");
         tv_begin_week.setText(UIUtil.getWeekOfDate(beginDate));
@@ -565,10 +568,13 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     }
 
     private boolean checkData() {
-        if (TextUtils.isEmpty(tv_address_name.getText().toString())) {
-            UIUtil.showToast("请选择收货地址");
-            return false;
+        if (deliverytype==0){
+            if (TextUtils.isEmpty(tv_address_name.getText().toString())) {
+                UIUtil.showToast("请选择收货地址");
+                return false;
+            }
         }
+
         if (tag.equals("rent")) {
             if (hour == 0) {
                 UIUtil.showToast("请选择正确的时间");
@@ -731,7 +737,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
      * @param string
      */
     private void pay(String string) {
-        if (payChannel==0){
+        if (payChannel == 0) {
             JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
                 @Override
                 public void onPaySuccess() {
@@ -743,7 +749,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                 @Override
                 public void onPayError(int error_code, String message) {
                     DialogUtils.closeDialog();
-                    Toast.makeText(CommitOrderActivity.this, "支付失败>"  + " " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CommitOrderActivity.this, "支付失败>" + " " + message, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -752,7 +758,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                     Toast.makeText(CommitOrderActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
                 }
             });
-        }else if (payChannel==1){
+        } else if (payChannel == 1) {
             JPay.getIntance(this).toPay(JPay.PayMode.WXPAY, string, new JPay.JPayListener() {
                 @Override
                 public void onPaySuccess() {

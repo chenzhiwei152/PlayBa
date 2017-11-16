@@ -260,7 +260,7 @@ public class RegisterActivity extends BaseActivity implements
             UIUtil.showToast("手机号不能为空");
             return;
         }
-        if (TextUtils.isEmpty(etCode.getText())) {
+        if (TextUtils.isEmpty(etCode.getText().toString())) {
             UIUtil.showToast("验证码不能为空");
             return;
         }
