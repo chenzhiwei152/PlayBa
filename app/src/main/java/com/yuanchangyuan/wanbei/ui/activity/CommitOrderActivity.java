@@ -632,9 +632,11 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         Map<String, String> map = new HashMap<>();
-        map.put("ordername", tv_address_name.getText().toString());
-        map.put("orderphone", tv_address_phone.getText().toString());
-        map.put("orderaddress", tv_address_detail.getText().toString());
+        if (deliverytype==0){
+            map.put("ordername", tv_address_name.getText().toString());
+            map.put("orderphone", tv_address_phone.getText().toString());
+            map.put("orderaddress", tv_address_detail.getText().toString());
+        }
         map.put("goodsid", goodsBean.getId() + "");
         map.put("goodsprice", goodsBean.getPrice() + "");
         map.put("count", tvNum.getText().toString());
