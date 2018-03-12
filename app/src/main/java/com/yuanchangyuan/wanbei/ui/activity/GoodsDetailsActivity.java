@@ -1,14 +1,27 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,6 +63,8 @@ public class GoodsDetailsActivity extends BaseActivity {
     TitleBar title_view;
     @BindView(R.id.tv_goods_detail_describe)
     TextView tv_goods_detail_describe;
+    @BindView(R.id.wv_webview)
+    WebView mWebView;
     private ConvenientBanner kanner;
     List<bannerBean> list = new ArrayList<>();
     private GoodsDetailItemAdapter listAdapter;
@@ -63,6 +78,17 @@ public class GoodsDetailsActivity extends BaseActivity {
     private TextView tv_price;
     private Call<SuperBean<GoodsListBean>> call;
     private boolean isNewData = true;
+
+
+
+    private View mCustomView;
+    private int mOriginalSystemUiVisibility;
+    private int mOriginalOrientation;
+    private WebChromeClient.CustomViewCallback mCustomViewCallback;
+    protected FrameLayout mFullscreenContainer;
+    private Handler mHandler=new Handler();
+
+
 
     @Override
     public int getContentViewLayoutId() {
@@ -99,6 +125,165 @@ public class GoodsDetailsActivity extends BaseActivity {
     @Override
     public void loadData() {
         setData();
+        setUpWebViewDefaults(mWebView);
+        setChromeClient();
+        mWebView.loadUrl("http://47.92.137.237:8080/resource/goods/video?goodsId="+goodsBean.getId()); //这个地方是本地的assets下的h5文件
+//android开发人员直接拿这个标准的文件去看是否能从当前页面播放，是否能全屏播放
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setWebView() {
+//        getWindow().setFlags(//强制打开GPU渲染
+//                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+//                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+//        WebSettings ws = wv_webview.getSettings();
+//        ws.setBuiltInZoomControls(true);// 隐藏缩放按钮
+//        // ws.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);// 排版适应屏幕
+//
+//        ws.setUseWideViewPort(true);// 可任意比例缩放
+//        ws.setLoadWithOverviewMode(true);// setUseWideViewPort方法设置webview推荐使用的窗口。setLoadWithOverviewMode方法是设置webview加载的页面的模式。
+//
+//        ws.setSavePassword(true);
+//        ws.setSaveFormData(true);// 保存表单数据
+//        ws.setJavaScriptEnabled(true);
+//        ws.setGeolocationEnabled(true);// 启用地理定位
+//        ws.setGeolocationDatabasePath("/data/data/com.yuanchangyuan.wanbei/databases/");// 设置定位的数据库路径
+//        ws.setDomStorageEnabled(true);
+//        ws.setSupportMultipleWindows(true);// 新加
+//        xwebchromeclient = new myWebChromeClient();
+
+
+
+//        WebSettings settings = wv_webview.getSettings();
+//        settings.setJavaScriptEnabled(true);
+//        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+//
+//            settings.setPluginState(WebSettings.PluginState.ON);
+//
+//        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.KITKAT) {
+//            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+//        }
+//        settings.setPluginState(WebSettings.PluginState.ON);
+        //settings.setPluginsEnabled(true);
+//        settings.setAllowFileAccess(true);
+//        settings.setLoadWithOverviewMode(true);
+//        settings.setUseWideViewPort(true);
+//        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+//        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+//        mInsideWebChromeClient = new InsideWebChromeClient();
+//        InsideWebViewClient mInsideWebViewClient = new InsideWebViewClient();
+//        //javascriptInterface = new JavascriptInterface();
+//        //mWebView.addJavascriptInterface(javascriptInterface, "java2js_laole918");
+//        mWebView.setWebChromeClient(mInsideWebChromeClient);
+//        mWebView.setWebViewClient(mInsideWebViewClient);
+//        wv_webview.setWebChromeClient(new WebChromeClient());
+//        wv_webview.setWebViewClient(new WebViewClient());
+
+
+
+//        wv_webview.loadUrl("http://47.92.137.237:8080/resource/goods/video?goodsId="+goodsBean.getId());
+//        String html="<!DOCTYPE html><html><head><meta charset=\"utf-8\"> <title></title></head><body><video preload=\"auto\" controls=\"true\" src=\""+goodsBean.getVideo()+"\"/></body></html>";
+//        wv_webview.loadDataWithBaseURL(null,html,"text/html","utf-8",null);
+    }
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setUpWebViewDefaults(WebView webView) {
+        WebSettings settings = webView.getSettings();
+
+        // Enable Javascript
+        settings.setJavaScriptEnabled(true);
+
+        // Use WideViewport and Zoom out if there is no viewport defined
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(true);
+
+        // Enable pinch to zoom without the zoom buttons
+        settings.setBuiltInZoomControls(false);
+
+        // Allow use of Local Storage
+        settings.setDomStorageEnabled(true);
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            // Hide the zoom controls for HONEYCOMB+
+            settings.setDisplayZoomControls(false);
+        }
+
+        // Enable remote debugging via chrome://inspect
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
+
+        webView.setWebViewClient(new WebViewClient());
+    }
+
+    void setChromeClient() {
+        mWebView.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public Bitmap getDefaultVideoPoster() {
+                if (this == null) {
+                    return null;
+                }
+
+                //这个地方是加载h5的视频列表 默认图   点击前的视频图
+                return BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.mipmap.ic_launcher);
+            }
+
+            @Override
+            public void onShowCustomView(View view,
+                                         WebChromeClient.CustomViewCallback callback) {
+                // if a view already exists then immediately terminate the new one
+                if (mCustomView != null) {
+                    onHideCustomView();
+                    return;
+                }
+
+                // 1. Stash the current state
+                mCustomView = view;
+                mOriginalSystemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
+                mOriginalOrientation = getRequestedOrientation();
+
+                // 2. Stash the custom view callback
+                mCustomViewCallback = callback;
+
+                // 3. Add the custom view to the view hierarchy
+                FrameLayout decor = (FrameLayout) getWindow().getDecorView();
+                decor.addView(mCustomView, new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
+
+                // 4. Change the state of the window
+                getWindow().getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                View.SYSTEM_UI_FLAG_IMMERSIVE);
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
+
+            @Override
+            public void onHideCustomView() {
+                // 1. Remove the custom view
+                FrameLayout decor = (FrameLayout) getWindow().getDecorView();
+                decor.removeView(mCustomView);
+                mCustomView = null;
+
+                // 2. Restore the state to it's original form
+                getWindow().getDecorView()
+                        .setSystemUiVisibility(mOriginalSystemUiVisibility);
+                setRequestedOrientation(mOriginalOrientation);
+
+                // 3. Call the custom view callback
+                mCustomViewCallback.onCustomViewHidden();
+                mCustomViewCallback = null;
+
+            }
+
+        });
     }
 
     @Override
@@ -311,9 +496,9 @@ public class GoodsDetailsActivity extends BaseActivity {
             if (goodsBean.getPrice() > 0) {
                 tv_price_title.setText("￥" + goodsBean.getPrice() / 100.00);
                 tv_price.setVisibility(View.VISIBLE);
-                if (goodsBean.getBillingmode()==1){
+                if (goodsBean.getBillingmode() == 1) {
                     tv_price.setText("/日");
-                }else {
+                } else {
                     tv_price.setText("/时");
                 }
             } else {
@@ -343,7 +528,7 @@ public class GoodsDetailsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         if (call != null) {
-                call.cancel();
+            call.cancel();
         }
         super.onDestroy();
     }

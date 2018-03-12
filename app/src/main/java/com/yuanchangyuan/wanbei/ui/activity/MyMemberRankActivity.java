@@ -3,6 +3,7 @@ package com.yuanchangyuan.wanbei.ui.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.adapter.MemberRankItemAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.MemberRankBean;
 import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
+import com.yuanchangyuan.wanbei.ui.listerner.CommonInterface;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
 import com.yuanchangyuan.wanbei.view.TitleBar;
@@ -68,7 +70,21 @@ public class MyMemberRankActivity extends BaseActivity {
         adapter = new MemberRankItemAdapter(this);
         rv_list.setAdapter(adapter);
         rv_list.setNestedScrollingEnabled(false);
+        adapter.setCommonInterface(new CommonInterface() {
+            @Override
+            public void onClicked(Object data) {
+                // 1. Instantiate an AlertDialog.Builder with its constructor
+                AlertDialog.Builder builder = new AlertDialog.Builder(MyMemberRankActivity.this);
 
+// 2. Chain together various setter methods to set the dialog characteristics
+                builder.setMessage((String) data)
+                ;
+
+// 3. Get the AlertDialog from create()
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
 
         bt_go_commit.setOnClickListener(new View.OnClickListener() {
             @Override

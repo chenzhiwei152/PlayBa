@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.ui.bean.MemberRankBean;
+import com.yuanchangyuan.wanbei.ui.listerner.CommonInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +26,20 @@ public class MemberRankItemAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static Context context;
     private boolean isLight;
     private final LayoutInflater mLayoutInflater;
+    private static CommonInterface commonInterface;
 
     public MemberRankItemAdapter(Context context) {
         this.context = context;
         this.list = new ArrayList<>();
         mLayoutInflater = LayoutInflater.from(context);
+    }
+
+    public CommonInterface getCommonInterface() {
+        return commonInterface;
+    }
+
+    public void setCommonInterface(CommonInterface commonInterface) {
+        this.commonInterface = commonInterface;
     }
 
     public MemberRankItemAdapter(Context context, List<MemberRankBean> items) {
@@ -42,6 +52,10 @@ public class MemberRankItemAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void addList(List<MemberRankBean> items) {
         this.list.addAll(items);
         notifyDataSetChanged();
+    }
+
+    public static List<MemberRankBean> getList() {
+        return list;
     }
 
     public void ClearData() {
@@ -64,7 +78,7 @@ public class MemberRankItemAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (list != null) {
 
             ((ImageViewHolder) viewHolder).tv_rank1_title.setText(list.get(position).getName());
-            ((ImageViewHolder) viewHolder).tv_rank.setText(list.get(position).getMoney()/100.00+"");
+            ((ImageViewHolder) viewHolder).tv_rank.setText(list.get(position).getMoney() / 100.00 + "");
         }
     }
 
@@ -86,6 +100,9 @@ public class MemberRankItemAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (commonInterface != null) {
+                        commonInterface.onClicked(list.get(getPosition()).getDescribe());
+                    }
                 }
             });
         }

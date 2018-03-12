@@ -21,6 +21,15 @@ public class MemberRankBean implements Serializable{
     private String name;
     private int money;
     private double discount;
+    private String describe;
+
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
 
     public int getId() {
         return id;
