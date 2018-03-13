@@ -1,6 +1,5 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -80,14 +79,12 @@ public class GoodsDetailsActivity extends BaseActivity {
     private boolean isNewData = true;
 
 
-
     private View mCustomView;
     private int mOriginalSystemUiVisibility;
     private int mOriginalOrientation;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
     protected FrameLayout mFullscreenContainer;
-    private Handler mHandler=new Handler();
-
+    private Handler mHandler = new Handler();
 
 
     @Override
@@ -122,71 +119,18 @@ public class GoodsDetailsActivity extends BaseActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void loadData() {
         setData();
         setUpWebViewDefaults(mWebView);
         setChromeClient();
         mWebView.loadUrl("http://47.92.137.237:8080/resource/goods/video?goodsId="+goodsBean.getId()); //这个地方是本地的assets下的h5文件
-//android开发人员直接拿这个标准的文件去看是否能从当前页面播放，是否能全屏播放
+//        mWebView.loadUrl("http://www.youku.com/");
 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void setWebView() {
-//        getWindow().setFlags(//强制打开GPU渲染
-//                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-//                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-//        WebSettings ws = wv_webview.getSettings();
-//        ws.setBuiltInZoomControls(true);// 隐藏缩放按钮
-//        // ws.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);// 排版适应屏幕
-//
-//        ws.setUseWideViewPort(true);// 可任意比例缩放
-//        ws.setLoadWithOverviewMode(true);// setUseWideViewPort方法设置webview推荐使用的窗口。setLoadWithOverviewMode方法是设置webview加载的页面的模式。
-//
-//        ws.setSavePassword(true);
-//        ws.setSaveFormData(true);// 保存表单数据
-//        ws.setJavaScriptEnabled(true);
-//        ws.setGeolocationEnabled(true);// 启用地理定位
-//        ws.setGeolocationDatabasePath("/data/data/com.yuanchangyuan.wanbei/databases/");// 设置定位的数据库路径
-//        ws.setDomStorageEnabled(true);
-//        ws.setSupportMultipleWindows(true);// 新加
-//        xwebchromeclient = new myWebChromeClient();
-
-
-
-//        WebSettings settings = wv_webview.getSettings();
-//        settings.setJavaScriptEnabled(true);
-//        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-//
-//            settings.setPluginState(WebSettings.PluginState.ON);
-//
-//        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.KITKAT) {
-//            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-//        }
-//        settings.setPluginState(WebSettings.PluginState.ON);
-        //settings.setPluginsEnabled(true);
-//        settings.setAllowFileAccess(true);
-//        settings.setLoadWithOverviewMode(true);
-//        settings.setUseWideViewPort(true);
-//        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-//        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-//        mInsideWebChromeClient = new InsideWebChromeClient();
-//        InsideWebViewClient mInsideWebViewClient = new InsideWebViewClient();
-//        //javascriptInterface = new JavascriptInterface();
-//        //mWebView.addJavascriptInterface(javascriptInterface, "java2js_laole918");
-//        mWebView.setWebChromeClient(mInsideWebChromeClient);
-//        mWebView.setWebViewClient(mInsideWebViewClient);
-//        wv_webview.setWebChromeClient(new WebChromeClient());
-//        wv_webview.setWebViewClient(new WebViewClient());
-
-
-
-//        wv_webview.loadUrl("http://47.92.137.237:8080/resource/goods/video?goodsId="+goodsBean.getId());
-//        String html="<!DOCTYPE html><html><head><meta charset=\"utf-8\"> <title></title></head><body><video preload=\"auto\" controls=\"true\" src=\""+goodsBean.getVideo()+"\"/></body></html>";
-//        wv_webview.loadDataWithBaseURL(null,html,"text/html","utf-8",null);
-    }
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setUpWebViewDefaults(WebView webView) {
         WebSettings settings = webView.getSettings();
 
@@ -202,7 +146,9 @@ public class GoodsDetailsActivity extends BaseActivity {
 
         // Allow use of Local Storage
         settings.setDomStorageEnabled(true);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
             // Hide the zoom controls for HONEYCOMB+
             settings.setDisplayZoomControls(false);

@@ -150,16 +150,16 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (tag.equals("rent")) {
             rl_number.setVisibility(View.GONE);
             vv_v1.setVisibility(View.GONE);
-            rl_rent_days.setVisibility(View.VISIBLE);
-            vv_v2.setVisibility(View.VISIBLE);
+//            rl_rent_days.setVisibility(View.VISIBLE);
+//            vv_v2.setVisibility(View.VISIBLE);
             orderType = 1;
             setDefaultTimeArea();
             setRentPrice();
         } else {
             rl_number.setVisibility(View.VISIBLE);
             vv_v1.setVisibility(View.VISIBLE);
-            rl_rent_days.setVisibility(View.GONE);
-            vv_v2.setVisibility(View.GONE);
+//            rl_rent_days.setVisibility(View.GONE);
+//            vv_v2.setVisibility(View.GONE);
             mxCount = goodsBean.getStock();
             orderType = 0;
             setDefaultTimeArea();
@@ -575,12 +575,12 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             }
         }
 
-        if (tag.equals("rent")) {
-            if (hour == 0) {
-                UIUtil.showToast("请选择正确的时间");
-                return false;
-            }
-        }
+//        if (tag.equals("rent")) {
+//            if (hour == 0) {
+//                UIUtil.showToast("请选择正确的时间");
+//                return false;
+//            }
+//        }
 
         return true;
     }
@@ -691,15 +691,15 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         map.put("orderphone", tv_address_phone.getText().toString());
         map.put("orderaddress", tv_address_detail.getText().toString());
         map.put("goodsid", goodsBean.getId() + "");
-        map.put("price", goodsBean.getPrice() + "");
+//        map.put("price", goodsBean.getPrice() + "");
         map.put("count", "1");
-        map.put("starttime", UIUtil.getTime(beginDate, "yyyy-MM-dd HH:mm:ss"));
-        map.put("endtime", UIUtil.getTime(endDate, "yyyy-MM-dd HH:mm:ss"));
+//        map.put("starttime", UIUtil.getTime(beginDate, "yyyy-MM-dd HH:mm:ss"));
+//        map.put("endtime", UIUtil.getTime(endDate, "yyyy-MM-dd HH:mm:ss"));
         map.put("deliverytype", deliverytype + "");
         map.put("payType", orderType + "");
-        map.put("totalmoney", price + "");
+//        map.put("totalmoney", price + "");
         map.put("userid", BaseContext.getInstance().getUserInfo().userId);
-        map.put("deposit", goodsBean.getDeposit() + "");
+//        map.put("deposit", goodsBean.getDeposit() + "");
         LogUtils.e(JSON.toJSONString(map));
         DialogUtils.showDialog(CommitOrderActivity.this, "获取订单...", false);
         commitRentCall = RestAdapterManager.getApi().getRentOrder(map);

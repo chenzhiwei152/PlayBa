@@ -33,6 +33,33 @@ public class OrderDetailBean implements Serializable{
     private String orderpayno;
     private String createtime;
     private String paytime;
+    private int feiYong;//费用总额
+    private int feiStatus;//费用支付状态0未支付1已支付
+    private int confirm;//2 显示跳转
+
+    public int getConfirm() {
+        return confirm;
+    }
+
+    public void setConfirm(int confirm) {
+        this.confirm = confirm;
+    }
+
+    public int getFeiYong() {
+        return feiYong;
+    }
+
+    public void setFeiYong(int feiYong) {
+        this.feiYong = feiYong;
+    }
+
+    public int getFeiStatus() {
+        return feiStatus;
+    }
+
+    public void setFeiStatus(int feiStatus) {
+        this.feiStatus = feiStatus;
+    }
 
     public String getOrdername() {
         return ordername;
