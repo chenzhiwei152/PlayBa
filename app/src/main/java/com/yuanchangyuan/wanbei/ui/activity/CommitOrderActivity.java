@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.javen205.jpay.JPay;
+import com.jpay.JPay;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
@@ -111,7 +111,8 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     TextView tv_end_week;
     @BindView(R.id.tv_begin_week)
     TextView tv_begin_week;
-
+    @BindView(R.id.rl_address)
+    RelativeLayout rl_address;
 
     private String tag;//rent,sale
     private String id;
@@ -149,16 +150,16 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (tag.equals("rent")) {
             rl_number.setVisibility(View.GONE);
             vv_v1.setVisibility(View.GONE);
-            rl_rent_days.setVisibility(View.VISIBLE);
-            vv_v2.setVisibility(View.VISIBLE);
+//            rl_rent_days.setVisibility(View.VISIBLE);
+//            vv_v2.setVisibility(View.VISIBLE);
             orderType = 1;
             setDefaultTimeArea();
             setRentPrice();
         } else {
             rl_number.setVisibility(View.VISIBLE);
             vv_v1.setVisibility(View.VISIBLE);
-            rl_rent_days.setVisibility(View.GONE);
-            vv_v2.setVisibility(View.GONE);
+//            rl_rent_days.setVisibility(View.GONE);
+//            vv_v2.setVisibility(View.GONE);
             mxCount = goodsBean.getStock();
             orderType = 0;
             setDefaultTimeArea();
@@ -294,7 +295,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (bean != null && !TextUtils.isEmpty(bean.getName()) && !TextUtils.isEmpty(bean.getPhone()) && !TextUtils.isEmpty(bean.getDetail())) {
             tv_address_name.setText(bean.getName());
             tv_address_phone.setText(bean.getPhone());
-            tv_address_detail.setText(bean.getDetail());
+            tv_address_detail.setText(bean.getProvince() + bean.getCity() + bean.getArea() + bean.getDetail());
             ll_address.setVisibility(View.VISIBLE);
             ll_add_addresss.setVisibility(View.GONE);
         } else {
@@ -309,7 +310,9 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (!TextUtils.isEmpty(orderId)) {
             Intent intent = new Intent(this, OrderDetailsActivity.class);
             intent.putExtra("orderId", orderId);
+            intent.putExtra("type", tag);
             startActivity(intent);
+            finish();
         } else {
             UIUtil.showToast("订单id为空");
         }
@@ -399,7 +402,6 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                     } else if (payChannel == 2) {
                         myDialog.dismiss();
                         goNext();
-                        finish();
                     } else {
                         getRSAOrderInfo();
                         myDialog.dismiss();
@@ -448,8 +450,10 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     private void setDeliveryType() {
         if (deliverytype == 0) {
             tv_delivery_type.setText("快递配送");
+            rl_address.setVisibility(View.VISIBLE);
         } else {
-            tv_delivery_type.setText("店铺自取");
+            tv_delivery_type.setText("到店自取");
+            rl_address.setVisibility(View.GONE);
         }
     }
 
@@ -547,10 +551,10 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     private void setDefaultTimeArea() {
         if (beginDate == null) {
 //            beginDate=new Date(Long.valueOf(UIUtil.getTime(new Date(),"yyyy-MM-dd HH")));
-            beginDate=UIUtil.strToDate(UIUtil.getTime(new Date(),"yyyy-MM-dd HH"));
+            beginDate = UIUtil.strToDate(UIUtil.getTime(new Date(), "yyyy-MM-dd HH"));
         }
         if (endDate == null) {
-            endDate = UIUtil.strToDate(UIUtil.getTime(new Date(),"yyyy-MM-dd HH"));
+            endDate = UIUtil.strToDate(UIUtil.getTime(new Date(), "yyyy-MM-dd HH"));
         }
         tv_begin_time.setText(UIUtil.getTime(beginDate, "yyyy-MM-dd HH") + "时");
         tv_begin_week.setText(UIUtil.getWeekOfDate(beginDate));
@@ -564,16 +568,19 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     }
 
     private boolean checkData() {
-        if (TextUtils.isEmpty(tv_address_name.getText().toString())) {
-            UIUtil.showToast("请选择收货地址");
-            return false;
-        }
-        if (tag.equals("rent")) {
-            if (hour == 0) {
-                UIUtil.showToast("请选择正确的时间");
+        if (deliverytype==0){
+            if (TextUtils.isEmpty(tv_address_name.getText().toString())) {
+                UIUtil.showToast("请选择收货地址");
                 return false;
             }
         }
+
+//        if (tag.equals("rent")) {
+//            if (hour == 0) {
+//                UIUtil.showToast("请选择正确的时间");
+//                return false;
+//            }
+//        }
 
         return true;
     }
@@ -625,9 +632,11 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         Map<String, String> map = new HashMap<>();
-        map.put("ordername", tv_address_name.getText().toString());
-        map.put("orderphone", tv_address_phone.getText().toString());
-        map.put("orderaddress", tv_address_detail.getText().toString());
+        if (deliverytype==0){
+            map.put("ordername", tv_address_name.getText().toString());
+            map.put("orderphone", tv_address_phone.getText().toString());
+            map.put("orderaddress", tv_address_detail.getText().toString());
+        }
         map.put("goodsid", goodsBean.getId() + "");
         map.put("goodsprice", goodsBean.getPrice() + "");
         map.put("count", tvNum.getText().toString());
@@ -635,6 +644,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         map.put("payType", orderType + "");
         map.put("totalmoney", price + "");
         map.put("userid", BaseContext.getInstance().getUserInfo().userId);
+        LogUtils.e(JSON.toJSONString(map));
         Call<SuperBean<String>> commitOrderCall;
         DialogUtils.showDialog(CommitOrderActivity.this, "获取订单...", false);
         commitOrderCall = RestAdapterManager.getApi().getCommitOrder(map);
@@ -681,15 +691,15 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         map.put("orderphone", tv_address_phone.getText().toString());
         map.put("orderaddress", tv_address_detail.getText().toString());
         map.put("goodsid", goodsBean.getId() + "");
-        map.put("price", goodsBean.getPrice() + "");
+//        map.put("price", goodsBean.getPrice() + "");
         map.put("count", "1");
-        map.put("starttime", UIUtil.getTime(beginDate, "yyyy-MM-dd HH"));
-        map.put("endtime", UIUtil.getTime(endDate, "yyyy-MM-dd HH"));
+//        map.put("starttime", UIUtil.getTime(beginDate, "yyyy-MM-dd HH:mm:ss"));
+//        map.put("endtime", UIUtil.getTime(endDate, "yyyy-MM-dd HH:mm:ss"));
         map.put("deliverytype", deliverytype + "");
         map.put("payType", orderType + "");
-        map.put("totalmoney", price + "");
+//        map.put("totalmoney", price + "");
         map.put("userid", BaseContext.getInstance().getUserInfo().userId);
-        map.put("deposit", goodsBean.getDeposit() + "");
+//        map.put("deposit", goodsBean.getDeposit() + "");
         LogUtils.e(JSON.toJSONString(map));
         DialogUtils.showDialog(CommitOrderActivity.this, "获取订单...", false);
         commitRentCall = RestAdapterManager.getApi().getRentOrder(map);
@@ -729,27 +739,50 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
      * @param string
      */
     private void pay(String string) {
-        JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
-            @Override
-            public void onPaySuccess() {
-                DialogUtils.closeDialog();
-                goNext();
-                finish();
-                Toast.makeText(CommitOrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
-            }
+        if (payChannel == 0) {
+            JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
+                @Override
+                public void onPaySuccess() {
+                    DialogUtils.closeDialog();
+                    goNext();
+                    Toast.makeText(CommitOrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onPayError(int error_code, String message) {
-                DialogUtils.closeDialog();
-                Toast.makeText(CommitOrderActivity.this, "支付失败>" + error_code + " " + message, Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onPayError(int error_code, String message) {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(CommitOrderActivity.this, "支付失败>" + " " + message, Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onPayCancel() {
-                DialogUtils.closeDialog();
-                Toast.makeText(CommitOrderActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onPayCancel() {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(CommitOrderActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else if (payChannel == 1) {
+            JPay.getIntance(this).toPay(JPay.PayMode.WXPAY, string, new JPay.JPayListener() {
+                @Override
+                public void onPaySuccess() {
+                    DialogUtils.closeDialog();
+                    goNext();
+                    Toast.makeText(CommitOrderActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onPayError(int error_code, String message) {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(CommitOrderActivity.this, "支付失败>" + " " + message, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onPayCancel() {
+                    DialogUtils.closeDialog();
+                    Toast.makeText(CommitOrderActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
     @Override

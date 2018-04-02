@@ -54,8 +54,16 @@ public class CommitRealNameActivity extends BaseActivity {
         if (BaseContext.getInstance().getUserInfo() != null && !TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().ID) && !TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().name)) {
             et_id_number.setText(BaseContext.getInstance().getUserInfo().ID);
             user_name.setText(BaseContext.getInstance().getUserInfo().name);
-            et_id_number.setClickable(false);
-            user_name.setClickable(false);
+//            et_id_number.setClickable(false);
+//            user_name.setClickable(false);
+
+            et_id_number.setFocusable(false);
+            et_id_number.setFocusableInTouchMode(false);
+
+            user_name.setFocusable(false);
+            user_name.setFocusableInTouchMode(false);
+
+
             rl_commit.setVisibility(View.GONE);
         }
 
@@ -77,7 +85,7 @@ public class CommitRealNameActivity extends BaseActivity {
         Map<String, String> map = new HashMap<>();
         map.put("userId", BaseContext.getInstance().getUserInfo().userId);
         map.put("name", user_name.getText().toString());
-        map.put("ID", et_id_number.getText().toString());
+        map.put("cardId", et_id_number.getText().toString());
         call = RestAdapterManager.getApi().commitRealName(map);
         call.enqueue(new JyCallBack<String>() {
             @Override
@@ -115,10 +123,10 @@ public class CommitRealNameActivity extends BaseActivity {
             UIUtil.showToast("身份证号不能为空");
             return false;
         }
-        if (!UIUtil.isRealIDCard(et_id_number.getText().toString())) {
-            UIUtil.showToast("请输入正确的身份证号码");
-            return false;
-        }
+//        if (!UIUtil.isRealIDCard(et_id_number.getText().toString())) {
+//            UIUtil.showToast("请输入正确的身份证号码");
+//            return false;
+//        }
         return true;
     }
 

@@ -1,23 +1,35 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.jpay.JPay;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
 import com.yuanchangyuan.wanbei.base.BaseActivity;
+import com.yuanchangyuan.wanbei.base.BaseContext;
 import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.bean.OrderDetailBean;
 import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.ImageLoadedrManager;
+import com.yuanchangyuan.wanbei.utils.LogUtils;
 import com.yuanchangyuan.wanbei.utils.NetUtil;
 import com.yuanchangyuan.wanbei.utils.UIUtil;
+import com.yuanchangyuan.wanbei.view.MyDialog;
 import com.yuanchangyuan.wanbei.view.TitleBar;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import retrofit2.Call;
@@ -52,11 +64,20 @@ public class OrderDetailsActivity extends BaseActivity {
     TextView tv_order_pay_time;
     @BindView(R.id.iv_goods)
     ImageView iv_goods;
-
+    @BindView(R.id.rl_all_pay)
+    RelativeLayout rl_all_pay;
+    @BindView(R.id.rl_pay_state)
+    RelativeLayout rl_pay_state;
+    @BindView(R.id.tv_pay)
+    TextView tv_pay;
+    @BindView(R.id.tv_pay_state)
+    TextView tv_pay_state;
+    private int payChannel = 0;//支付通道0为支付宝1为微信
 
     private String orderId;
     private String type;
     Call<SuperBean<OrderDetailBean>> call;
+    private Call<SuperBean<String>> getRsaOrderCall;
 
     @Override
     public int getContentViewLayoutId() {
@@ -71,7 +92,6 @@ public class OrderDetailsActivity extends BaseActivity {
             type = getIntent().getExtras().getString("type");
         } catch (Exception e) {
         }
-
     }
 
     @Override
@@ -111,6 +131,29 @@ public class OrderDetailsActivity extends BaseActivity {
             tv_order_number.setText(orderDetailBean.getOrderpayno());
             tv_order_create_time.setText(UIUtil.timeStamp2Date(orderDetailBean.getCreatetime(), "yyyy-MM-dd HH:mm:ss"));
             tv_order_pay_time.setText(UIUtil.timeStamp2Date(orderDetailBean.getPaytime(), "yyyy-MM-dd HH:mm:ss"));
+            tv_pay_state.setText(orderDetailBean.getFeiStatus() == 0 ? "未支付" : "已支付");
+            if (orderDetailBean.getFeiStatus() == 0) {
+                rl_pay_state.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        payStyleDialog();
+                    }
+                });
+            } else {
+                rl_pay_state.setOnClickListener(null);
+            }
+            tv_pay.setText(orderDetailBean.getFeiYong()/ 100.00+"");
+            if (type.equals("rent")) {
+                if (orderDetailBean.getConfirm()==2){
+                    rl_pay_state.setVisibility(View.VISIBLE);
+                    rl_all_pay.setVisibility(View.VISIBLE);
+                }else {
+                    rl_pay_state.setVisibility(View.GONE);
+                    rl_all_pay.setVisibility(View.GONE);
+                }
+
+
+            }
         }
     }
 
@@ -122,10 +165,15 @@ public class OrderDetailsActivity extends BaseActivity {
             UIUtil.showToast(R.string.net_state_error);
             return;
         }
+        if (TextUtils.isEmpty(type)) {
+            UIUtil.showToast("dingdanid为空");
+            finish();
+            return;
+        }
         DialogUtils.showDialog(this, "加载中", false);
-        if (type.equals("rent")){
+        if (type.equals("rent")) {
             call = RestAdapterManager.getApi().getRentOrderDetails(orderId);
-        }else {
+        } else {
             call = RestAdapterManager.getApi().getOrderDetails(orderId);
         }
 
@@ -190,6 +238,195 @@ public class OrderDetailsActivity extends BaseActivity {
         if (call != null) {
             call.cancel();
         }
+        if (getRsaOrderCall != null) {
+            getRsaOrderCall.cancel();
+        }
         super.onDestroy();
+    }
+
+    /**
+     * 支付方式
+     */
+    public void payStyleDialog() {
+
+        View view = View.inflate(OrderDetailsActivity.this, R.layout.dialog_pay_type, null);
+        showdialog(view);
+
+
+        final CheckBox aliCheck = (CheckBox) view.findViewById(R.id.cb_ali);
+        final CheckBox wxCheck = (CheckBox) view.findViewById(R.id.cb_wx);
+        final CheckBox offLineCheck = (CheckBox) view.findViewById(R.id.cb_off);
+        final Button commit = (Button) view.findViewById(R.id.bt_commit);
+
+        aliCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    wxCheck.setChecked(false);
+                    offLineCheck.setChecked(false);
+                    payChannel = 0;
+                } else {
+                    aliCheck.setChecked(false);
+                    payChannel = 3;
+                }
+            }
+        });
+        wxCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    aliCheck.setChecked(false);
+                    offLineCheck.setChecked(false);
+                    payChannel = 1;
+                } else {
+                    wxCheck.setChecked(false);
+                    payChannel = 3;
+                }
+            }
+        });
+        offLineCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    wxCheck.setChecked(false);
+                    aliCheck.setChecked(false);
+                    payChannel = 2;
+                } else {
+                    offLineCheck.setChecked(false);
+                    payChannel = 3;
+                }
+            }
+        });
+        commit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!UIUtil.isFastDoubleClick()) {
+                    if (payChannel == 3) {
+                        UIUtil.showToast("请选择支付方式");
+                    } else if (payChannel == 2) {
+                        myDialog.dismiss();
+                        goNext();
+                        // 刷新数据
+                    } else {
+                        getRSAOrderInfo();
+                        myDialog.dismiss();
+                    }
+                }
+
+            }
+        });
+
+    }
+
+    private MyDialog myDialog;
+
+    /**
+     * 弹出dialog
+     *
+     * @param view
+     */
+    private void showdialog(View view) {
+
+        myDialog = new MyDialog(this, 0, 0, view, R.style.dialog);
+        myDialog.show();
+        myDialog.setCancelable(false);
+    }
+
+    /**
+     * 获取加密订单信息
+     */
+    private void getRSAOrderInfo() {
+        Map<String, String> map = new HashMap<>();
+        map.put("orderId", orderId);
+        map.put("userId", BaseContext.getInstance().getUserInfo().userId);
+        map.put("payChannel", payChannel + "");
+//        map.put("totalMoney", price + "");
+        map.put("orderType", "3");
+        DialogUtils.showDialog(OrderDetailsActivity.this, "加载...", false);
+        getRsaOrderCall = RestAdapterManager.getApi().getRsaOrderInfo(map);
+        getRsaOrderCall.enqueue(new JyCallBack<SuperBean<String>>() {
+            @Override
+            public void onSuccess(Call<SuperBean<String>> call, Response<SuperBean<String>> response) {
+                DialogUtils.closeDialog();
+                if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
+                    LogUtils.e(response.body().getMsg());
+                    pay(response.body().getData());
+                } else {
+                    UIUtil.showToast("支付失败");
+                }
+            }
+
+            @Override
+            public void onError(Call<SuperBean<String>> call, Throwable t) {
+                DialogUtils.closeDialog();
+                UIUtil.showToast("支付失败");
+            }
+
+            @Override
+            public void onError(Call<SuperBean<String>> call, Response<SuperBean<String>> response) {
+                DialogUtils.closeDialog();
+                UIUtil.showToast("支付失败");
+            }
+        });
+    }
+
+    /**
+     * 支付
+     *
+     * @param string
+     */
+    private void pay(String string) {
+        if (payChannel == 0) {
+            JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
+                @Override
+                public void onPaySuccess() {
+                    DialogUtils.closeDialog();
+                    goNext();
+                    UIUtil.showToast("支付成功");
+                }
+
+                @Override
+                public void onPayError(int error_code, String message) {
+                    DialogUtils.closeDialog();
+                    UIUtil.showToast("支付失败>" + " " + message);
+                }
+
+                @Override
+                public void onPayCancel() {
+                    DialogUtils.closeDialog();
+                    UIUtil.showToast("取消了支付");
+                }
+            });
+        } else if (payChannel == 1) {
+            JPay.getIntance(this).toPay(JPay.PayMode.WXPAY, string, new JPay.JPayListener() {
+                @Override
+                public void onPaySuccess() {
+                    DialogUtils.closeDialog();
+                    goNext();
+                    UIUtil.showToast("支付成功");
+                }
+
+                @Override
+                public void onPayError(int error_code, String message) {
+                    DialogUtils.closeDialog();
+                    UIUtil.showToast("支付失败>" + " " + message);
+                }
+
+                @Override
+                public void onPayCancel() {
+                    DialogUtils.closeDialog();
+                    UIUtil.showToast("取消了支付");
+                }
+            });
+        }
+
+    }
+
+    private void goNext() {
+        if (!TextUtils.isEmpty(orderId)) {
+            getOrderDetail();
+        } else {
+            UIUtil.showToast("订单id为空");
+        }
     }
 }

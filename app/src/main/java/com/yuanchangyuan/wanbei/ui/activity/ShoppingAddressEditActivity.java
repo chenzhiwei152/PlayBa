@@ -41,6 +41,12 @@ public class ShoppingAddressEditActivity extends BaseActivity {
     EditText etAddressPhone;
     @BindView(R.id.et_address_detail)
     EditText etAddressDetail;
+    @BindView(R.id.et_address_province)
+    EditText etAddresspPovince;
+    @BindView(R.id.et_address_city)
+    EditText etAddressCity;
+    @BindView(R.id.et_address_area)
+    EditText etAddressArea;
     private String tag = "0";//0新增，1编辑
     private String id = "";
     Call<String> call;
@@ -61,6 +67,9 @@ public class ShoppingAddressEditActivity extends BaseActivity {
 
             etAddressName.setText(bundle.getString("name", ""));
             etAddressPhone.setText(bundle.getString("phone", ""));
+            etAddresspPovince.setText(bundle.getString("province", ""));
+            etAddressCity.setText(bundle.getString("city", ""));
+            etAddressArea.setText(bundle.getString("area", ""));
             etAddressDetail.setText(bundle.getString("detail", ""));
             id = bundle.getString("id", "");
         }
@@ -100,6 +109,9 @@ public class ShoppingAddressEditActivity extends BaseActivity {
         Map<String, String> map = new HashMap<>();
         map.put("phone", etAddressPhone.getText().toString());
         map.put("name", etAddressName.getText().toString());
+        map.put("province", etAddresspPovince.getText().toString());
+        map.put("city", etAddressCity.getText().toString());
+        map.put("area", etAddressArea.getText().toString());
         map.put("detail", etAddressDetail.getText().toString());
         map.put("userId", BaseContext.getInstance().getUserInfo().userId);
         if (tag.equals("1")) {
@@ -149,7 +161,7 @@ public class ShoppingAddressEditActivity extends BaseActivity {
 
     private boolean checkData() {
         if (TextUtils.isEmpty(etAddressName.getText().toString())) {
-            UIUtil.showToast("姓名不能为空");
+            UIUtil.showToast("收货人不能为空");
             return false;
         }
         if (TextUtils.isEmpty(etAddressPhone.getText().toString())) {

@@ -5,16 +5,25 @@ android {
     buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "com.yuanchangyuan.wanbei"
-        minSdkVersion 19
+        minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        releaseConfig {
+            keyAlias 'key0'
+            keyPassword 'wafamily'
+            storeFile file('playbaleystore.jks')
+            storePassword '907653'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
         }
     }
     lintOptions {
@@ -56,7 +65,8 @@ dependencies {
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     testCompile 'junit:junit:4.12'
     compile 'com.bigkoo:convenientbanner:2.0.5'
-    compile 'com.javen205.jpay:jpaysdk:0.0.2'//集成支付宝，微信的支付
+//    compile 'com.javen205.jpay:jpaysdk:0.0.2'//集成支付宝，微信的支付
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     //第三方登录
     compile files('libs/fastjson-1.2.5.jar')
     compile files('libs/MobCommons-2017.0608.1618.jar')

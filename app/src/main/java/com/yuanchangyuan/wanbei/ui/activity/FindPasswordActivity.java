@@ -84,7 +84,15 @@ public class FindPasswordActivity extends BaseActivity {
     }
 
     private void initTitle() {
-
+        titleView.setLeftImageResource(R.mipmap.ic_title_back);
+        titleView.setLeftText("返回");
+        titleView.setLeftTextColor(Color.WHITE);
+        titleView.setLeftClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         titleView.setTitle("忘记密码");
         titleView.setTitleColor(Color.WHITE);
         titleView.setBackgroundColor(getResources().getColor(R.color.color_ff6900));
@@ -213,7 +221,7 @@ public class FindPasswordActivity extends BaseActivity {
                         UIUtil.showToast(response.body().msg);
                         finish();
                     } else {
-                        UIUtil.showToast("修改密码失败~请稍后重试");
+                        UIUtil.showToast(response.body().msg);
                     }
                 } else {
                     UIUtil.showToast("修改密码失败~请稍后重试");
@@ -222,7 +230,7 @@ public class FindPasswordActivity extends BaseActivity {
 
             @Override
             public void onError(Call<ErrorBean> call, Throwable t) {
-                UIUtil.showToast("修改密码失败~请稍后重试");
+                UIUtil.showToast(t.getMessage());
             }
 
             @Override

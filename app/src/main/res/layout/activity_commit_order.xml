@@ -22,6 +22,8 @@
             android:orientation="vertical">
             <!--收货地址-->
             <RelativeLayout
+                android:id="@+id/rl_address"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -106,9 +108,11 @@
                 android:id="@+id/vv_v2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:visibility="gone"
                 android:background="@color/color_eeeeee" />
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/rl_rent_days"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -92,9 +92,12 @@ public class ShoppingAddressActivity extends BaseActivity {
                 DialogUtils.showOrderCancelMsg(ShoppingAddressActivity.this, "确定要删除吗？", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (bean != null && !TextUtils.isEmpty(bean.getId() + "")) {
-                            deleteAddress(bean.getId() + "");
+                        if (view.getTag().equals("确定")){
+                            if (bean != null && !TextUtils.isEmpty(bean.getId() + "")) {
+                                deleteAddress(bean.getId() + "");
+                            }
                         }
+
                     }
 
 //            @Override

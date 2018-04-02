@@ -101,7 +101,7 @@ public class ShoppingAddressListAdapter extends RecyclerView.Adapter<RecyclerVie
 
             ((ImageViewHolder) viewHolder).tv_address_name.setText(list.get(position).getName());
             ((ImageViewHolder) viewHolder).tv_address_phone.setText(list.get(position).getPhone());
-            ((ImageViewHolder) viewHolder).tv_address_detail.setText(list.get(position).getDetail());
+            ((ImageViewHolder) viewHolder).tv_address_detail.setText(list.get(position).getProvince()+list.get(position).getCity()+list.get(position).getArea()+list.get(position).getDetail());
             ((ImageViewHolder) viewHolder).tv_address_edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -111,6 +111,9 @@ public class ShoppingAddressListAdapter extends RecyclerView.Adapter<RecyclerVie
                     bundle.putString("flag", "1");
                     bundle.putString("phone", list.get(position).getPhone());
                     bundle.putString("name", list.get(position).getName());
+                    bundle.putString("province", list.get(position).getProvince());
+                    bundle.putString("city", list.get(position).getCity());
+                    bundle.putString("area", list.get(position).getArea());
                     bundle.putString("detail", list.get(position).getDetail());
                     bundle.putString("id", list.get(position).getId() + "");
                     intent.putExtras(bundle);

@@ -1,6 +1,5 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,8 +7,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -118,8 +115,12 @@ public class PersonInformationActivity extends BaseActivity implements View.OnCl
             if (!TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().sex)) {
                 tv_sex.setText(BaseContext.getInstance().getUserInfo().sex.equals("1") ? "男" : "女");
             }
-            tv_birthday.setText(UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().birthday));
-            ImageLoadedrManager.getInstance().displayNoFilter(this, BaseContext.getInstance().getUserInfo().headimg, iv_head);
+            try {
+                tv_birthday.setText(UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().birthday));
+            } catch (Exception w) {
+                tv_birthday.setText(BaseContext.getInstance().getUserInfo().birthday);
+            }
+            ImageLoadedrManager.getInstance().display(this, BaseContext.getInstance().getUserInfo().headimg, iv_head, R.mipmap.ic_head_default);
         }
     }
 

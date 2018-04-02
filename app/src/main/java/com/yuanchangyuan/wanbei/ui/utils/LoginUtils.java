@@ -2,6 +2,7 @@ package com.yuanchangyuan.wanbei.ui.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import com.yuanchangyuan.wanbei.api.JyCallBack;
 import com.yuanchangyuan.wanbei.api.RestAdapterManager;
@@ -10,6 +11,7 @@ import com.yuanchangyuan.wanbei.base.Constants;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.bean.UserInfoBean;
+import com.yuanchangyuan.wanbei.ui.index.MainActivity;
 import com.yuanchangyuan.wanbei.ui.utils.login.UserInfo;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.ErrorMessageUtils;
@@ -53,11 +55,12 @@ public class LoginUtils {
                     SharePreManager.instance(context).setUserInfo(response.body().getData());
                     EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.LOGIN_SUCCESS));
 
-//                    Intent jmActivityIntent = new Intent(context, MainActivity.class);
-//                    context.startActivity(jmActivityIntent);
+                    Intent jmActivityIntent = new Intent(context, MainActivity.class);
+                    context.startActivity(jmActivityIntent);
                     ((Activity) context).finish();
                 } else {
-                    UIUtil.showToast(response.body().getMsg());
+                    try{UIUtil.showToast(response.body().getMsg());}catch (Exception e){}
+
                 }
             }
 
@@ -104,8 +107,8 @@ public class LoginUtils {
                     SharePreManager.instance(context).setLoginTime(now.getTime());
                     SharePreManager.instance(context).setUserInfo(response.body().getData());
                     EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.LOGIN_SUCCESS));
-//                    Intent jmActivityIntent = new Intent(context, MainActivity.class);
-//                    context.startActivity(jmActivityIntent);
+                    Intent jmActivityIntent = new Intent(context, MainActivity.class);
+                    context.startActivity(jmActivityIntent);
                     ((Activity) context).finish();
                 } else {
                     UIUtil.showToast(response.body().getMsg());

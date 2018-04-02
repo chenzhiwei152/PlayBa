@@ -257,6 +257,9 @@ public class IndexFragment extends BaseFragment {
         } else {
             map.put("userId", "0");
         }
+        if (goodsListCall != null) {
+            goodsListCall.cancel();
+        }
         goodsListCall = RestAdapterManager.getApi().getGoodsList(map);
         goodsListCall.enqueue(new JyCallBack<SuperBean<List<GoodsListBean>>>() {
             @Override
@@ -269,7 +272,7 @@ public class IndexFragment extends BaseFragment {
                         sf_listview.setVisibility(View.VISIBLE);
                         listAdapter.ClearData();
                         listAdapter.addList(response.body().getData());
-                        pageNum++;
+//                        pageNum++;
                     } else {
                         if (!TextUtils.isEmpty(keyWord)) {
                             //搜索数据为空
@@ -280,6 +283,7 @@ public class IndexFragment extends BaseFragment {
                         } else {
                             ll_empty.setVisibility(View.GONE);
                             sf_listview.setVisibility(View.VISIBLE);
+                            listAdapter.ClearData();
                             if (pageNum == 1) {
                                 //无数据
                                 listAdapter.ClearData();
@@ -332,13 +336,17 @@ public class IndexFragment extends BaseFragment {
         sortView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                dropDownMenu.setTabText(typesList.get(position).getTypename());
+                if (typesList.get(position).getTypename().equals("全部")) {
+                    dropDownMenu.setTabText("商品分类");
+                } else {
+                    dropDownMenu.setTabText(typesList.get(position).getTypename());
+                }
                 dropDownMenu.closeMenu();
                 goodstype = typesList.get(position).getId() + "";
                 getList();
             }
         });
-        types.add("全部");
+        types.add("商品分类");
         popupViews.add(sortView);
 
 
@@ -350,13 +358,17 @@ public class IndexFragment extends BaseFragment {
         softView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                dropDownMenu.setTabText(shopsList.get(position).getShopname());
+                if (shopsList.get(position).getShopname().equals("全部")) {
+                    dropDownMenu.setTabText("店铺位置");
+                } else {
+                    dropDownMenu.setTabText(shopsList.get(position).getShopname());
+                }
                 dropDownMenu.closeMenu();
                 shop = shopsList.get(position).getId() + "";
                 getList();
             }
         });
-        types.add("全部");
+        types.add("店铺位置");
         popupViews.add(softView);
         dropDownMenu.setDropDownMenu(types, popupViews);
     }
