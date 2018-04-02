@@ -110,7 +110,7 @@ public class MyMemberRankActivity extends BaseActivity {
     public void onMsgEvent(EventBusCenter eventBusCenter) {
         if (eventBusCenter != null) {
             if (eventBusCenter.getEvenCode() == Constants.PAY_MEMBER_SUCCESS) {
-//                loadData();
+                loadData();
             }
         }
     }

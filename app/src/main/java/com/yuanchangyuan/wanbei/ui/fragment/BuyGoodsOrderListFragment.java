@@ -123,7 +123,10 @@ public class BuyGoodsOrderListFragment extends BaseFragment {
                         if (pageNum == 1) {
                             buyOrderListAdapter.ClearData();
                         }
-                        buyOrderListAdapter.addList(response.body().getData().getData());
+                        if (response.body().getData()!=null){
+
+                            buyOrderListAdapter.addList(response.body().getData().getData());
+                        }
                         pageNum++;
                     } else {
                         if (pageNum == 1) {
