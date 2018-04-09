@@ -35,7 +35,7 @@
 
                 <RatingBar
                     android:id="@+id/rb_rank"
-                    style="?android:attr/ratingBarStyleSmall"
+                    style="@style/roomRatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@+id/tv_member"
@@ -62,7 +62,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="￥500"
+                    android:text=""
                     android:textSize="24sp" />
 
             </RelativeLayout>
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_toRightOf="@+id/tv_commit_time_title"
-                    android:text="2017-05-01" />
+                    android:text="" />
 
                 <TextView
                     android:id="@+id/tv_effective_time_title"
@@ -111,7 +111,7 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_toRightOf="@+id/tv_effective_time_title"
-                    android:text="2017-05-01" />
+                    android:text="" />
 
             </RelativeLayout>
 

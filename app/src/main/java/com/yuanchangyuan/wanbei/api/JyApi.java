@@ -39,6 +39,15 @@ public interface JyApi {
     Call<SuperBean<UserInfoBean>> login(@Body Map<String, String> map);
 
     /**
+     * 根据id获取个人信息
+     *
+     * @param id
+     * @return
+     */
+    @GET("/resource/user/getUserById")
+    Call<SuperBean<UserInfoBean>> getinfo(@Query("id") String id);
+
+    /**
      * 第三方登录
      */
     @POST("/resource/user/userAuthLogin")
@@ -230,6 +239,7 @@ public interface JyApi {
      */
     @GET("/resource/buyorder/appGetBuyOrderDetail")
     Call<SuperBean<OrderDetailBean>> getOrderDetails(@Query("id") String id);
+
     /**
      * 获取租赁订单详情
      *
@@ -250,7 +260,6 @@ public interface JyApi {
     Call<SuperBean<String>> getDepositOrder(@Body Map<String, String> map);
 
 
-
     /**
      * 提交租赁订单
      *
@@ -269,4 +278,6 @@ public interface JyApi {
      */
     @POST("/resource/zuorder/appGetAllList")
     Call<SuperBean<BuyOrderListItemBean>> getRentOrderList(@Body Map<String, String> map);
+
+
 }

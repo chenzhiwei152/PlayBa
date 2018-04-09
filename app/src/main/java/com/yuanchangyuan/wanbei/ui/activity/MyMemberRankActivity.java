@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
@@ -106,14 +107,20 @@ public class MyMemberRankActivity extends BaseActivity {
         if (BaseContext.getInstance().getUserInfo() != null) {
 
             tv_payed_deposit.setText("￥" + BaseContext.getInstance().getUserInfo().deposit / 100.00);
+            if (!TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().paytime)) {
+                String ss=UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().paytime);
+                tv_commit_time.setText(ss);
+            }
+            if (!TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().endtime)) {
+
+                tv_effective_time.setText(UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().endtime));
+            }
             if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
                 rb_rank.setNumStars(BaseContext.getInstance().getUserInfo().vipgrade);
                 rb_rank.setVisibility(View.VISIBLE);
             } else {
                 rb_rank.setVisibility(View.GONE);
             }
-            tv_commit_time.setText(BaseContext.getInstance().getUserInfo().paytime);
-            tv_effective_time.setText(BaseContext.getInstance().getUserInfo().endtime);
         }
     }
 

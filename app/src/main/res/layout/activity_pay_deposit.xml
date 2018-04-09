@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/tv_phone_title"
-            android:text="18888888888"
+            android:text=""
             android:textColor="@color/color_1C74D9" />
     </RelativeLayout>
 </LinearLayout>

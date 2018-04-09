@@ -119,7 +119,7 @@ public class BuyGoodsOrderListFragment extends BaseFragment {
                     swiperefreshlayout.finishLoadmore();
                 }
                 if (response != null && response.body() != null) {
-                    if (response.body().getData().getData().size() > 0) {
+                    if (response.body().getData()!=null&&response.body().getData().getData()!=null&&response.body().getData().getData().size() > 0) {
                         if (pageNum == 1) {
                             buyOrderListAdapter.ClearData();
                         }

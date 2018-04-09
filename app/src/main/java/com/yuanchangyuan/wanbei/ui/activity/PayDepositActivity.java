@@ -1,7 +1,9 @@
 package com.yuanchangyuan.wanbei.ui.activity;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -16,6 +18,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.jpay.JPay;
 import com.yuanchangyuan.wanbei.R;
 import com.yuanchangyuan.wanbei.api.JyCallBack;
@@ -28,6 +31,7 @@ import com.yuanchangyuan.wanbei.ui.adapter.PayMemberRankItemAdapter;
 import com.yuanchangyuan.wanbei.ui.bean.MemberRankBean;
 import com.yuanchangyuan.wanbei.ui.bean.SuperBean;
 import com.yuanchangyuan.wanbei.ui.listerner.PayMemberItemOnClickListerner;
+import com.yuanchangyuan.wanbei.ui.utils.LoginUtils;
 import com.yuanchangyuan.wanbei.utils.DialogUtils;
 import com.yuanchangyuan.wanbei.utils.LogUtils;
 import com.yuanchangyuan.wanbei.utils.NetUtil;
@@ -67,7 +71,7 @@ public class PayDepositActivity extends BaseActivity {
     private String orderId;
     private int payChannel = 0;//支付通道0为支付宝1为微信
     private int totalMoney;//订单总额单位是分
-    private int orderType=2;//订单类型0为购买1租，2为会员押金支付
+    private int orderType = 2;//订单类型0为购买1租，2为会员押金支付
     private Call<SuperBean<String>> getRsaOrderCall;
 
     @Override
@@ -88,6 +92,7 @@ public class PayDepositActivity extends BaseActivity {
     @Override
     public void loadData() {
         tv_pay_number.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
                 showpopupWindow(tv_pay_number);
@@ -268,6 +273,7 @@ public class PayDepositActivity extends BaseActivity {
         map.put("payChannel", payChannel + "");
         map.put("totalMoney", memberBean.getMoney() + "");
         map.put("orderType", orderType + "");
+        LogUtils.e(JSON.toJSONString(map));
         DialogUtils.showDialog(PayDepositActivity.this, "加载...", false);
         getRsaOrderCall = RestAdapterManager.getApi().getRsaOrderInfo(map);
         getRsaOrderCall.enqueue(new JyCallBack<SuperBean<String>>() {
@@ -302,20 +308,21 @@ public class PayDepositActivity extends BaseActivity {
      * @param string
      */
     private void pay(String string) {
-        if(payChannel==0){
+        if (payChannel == 0) {
             JPay.getIntance(this).toPay(JPay.PayMode.ALIPAY, string, new JPay.JPayListener() {
                 @Override
                 public void onPaySuccess() {
                     EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.PAY_MEMBER_SUCCESS));
                     DialogUtils.closeDialog();
                     Toast.makeText(PayDepositActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+                    LoginUtils.getInfo();
                     finish();
                 }
 
                 @Override
                 public void onPayError(int error_code, String message) {
                     DialogUtils.closeDialog();
-                    Toast.makeText(PayDepositActivity.this, "支付失败>"  + " " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PayDepositActivity.this, "支付失败>" + " " + message, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -324,20 +331,21 @@ public class PayDepositActivity extends BaseActivity {
                     Toast.makeText(PayDepositActivity.this, "取消了支付", Toast.LENGTH_SHORT).show();
                 }
             });
-        }else  if(payChannel==1){
+        } else if (payChannel == 1) {
             JPay.getIntance(this).toPay(JPay.PayMode.WXPAY, string, new JPay.JPayListener() {
                 @Override
                 public void onPaySuccess() {
                     EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.PAY_MEMBER_SUCCESS));
                     DialogUtils.closeDialog();
                     Toast.makeText(PayDepositActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+                    LoginUtils.getInfo();
                     finish();
                 }
 
                 @Override
                 public void onPayError(int error_code, String message) {
                     DialogUtils.closeDialog();
-                    Toast.makeText(PayDepositActivity.this, "支付失败>"  + " " + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PayDepositActivity.this, "支付失败>" + " " + message, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -350,6 +358,7 @@ public class PayDepositActivity extends BaseActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void showpopupWindow(View v) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(this);

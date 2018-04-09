@@ -35,6 +35,7 @@ import retrofit2.Response;
 public class LoginUtils {
     static Call<SuperBean<UserInfoBean>> loginCall;
     static Call<SuperBean<UserInfoBean>> thirdLoginCall;
+    static Call<SuperBean<UserInfoBean>> getInfoCall;
     static boolean isSuccess;
 
     public static void commitlogin(final Context context, final String tel, String password) {
@@ -59,7 +60,10 @@ public class LoginUtils {
                     context.startActivity(jmActivityIntent);
                     ((Activity) context).finish();
                 } else {
-                    try{UIUtil.showToast(response.body().getMsg());}catch (Exception e){}
+                    try {
+                        UIUtil.showToast(response.body().getMsg());
+                    } catch (Exception e) {
+                    }
 
                 }
             }
@@ -132,5 +136,43 @@ public class LoginUtils {
             }
         });
         return true;
+    }
+
+    /**
+     * 根据id获取个人信息
+     */
+    public static void getInfo() {
+        final Context context = BaseContext.getInstance();
+        if (BaseContext.getInstance().getUserInfo() != null) {
+            getInfoCall = RestAdapterManager.getApi().getinfo(BaseContext.getInstance().getUserInfo().userId);
+            getInfoCall.enqueue(new JyCallBack<SuperBean<UserInfoBean>>() {
+                @Override
+                public void onSuccess(Call<SuperBean<UserInfoBean>> call, Response<SuperBean<UserInfoBean>> response) {
+                    if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
+                        BaseContext.getInstance().setUserInfo(response.body().getData());
+                        Timestamp now = new Timestamp(System.currentTimeMillis());
+                        SharePreManager.instance(context).setLoginTime(now.getTime());
+                        SharePreManager.instance(context).setUserInfo(response.body().getData());
+                        EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.PAY_MEMBER_SUCCESS));
+                        EventBus.getDefault().post(new EventBusCenter<Integer>(Constants.LOGIN_SUCCESS));
+//                        Intent jmActivityIntent = new Intent(context, MainActivity.class);
+//                        context.startActivity(jmActivityIntent);
+//                        ((Activity) context).finish();
+                    } else {
+                        UIUtil.showToast(response.body().getMsg());
+                    }
+                }
+
+                @Override
+                public void onError(Call<SuperBean<UserInfoBean>> call, Throwable t) {
+
+                }
+
+                @Override
+                public void onError(Call<SuperBean<UserInfoBean>> call, Response<SuperBean<UserInfoBean>> response) {
+
+                }
+            });
+        }
     }
 }
