@@ -15,6 +15,7 @@ import com.yuanchangyuan.wanbei.base.BaseFragment;
 import com.yuanchangyuan.wanbei.base.EventBusCenter;
 import com.yuanchangyuan.wanbei.ui.fragment.IndexFragment;
 import com.yuanchangyuan.wanbei.ui.fragment.MyFragment;
+import com.yuanchangyuan.wanbei.ui.utils.LoginUtils;
 import com.yuanchangyuan.wanbei.view.NoScrollViewPager;
 
 import java.util.ArrayList;
@@ -97,6 +98,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void loadData() {
+        LoginUtils.getInfo();
     }
 
     @Override

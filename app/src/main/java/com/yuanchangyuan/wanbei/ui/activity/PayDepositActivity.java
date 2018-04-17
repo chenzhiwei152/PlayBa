@@ -232,6 +232,7 @@ public class PayDepositActivity extends BaseActivity {
         map.put("money", memberBean.getMoney() + "");
         map.put("userid", BaseContext.getInstance().getUserInfo().userId);
         getOrderIdcall = RestAdapterManager.getApi().getDepositOrder(map);
+        LogUtils.e("map"+JSON.toJSONString(map));
         getOrderIdcall.enqueue(new JyCallBack<SuperBean<String>>() {
             @Override
             public void onSuccess(Call<SuperBean<String>> call, Response<SuperBean<String>> response) {
