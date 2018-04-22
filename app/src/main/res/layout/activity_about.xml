@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:text="联系邮箱:xxxx@163.com"
+            android:text="联系邮箱:"
             android:textColor="@color/color_0880BD" />
 
         <TextView
