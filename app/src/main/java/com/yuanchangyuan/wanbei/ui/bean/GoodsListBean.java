@@ -32,6 +32,15 @@ public class GoodsListBean extends ErrorBean implements Serializable {
     private int vipprice;
     private int purchase;
     private String video;
+    private int postMoney;
+
+    public int getPostMoney() {
+        return postMoney;
+    }
+
+    public void setPostMoney(int postMoney) {
+        this.postMoney = postMoney;
+    }
 
     public String getVideo() {
         return video;

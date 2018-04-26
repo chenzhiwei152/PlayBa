@@ -124,7 +124,7 @@ public class IndexFragment extends BaseFragment {
 
         sf_listview.setLayoutManager(linearLayoutManager);
         sf_listview.setNestedScrollingEnabled(false);
-        swiperefreshlayout.setFloatRefresh(true);
+//        swiperefreshlayout.setFloatRefresh(true);
         ProgressLayout headerView = new ProgressLayout(getActivity());
         swiperefreshlayout.setHeaderView(headerView);
         swiperefreshlayout.setEnableLoadmore(false);
@@ -136,7 +136,6 @@ public class IndexFragment extends BaseFragment {
             public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
 
                 getList();
-//                getAdList();
 //                UIUtil.showToast("刷新数据~");
             }
 
@@ -198,8 +197,7 @@ public class IndexFragment extends BaseFragment {
 
     private void getAdList() {
         String userId = "0";
-        list.clear();
-        adList.clear();
+
         if (BaseContext.getInstance().getUserInfo() != null) {
             userId = BaseContext.getInstance().getUserInfo().userId;
         }
@@ -208,6 +206,8 @@ public class IndexFragment extends BaseFragment {
             @Override
             public void onSuccess(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
                 //初始化广告栏
+                list.clear();
+                adList.clear();
                 if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                     adList.addAll(response.body().getData());
                     for (int i = 0; i < adList.size(); i++) {
@@ -265,7 +265,7 @@ public class IndexFragment extends BaseFragment {
             @Override
             public void onSuccess(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
                 swiperefreshlayout.finishRefreshing();
-                swiperefreshlayout.onFinishLoadMore();
+                swiperefreshlayout.finishLoadmore();
                 if (response != null && response.body() != null && response.body().getCode() == Constants.successCode) {
                     if (response.body().getData().size() > 0) {
                         ll_empty.setVisibility(View.GONE);
@@ -308,7 +308,7 @@ public class IndexFragment extends BaseFragment {
             public void onError(Call<SuperBean<List<GoodsListBean>>> call, Throwable t) {
                 if (swiperefreshlayout != null) {
                     swiperefreshlayout.finishRefreshing();
-                    swiperefreshlayout.onFinishLoadMore();
+                    swiperefreshlayout.finishLoadmore();
                 }
 
             }
@@ -317,7 +317,7 @@ public class IndexFragment extends BaseFragment {
             public void onError(Call<SuperBean<List<GoodsListBean>>> call, Response<SuperBean<List<GoodsListBean>>> response) {
                 if (swiperefreshlayout != null) {
                     swiperefreshlayout.finishRefreshing();
-                    swiperefreshlayout.onFinishLoadMore();
+                    swiperefreshlayout.finishLoadmore();
                 }
             }
         });
@@ -487,7 +487,7 @@ public class IndexFragment extends BaseFragment {
         }
     }
 
-    private void initAD(final List<bannerBean> list) {
+    private void initAD(List<bannerBean> list) {
 //        View header = LayoutInflater.from(getActivity()).inflate(R.layout.kanner_index, sf_listview, false);//headview,广告栏
 
 

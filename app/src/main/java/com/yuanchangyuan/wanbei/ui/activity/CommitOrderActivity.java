@@ -117,6 +117,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     private String tag;//rent,sale
     private String id;
     private int price;
+    private int postMoneyPrice;//运费
     private int count = 1;
     private int days;
     private int hour;
@@ -237,7 +238,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void setSalePrice() {
-        price = goodsBean.getPurchase() * count;
+        price = goodsBean.getPurchase() * count+goodsBean.getPostMoney();
         tv_num_price.setText("共计" + count + "件商品，合计￥" + price / 100.00);
         tv_price_all.setText("￥" + price / 100.00);
     }
@@ -636,6 +637,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             map.put("ordername", tv_address_name.getText().toString());
             map.put("orderphone", tv_address_phone.getText().toString());
             map.put("orderaddress", tv_address_detail.getText().toString());
+            map.put("postMoney", price + "");
         }
         map.put("goodsid", goodsBean.getId() + "");
         map.put("goodsprice", goodsBean.getPrice() + "");
