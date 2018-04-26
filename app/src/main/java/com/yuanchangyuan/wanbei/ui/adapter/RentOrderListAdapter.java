@@ -79,11 +79,16 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             ((ImageViewHolder) viewHolder).tv_receive_store_name.setText(list.get(position).getShopName());
             ((ImageViewHolder) viewHolder).tv_back_store_name.setText(list.get(position).getShopName());
-            ((ImageViewHolder) viewHolder).tv_deposit.setText("押金：￥" + list.get(position).getDeposit() / 100.00 + "");
+            if (!TextUtils.isEmpty(list.get(position).getOrderStatus()) && list.get(position).getOrderStatus().contains("成功")) {
+                ((ImageViewHolder) viewHolder).tv_deposit.setText("当前费用：￥" + list.get(position).getDeposit() / 100.00 + "");
+            } else {
+                ((ImageViewHolder) viewHolder).tv_deposit.setText("押金：￥" + list.get(position).getDeposit() / 100.00 + "");
+            }
+
             if (!TextUtils.isEmpty(list.get(position).getStarttime())) {
                 ((ImageViewHolder) viewHolder).tv_start_time.setText(UIUtil.timeStamp2Date(list.get(position).getStarttime(), "yyyy-MM-dd HH") + "时");
                 ((ImageViewHolder) viewHolder).tv_start_week.setText(UIUtil.getWeekOfDate(new Date(Long.valueOf(list.get(position).getStarttime()))));
-            }else {
+            } else {
                 ((ImageViewHolder) viewHolder).tv_start_time.setText("");
                 ((ImageViewHolder) viewHolder).tv_start_week.setText("");
             }
@@ -91,7 +96,7 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                 ((ImageViewHolder) viewHolder).tv_end_time.setText(UIUtil.timeStamp2Date(list.get(position).getEndtime(), "yyyy-MM-dd HH") + "时");
                 ((ImageViewHolder) viewHolder).tv_end_week.setText(UIUtil.getWeekOfDate(new Date(Long.valueOf(list.get(position).getEndtime()))));
-            }else {
+            } else {
                 ((ImageViewHolder) viewHolder).tv_end_time.setText("");
                 ((ImageViewHolder) viewHolder).tv_end_week.setText("");
             }
