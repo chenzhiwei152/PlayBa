@@ -33,6 +33,15 @@ public class GoodsListBean extends ErrorBean implements Serializable {
     private int purchase;
     private String video;
     private int postMoney;
+    private String shoptype;
+
+    public String getShoptype() {
+        return shoptype;
+    }
+
+    public void setShoptype(String shoptype) {
+        this.shoptype = shoptype;
+    }
 
     public int getPostMoney() {
         return postMoney;

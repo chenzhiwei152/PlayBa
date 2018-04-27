@@ -125,7 +125,7 @@ public class GoodsDetailsActivity extends BaseActivity {
         setData();
         setUpWebViewDefaults(mWebView);
         setChromeClient();
-        mWebView.loadUrl("http://47.92.137.237:8080/resource/goods/video?goodsId="+goodsBean.getId()); //这个地方是本地的assets下的h5文件
+        mWebView.loadUrl("http://47.92.137.237:8080/resource/goods/video?goodsId=" + goodsBean.getId()); //这个地方是本地的assets下的h5文件
 //        mWebView.loadUrl("http://www.youku.com/");
 
     }
@@ -263,6 +263,7 @@ public class GoodsDetailsActivity extends BaseActivity {
             call = RestAdapterManager.getApi().getGoodsDetail(goodsBean.getId() + "", "");
         }
         call.enqueue(new JyCallBack<SuperBean<GoodsListBean>>() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onSuccess(Call<SuperBean<GoodsListBean>> call, Response<SuperBean<GoodsListBean>> response) {
                 DialogUtils.closeDialog();
@@ -290,6 +291,7 @@ public class GoodsDetailsActivity extends BaseActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void setData() {
         if (goodsBean != null) {
             if (goodsBean.getBinners() != null) {
@@ -300,6 +302,39 @@ public class GoodsDetailsActivity extends BaseActivity {
                     list.add(bannerBean);
                 }
                 //初始化广告栏
+                if (!TextUtils.isEmpty(goodsBean.getShoptype())) {
+                    //0可能对应只租、1对应只买、2对应都能
+                    if ("0".equals(goodsBean.getShoptype())) {
+                        bt_exchange_state.setOnClickListener(null);
+                        bt_exchange_state.setBackground(getResources().getDrawable(R.drawable.bg_eeeeee));
+                        bt_buy.setText("立即租赁");
+                        bt_exchange_state.setText("切换至购买");
+                    } else if ("1".equals(goodsBean.getShoptype())) {
+                        bt_exchange_state.setOnClickListener(null);
+                        bt_exchange_state.setBackground(getResources().getDrawable(R.drawable.bg_eeeeee));
+                        bt_buy.setText("立即购买");
+                        bt_exchange_state.setText("切换至租赁");
+                    } else {
+                        bt_exchange_state.setBackground(getResources().getDrawable(R.drawable.bg_9ccc65));
+                        bt_exchange_state.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (bt_buy.getText().equals("立即租赁")) {
+                                    bt_exchange_state.setText("切换至租赁");
+                                    bt_buy.setText("立即购买");
+                                    setPriceValue();
+                                } else {
+                                    bt_exchange_state.setText("切换至购买");
+                                    bt_buy.setText("立即租赁");
+                                    setPriceValue();
+                                }
+                            }
+                        });
+                    }
+                }else {
+                    bt_exchange_state.setOnClickListener(null);
+                    bt_exchange_state.setBackground(getResources().getDrawable(R.drawable.bg_eeeeee));
+                }
                 initAD(list);
             }
             //大图
@@ -353,20 +388,7 @@ public class GoodsDetailsActivity extends BaseActivity {
 
 
         setPriceValue();
-        bt_exchange_state.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (bt_buy.getText().equals("立即租赁")) {
-                    bt_exchange_state.setText("切换至租赁");
-                    bt_buy.setText("立即购买");
-                    setPriceValue();
-                } else {
-                    bt_exchange_state.setText("切换至购买");
-                    bt_buy.setText("立即租赁");
-                    setPriceValue();
-                }
-            }
-        });
+
 
         bt_buy.setOnClickListener(new View.OnClickListener() {
             @Override
