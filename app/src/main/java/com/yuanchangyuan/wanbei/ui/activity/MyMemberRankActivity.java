@@ -106,7 +106,7 @@ public class MyMemberRankActivity extends BaseActivity {
         getMenberRankInfo();
         if (BaseContext.getInstance().getUserInfo() != null) {
 
-            tv_payed_deposit.setText("￥" + BaseContext.getInstance().getUserInfo().deposit / 100.00);
+            tv_payed_deposit.setText("￥" + BaseContext.getInstance().getUserInfo().deposit );
             if (!TextUtils.isEmpty(BaseContext.getInstance().getUserInfo().paytime)) {
                 String ss=UIUtil.timeStamp2Date(BaseContext.getInstance().getUserInfo().paytime);
                 tv_commit_time.setText(ss);

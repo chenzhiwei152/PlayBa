@@ -125,9 +125,9 @@ public class OrderDetailsActivity extends BaseActivity {
             tv_address_phone.setText(orderDetailBean.getOrderphone());
             tv_address_detail.setText(orderDetailBean.getOrderaddress());
             tv_goods_name.setText(orderDetailBean.getGoodsName());
-            tv_price.setText("￥" + orderDetailBean.getGoodsprice() / 100.00);
+            tv_price.setText("￥" + orderDetailBean.getGoodsprice() );
             tv_count.setText("x" + orderDetailBean.getCount());
-            tv_real_pay.setText("￥" + orderDetailBean.getPayamount() / 100.00);
+            tv_real_pay.setText("￥" + orderDetailBean.getPayamount());
             tv_order_number.setText(orderDetailBean.getOrderpayno());
             tv_order_create_time.setText(UIUtil.timeStamp2Date(orderDetailBean.getCreatetime(), "yyyy-MM-dd HH:mm:ss"));
             tv_order_pay_time.setText(UIUtil.timeStamp2Date(orderDetailBean.getPaytime(), "yyyy-MM-dd HH:mm:ss"));
@@ -142,7 +142,7 @@ public class OrderDetailsActivity extends BaseActivity {
             } else {
                 rl_pay_state.setOnClickListener(null);
             }
-            tv_pay.setText(orderDetailBean.getFeiYong()/ 100.00+"");
+            tv_pay.setText(orderDetailBean.getFeiYong()+"");
             if (type.equals("rent")) {
                 if (orderDetailBean.getConfirm()==2){
                     rl_pay_state.setVisibility(View.VISIBLE);

@@ -375,7 +375,7 @@ public class PayDepositActivity extends BaseActivity {
                 public void onClick(MemberRankBean bean) {
                     if (bean != null) {
                         memberBean = bean;
-                        tv_pay_number.setText(bean.getMoney() / 100.00 + "");
+                        tv_pay_number.setText(bean.getMoney()+ "");
                         if (popupWindow != null) {
                             popupWindow.dismiss();
                         }

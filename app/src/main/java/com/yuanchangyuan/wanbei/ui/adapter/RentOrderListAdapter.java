@@ -73,16 +73,16 @@ public class RentOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
             ImageLoadedrManager.getInstance().display(context, list.get(position).getGoodsimg(), ((ImageViewHolder) viewHolder).iv_goods);
             ((ImageViewHolder) viewHolder).tv_store_name.setText(list.get(position).getShopName());
             ((ImageViewHolder) viewHolder).tv_goods_name.setText(list.get(position).getGoodsName());
-            ((ImageViewHolder) viewHolder).tv_goods_price.setText(list.get(position).getPrice() / 100.00 + "");
+            ((ImageViewHolder) viewHolder).tv_goods_price.setText(list.get(position).getPrice()  + "");
             ((ImageViewHolder) viewHolder).tv_goods_number.setText("x" + list.get(position).getCount());
             ((ImageViewHolder) viewHolder).tv_translate_state.setText(list.get(position).getOrderStatus());
 
             ((ImageViewHolder) viewHolder).tv_receive_store_name.setText(list.get(position).getShopName());
             ((ImageViewHolder) viewHolder).tv_back_store_name.setText(list.get(position).getShopName());
             if (!TextUtils.isEmpty(list.get(position).getOrderStatus()) && list.get(position).getOrderStatus().contains("成功")) {
-                ((ImageViewHolder) viewHolder).tv_deposit.setText("当前费用：￥" + list.get(position).getDeposit() / 100.00 + "");
+                ((ImageViewHolder) viewHolder).tv_deposit.setText("当前费用：￥" + list.get(position).getDeposit() + "");
             } else {
-                ((ImageViewHolder) viewHolder).tv_deposit.setText("押金：￥" + list.get(position).getDeposit() / 100.00 + "");
+                ((ImageViewHolder) viewHolder).tv_deposit.setText("押金：￥" + list.get(position).getDeposit()  + "");
             }
 
             if (!TextUtils.isEmpty(list.get(position).getStarttime())) {

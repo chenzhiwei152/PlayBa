@@ -233,14 +233,14 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
                 price = goodsBean.getPrice() * hour + goodsBean.getDeposit();
             }
         }
-        tv_num_price.setText("共计1件商品，合计￥" + price / 100.00);
-        tv_price_all.setText("￥" + price / 100.00);
+        tv_num_price.setText("共计1件商品，合计￥" + price );
+        tv_price_all.setText("￥" + price );
     }
 
     private void setSalePrice() {
         price = goodsBean.getPurchase() * count+goodsBean.getPostMoney();
-        tv_num_price.setText("共计" + count + "件商品，合计￥" + price / 100.00);
-        tv_price_all.setText("￥" + price / 100.00);
+        tv_num_price.setText("共计" + count + "件商品，合计￥" + price );
+        tv_price_all.setText("￥" + price );
     }
 
     @Override
@@ -254,12 +254,12 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (tag.equals("rent")) {
             if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
 
-                tv_price.setText("￥" + goodsBean.getVipprice() / 100.00);
+                tv_price.setText("￥" + goodsBean.getVipprice());
             } else {
-                tv_price.setText("￥" + goodsBean.getPrice() / 100.00);
+                tv_price.setText("￥" + goodsBean.getPrice());
             }
         } else {
-            tv_price.setText("￥" + goodsBean.getPurchase() / 100.00);
+            tv_price.setText("￥" + goodsBean.getPurchase());
         }
 
 

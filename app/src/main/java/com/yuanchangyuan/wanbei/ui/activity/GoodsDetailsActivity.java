@@ -462,7 +462,7 @@ public class GoodsDetailsActivity extends BaseActivity {
         tv_goods_detail_describe.setText(goodsBean.getGoodsdetail());
         if (bt_buy.getText().equals("立即租赁")) {
             if (goodsBean.getPrice() > 0) {
-                tv_price_title.setText("￥" + goodsBean.getPrice() / 100.00);
+                tv_price_title.setText("￥" + goodsBean.getPrice());
                 tv_price.setVisibility(View.VISIBLE);
                 if (goodsBean.getBillingmode() == 1) {
                     tv_price.setText("/日");
@@ -474,7 +474,7 @@ public class GoodsDetailsActivity extends BaseActivity {
                 tv_price.setVisibility(View.GONE);
             }
             if (goodsBean.getVipprice() > 0) {
-                tv_member_price.setText("￥" + goodsBean.getVipprice() / 100.00);
+                tv_member_price.setText("￥" + goodsBean.getVipprice());
                 tv_member_price_title.setVisibility(View.VISIBLE);
             } else {
                 tv_member_price.setText("");
@@ -482,7 +482,7 @@ public class GoodsDetailsActivity extends BaseActivity {
             }
         } else {
             if (goodsBean.getPurchase() > 0) {
-                tv_price_title.setText("￥" + goodsBean.getPurchase() / 100.00);
+                tv_price_title.setText("￥" + goodsBean.getPurchase());
                 tv_price.setVisibility(View.GONE);
             } else {
                 tv_price_title.setText("");
