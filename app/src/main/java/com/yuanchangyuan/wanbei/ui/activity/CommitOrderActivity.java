@@ -116,7 +116,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
 
     private String tag;//rent,sale
     private String id;
-    private int price;
+    private double price;
     private int postMoneyPrice;//运费
     private int count = 1;
     private int days;
@@ -218,27 +218,30 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void setRentPrice() {
-        if (goodsBean.getBillingmode() == 1) {
-            //按照天算
-            if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
-                price = goodsBean.getVipprice() * days + goodsBean.getDeposit();
-            } else {
-                price = goodsBean.getPrice() * days + goodsBean.getDeposit();
-            }
-        } else {
-            //按照小时算
-            if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
-                price = goodsBean.getVipprice() * hour + goodsBean.getDeposit();
-            } else {
-                price = goodsBean.getPrice() * hour + goodsBean.getDeposit();
-            }
-        }
+//        if (goodsBean.getBillingmode() == 1) {
+//            //按照天算
+//            if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
+//                price = goodsBean.getVipprice() * days + goodsBean.getDeposit();
+//            } else {
+//                price = goodsBean.getPrice() * days + goodsBean.getDeposit();
+//            }
+//        } else {
+//            //按照小时算
+//            if (BaseContext.getInstance().getUserInfo().vipgrade > 0) {
+//                price = goodsBean.getVipprice() * hour + goodsBean.getDeposit();
+//            } else {
+//                price = goodsBean.getPrice() * hour + goodsBean.getDeposit();
+//            }
+//        }
         tv_num_price.setText("共计1件商品，合计￥" + price );
         tv_price_all.setText("￥" + price );
     }
 
     private void setSalePrice() {
-        price = goodsBean.getPurchase() * count+goodsBean.getPostMoney();
+        if (TextUtils.isEmpty(goodsBean.getPurchase())){
+            return;
+        }
+        price = Double.parseDouble(goodsBean.getPurchase()) * count+Double.parseDouble(goodsBean.getPostMoney());
         tv_num_price.setText("共计" + count + "件商品，合计￥" + price );
         tv_price_all.setText("￥" + price );
     }

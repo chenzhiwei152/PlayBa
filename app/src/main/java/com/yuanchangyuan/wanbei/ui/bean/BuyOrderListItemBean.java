@@ -83,19 +83,19 @@ public class BuyOrderListItemBean implements Serializable {
         private String orderStatus;
         private String goodsimg;
         private int count;
-        private int purchase;
-        private int totalmoney;
+        private String purchase;
+        private String totalmoney;
         private String goodsName;
         private String id;
-        private int deposit;
+        private String deposit;
         private int days;
-        private int price;
+        private String price;
 
-        public int getPrice() {
+        public String getPrice() {
             return price;
         }
 
-        public void setPrice(int price) {
+        public void setPrice(String price) {
             this.price = price;
         }
 
@@ -126,11 +126,11 @@ public class BuyOrderListItemBean implements Serializable {
         private String starttime;
         private String endtime;
 
-        public int getDeposit() {
+        public String getDeposit() {
             return deposit;
         }
 
-        public void setDeposit(int deposit) {
+        public void setDeposit(String deposit) {
             this.deposit = deposit;
         }
         public String getGoodsName() {
@@ -189,19 +189,19 @@ public class BuyOrderListItemBean implements Serializable {
             this.count = count;
         }
 
-        public int getPurchase() {
+        public String getPurchase() {
             return purchase;
         }
 
-        public void setPurchase(int purchase) {
+        public void setPurchase(String purchase) {
             this.purchase = purchase;
         }
 
-        public int getTotalmoney() {
+        public String getTotalmoney() {
             return totalmoney;
         }
 
-        public void setTotalmoney(int totalmoney) {
+        public void setTotalmoney(String totalmoney) {
             this.totalmoney = totalmoney;
         }
     }

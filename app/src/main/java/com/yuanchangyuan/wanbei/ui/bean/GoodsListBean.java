@@ -28,11 +28,11 @@ public class GoodsListBean extends ErrorBean implements Serializable {
 
     private int id;
     private String name;
-    private int price;
-    private int vipprice;
-    private int purchase;
+    private String price;
+    private String vipprice;
+    private String purchase;
     private String video;
-    private int postMoney;
+    private String postMoney;
     private String shoptype;
 
     public String getShoptype() {
@@ -43,11 +43,11 @@ public class GoodsListBean extends ErrorBean implements Serializable {
         this.shoptype = shoptype;
     }
 
-    public int getPostMoney() {
+    public String getPostMoney() {
         return postMoney;
     }
 
-    public void setPostMoney(int postMoney) {
+    public void setPostMoney(String postMoney) {
         this.postMoney = postMoney;
     }
 
@@ -130,27 +130,27 @@ public class GoodsListBean extends ErrorBean implements Serializable {
         this.name = name;
     }
 
-    public int getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
-    public int getVipprice() {
+    public String getVipprice() {
         return vipprice;
     }
 
-    public void setVipprice(int vipprice) {
+    public void setVipprice(String vipprice) {
         this.vipprice = vipprice;
     }
 
-    public int getPurchase() {
+    public String getPurchase() {
         return purchase;
     }
 
-    public void setPurchase(int purchase) {
+    public void setPurchase(String purchase) {
         this.purchase = purchase;
     }
 

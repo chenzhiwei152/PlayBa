@@ -70,10 +70,10 @@ public class BuyOrderListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ImageLoadedrManager.getInstance().display(context, list.get(position).getGoodsimg(), ((ImageViewHolder) viewHolder).iv_goods);
             ((ImageViewHolder) viewHolder).tv_store_name.setText(list.get(position).getShopName());
             ((ImageViewHolder) viewHolder).tv_goods_name.setText(list.get(position).getGoodsName());
-            ((ImageViewHolder) viewHolder).tv_goods_price.setText(list.get(position).getPurchase()/100.00 + "");
+            ((ImageViewHolder) viewHolder).tv_goods_price.setText(list.get(position).getPurchase() + "");
             ((ImageViewHolder) viewHolder).tv_goods_number.setText("x" + list.get(position).getCount());
             ((ImageViewHolder) viewHolder).tv_translate_state.setText(list.get(position).getOrderStatus());
-            ((ImageViewHolder) viewHolder).tv_goods_cost.setText("共计" + list.get(position).getCount() + "件商品，合计" + list.get(position).getTotalmoney()/100.00 + "元");
+            ((ImageViewHolder) viewHolder).tv_goods_cost.setText("共计" + list.get(position).getCount() + "件商品，合计" + list.get(position).getTotalmoney() + "元");
             ((ImageViewHolder) viewHolder).ll_content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

@@ -461,7 +461,7 @@ public class GoodsDetailsActivity extends BaseActivity {
         tv_goods_name.setText(goodsBean.getName());//标题
         tv_goods_detail_describe.setText(goodsBean.getGoodsdetail());
         if (bt_buy.getText().equals("立即租赁")) {
-            if (goodsBean.getPrice() > 0) {
+            if (!TextUtils.isEmpty(goodsBean.getPrice())&&Double.parseDouble(goodsBean.getPrice()) > 0) {
                 tv_price_title.setText("￥" + goodsBean.getPrice());
                 tv_price.setVisibility(View.VISIBLE);
                 if (goodsBean.getBillingmode() == 1) {
@@ -473,7 +473,7 @@ public class GoodsDetailsActivity extends BaseActivity {
                 tv_price_title.setText("");
                 tv_price.setVisibility(View.GONE);
             }
-            if (goodsBean.getVipprice() > 0) {
+            if (!TextUtils.isEmpty(goodsBean.getVipprice())&&Double.parseDouble(goodsBean.getVipprice()) > 0) {
                 tv_member_price.setText("￥" + goodsBean.getVipprice());
                 tv_member_price_title.setVisibility(View.VISIBLE);
             } else {
@@ -481,7 +481,7 @@ public class GoodsDetailsActivity extends BaseActivity {
                 tv_member_price_title.setVisibility(View.GONE);
             }
         } else {
-            if (goodsBean.getPurchase() > 0) {
+            if (!TextUtils.isEmpty(goodsBean.getPurchase())&&Double.parseDouble(goodsBean.getPurchase()) > 0) {
                 tv_price_title.setText("￥" + goodsBean.getPurchase());
                 tv_price.setVisibility(View.GONE);
             } else {

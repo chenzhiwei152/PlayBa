@@ -19,7 +19,7 @@ public class MemberRankBean implements Serializable{
     private int id;
     private int grade;
     private String name;
-    private int money;
+    private String money;
     private double discount;
     private String describe;
 
@@ -55,11 +55,11 @@ public class MemberRankBean implements Serializable{
         this.name = name;
     }
 
-    public int getMoney() {
+    public String getMoney() {
         return money;
     }
 
-    public void setMoney(int money) {
+    public void setMoney(String money) {
         this.money = money;
     }
 
