@@ -244,8 +244,12 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
         if (TextUtils.isEmpty(goodsBean.getPostMoney())){
             goodsBean.setPostMoney("0.00");
         }
+if (deliverytype==1){
+    price = Double.parseDouble(goodsBean.getPurchase()) * count;
+}else {
+    price = Double.parseDouble(goodsBean.getPurchase()) * count+Double.parseDouble(goodsBean.getPostMoney());
 
-        price = Double.parseDouble(goodsBean.getPurchase()) * count+Double.parseDouble(goodsBean.getPostMoney());
+}
         tv_num_price.setText("共计" + count + "件商品，合计￥" + price );
         tv_price_all.setText("￥" + price );
     }
@@ -439,8 +443,8 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             public void onClick(View v) {
                 deliverytype = 1;
                 setDeliveryType();
+                setSalePrice();
                 myDialog.dismiss();
-
             }
         });
         picture.setOnClickListener(new View.OnClickListener() {
@@ -449,6 +453,7 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
             public void onClick(View v) {
                 deliverytype = 0;
                 setDeliveryType();
+                setSalePrice();
                 myDialog.dismiss();
             }
         });
