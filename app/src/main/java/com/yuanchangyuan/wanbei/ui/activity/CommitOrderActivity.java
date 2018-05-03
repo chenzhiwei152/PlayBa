@@ -233,14 +233,18 @@ public class CommitOrderActivity extends BaseActivity implements View.OnClickLis
 //                price = goodsBean.getPrice() * hour + goodsBean.getDeposit();
 //            }
 //        }
-        tv_num_price.setText("共计1件商品，合计￥" + price );
-        tv_price_all.setText("￥" + price );
+        tv_num_price.setText("共计1件商品，合计￥" + goodsBean.getDeposit() );
+        tv_price_all.setText("￥" + goodsBean.getDeposit() );
     }
 
     private void setSalePrice() {
         if (TextUtils.isEmpty(goodsBean.getPurchase())){
-            return;
+            goodsBean.setPurchase("0.00");
         }
+        if (TextUtils.isEmpty(goodsBean.getPostMoney())){
+            goodsBean.setPostMoney("0.00");
+        }
+
         price = Double.parseDouble(goodsBean.getPurchase()) * count+Double.parseDouble(goodsBean.getPostMoney());
         tv_num_price.setText("共计" + count + "件商品，合计￥" + price );
         tv_price_all.setText("￥" + price );
