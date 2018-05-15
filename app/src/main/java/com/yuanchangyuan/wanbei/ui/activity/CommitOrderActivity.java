@@ -713,7 +713,7 @@ if (deliverytype==1){
         map.put("payType", orderType + "");
 //        map.put("totalmoney", price + "");
         map.put("userid", BaseContext.getInstance().getUserInfo().userId);
-//        map.put("deposit", goodsBean.getDeposit() + "");
+        map.put("vipgrade", BaseContext.getInstance().getUserInfo().vipgrade + "");
         LogUtils.e(JSON.toJSONString(map));
         DialogUtils.showDialog(CommitOrderActivity.this, "获取订单...", false);
         commitRentCall = RestAdapterManager.getApi().getRentOrder(map);
